@@ -115,6 +115,9 @@ public abstract class Action {
 			case FILL:
 				createdAction = new Fill(mappedAction, mappedElements);
 				break;
+			case ELEMENT_PAINT:
+				createdAction = new Paint(mappedAction, mappedElements);
+				break;
 			default:
 				break;
 		}

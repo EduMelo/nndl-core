@@ -9,7 +9,8 @@ public enum ActionType {
 	HOVER("hover"),
 	SEND_KEY("sendKey"),
 	LOOP("loop"),
-	FILL("fill");
+	FILL("fill"),
+	ELEMENT_PAINT("elementPaint");
 	
 	private String actionTag;
 	

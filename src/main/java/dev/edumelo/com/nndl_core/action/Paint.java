@@ -37,6 +37,9 @@ public class Paint extends Action {
 	}
 	
 	private StepElement getElement(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+		if(mappedElements == null) {
+			return null;
+		}
 		String elementKey = (String) mappedAction.get(TAG);
 		return mappedElements.get(elementKey);
 	}
@@ -82,7 +85,7 @@ public class Paint extends Action {
 				target = rootElement.getRootElement();
 			}
 		}
-		Advice advice = runElement(webDriver, target);
+		Advice advice = runElement(webDriver, webDriverWait, rootElement, target);
 		setActionPerformed(true);
 		return advice;
 	}
@@ -91,13 +94,19 @@ public class Paint extends Action {
 	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
 			throws ActionException {
 		WebElement element =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
-				.until(ExpectedConditions.elementToBeClickable(paintableElement.getLocator(webDriver)));		
+				.until(ExpectedConditions.elementToBeClickable(paintableElement.getLocator(webDriver)));
 		setActionPerformed(true);
-		return runElement(webDriver, element);
+		return runElement(webDriver, webDriverWait, null, element);
 	}
 	
-	public Advice runElement(SeleniumSndlWebDriver webDriver, WebElement element) {
-		webDriver.getWebDriver().executeScript("arguments[0].style.backgroundColor = arguments[1]", element, color);		
+	public Advice runElement(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement, WebElement element) {
+		if(checkCondition(webDriver, webDriverWait, rootElement)) {
+			webDriver.getWebDriver().executeScript("arguments[0].style.backgroundColor = arguments[1]", element, color);		
+			setActionPerformed(true);
+		} else {
+			setActionPerformed(false);
+		}
 		return new ContinueAdvice();
 	}
 

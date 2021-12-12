@@ -10,7 +10,8 @@ public enum ActionType {
 	SEND_KEY("sendKey"),
 	LOOP("loop"),
 	FILL("fill"),
-	ELEMENT_PAINT("elementPaint");
+	ELEMENT_PAINT("elementPaint"),
+	ACTION_TRIGGERER("actionTriggerer");
 	
 	private String actionTag;
 	

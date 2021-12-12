@@ -1,5 +1,6 @@
 package dev.edumelo.com.nndl_core.action;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -8,6 +9,7 @@ import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatus;
 import dev.edumelo.com.nndl_core.step.StepElement;
@@ -26,6 +28,7 @@ public abstract class Action {
 	private int waitDuration;
 	private RequirementStatus requirementStatus;
 	private Class<ActionCondition> conditionClass;
+	private StepElement conditionElement;
 	private boolean limitRequirement;
 	private boolean actionPerformed;
 	private Position positionBefore;
@@ -38,14 +41,25 @@ public abstract class Action {
 	public abstract Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) throws ActionException;
 	public abstract Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException;
 	
-	protected boolean checkCondition(WebElement element) {
-		if(this.conditionClass == null) {
+	protected boolean checkCondition(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) {
+		if(this.conditionClass == null || conditionElement == null) {
 			return true;
 		}
 		
 		try {
+			WebElement target;
+			if(rootElement != null) {
+				target = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
+						.until(ExpectedConditions.elementToBeClickable(
+								rootElement.getRootElement().findElement(conditionElement.getLocator(webDriver))));				
+			} else {
+				target = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
+						.until(ExpectedConditions.elementToBeClickable(conditionElement.getLocator(webDriver)));
+			}
+			
 			ActionCondition condition = conditionClass.getConstructor().newInstance();
-			return condition.checkCondition(element);
+			return condition.checkCondition(target);
 		} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
 			String message = "Error while instantiating Condition class";
 			//XXX Retornar
@@ -118,6 +132,9 @@ public abstract class Action {
 			case ELEMENT_PAINT:
 				createdAction = new Paint(mappedAction, mappedElements);
 				break;
+			case ACTION_TRIGGERER:
+				createdAction = new ActionTriggerer(mappedAction, mappedElements);
+				break;
 			default:
 				break;
 		}
@@ -125,6 +142,7 @@ public abstract class Action {
 		createdAction.setOrder(ActionExtractor.getOrder(mappedAction));
 		createdAction.setRequirementStatus(ActionExtractor.getRequirementStatus(mappedAction));
 		createdAction.setConditionClass(ActionExtractor.getConditionClass(mappedAction));
+		createdAction.setConditionElement(ActionExtractor.getConditionElement(mappedAction, mappedElements));
 		createdAction.setLimitRequirement(ActionExtractor.getLimitRequirement(mappedAction));
 		createdAction.setPositionAfter(ActionExtractor.getPositionAfter(mappedAction));
 		createdAction.setPositionBefore(ActionExtractor.getPositionBefore(mappedAction));
@@ -134,10 +152,7 @@ public abstract class Action {
 	}
 	
 	
-	public Advice run(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) throws ActionException {
-		//XXX Retornar
-//		log.debug("run: rootElement: {}", rootElement);
-		
+	public Advice run(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) throws ActionException {		
 		if(!isLoopCountAccepted(rootElement)) {
 			return new ContinueAdvice();
 		}

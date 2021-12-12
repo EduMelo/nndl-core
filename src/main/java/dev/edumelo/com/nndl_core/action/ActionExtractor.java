@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatus;
 import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatusFactory;
+import dev.edumelo.com.nndl_core.step.StepElement;
 
 //XXX Retornar
 //@Slf4j
@@ -15,7 +16,9 @@ public class ActionExtractor {
 	private static final String POSITION_BEFORE = "positionBefore";
 	private static final String LIMIT_REQUIREMENT_TAG = "limitRequirement";
 	private static final String CONDITION_TAG = "condition";
-	private static final Object ON_EACH_TAG = "onEach";
+	private static final String ON_EACH_TAG = "onEach";
+	private static final String CONDITION_CLASS_TAG = "class";
+	private static final String CONDITION_ELEMENT_TAG = "element";
 	
 	public static int getOrder(Map<String, ?> mappedAction) {
 		return (int) mappedAction.get("order");
@@ -60,7 +63,8 @@ public class ActionExtractor {
 	public static Class<ActionCondition> getConditionClass(Map<String, ?> mappedAction) {
 		Object conditionValue = mappedAction.get(CONDITION_TAG);
 		if(Objects.nonNull(conditionValue)) {
-			String className = (String) conditionValue;
+			Map<String, Object> mapaCondition = (Map<String, Object>) conditionValue; 
+			String className = (String) mapaCondition.get(CONDITION_CLASS_TAG);
 			try {
 				return (Class<ActionCondition>) Class.forName(className);			
 			} catch (ClassNotFoundException e) {
@@ -68,6 +72,17 @@ public class ActionExtractor {
 //				log.error(message);
 				throw new RuntimeException(message, e);
 			}
+		}
+		return null;
+	}
+
+	public static StepElement getConditionElement(Map<String, ?> mappedAction, 
+			Map<String, StepElement> mappedElements) {
+		Object conditionValue = mappedAction.get(CONDITION_TAG);
+		if(Objects.nonNull(conditionValue)) {
+			Map<String, Object> mapaCondition = (Map<String, Object>) conditionValue; 
+			String elementKey = (String) mapaCondition.get(CONDITION_ELEMENT_TAG);
+			return mappedElements.get(elementKey);
 		}
 		return null;
 	}

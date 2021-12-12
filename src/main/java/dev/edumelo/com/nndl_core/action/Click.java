@@ -36,23 +36,24 @@ public class Click extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {	
+	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {	
 		//TODO parametrized duration
 		WebElement button = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50)).until(ExpectedConditions.elementToBeClickable(
-				rootElement.getRootElement().findElement(clickableElement.getLocator(remoteWebDriver))));
-		return runElement(button);
+				rootElement.getRootElement().findElement(clickableElement.getLocator(webDriver))));
+		return runElement(webDriver, webDriverWait, rootElement, button);
 	}
 	
 	@Override
-	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {	
+	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait) {	
 		//TODO parametrized duration
 		WebElement button = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50)).until(ExpectedConditions.elementToBeClickable(
-					clickableElement.getLocator(remoteWebDriver)));			
-		return runElement(button);
+					clickableElement.getLocator(webDriver)));			
+		return runElement(webDriver, webDriverWait, null, button);
 	}
 	
-	public Advice runElement(WebElement button) {
-		if(checkCondition(button)) {
+	public Advice runElement(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement, WebElement button) {
+		if(checkCondition(webDriver, webDriverWait, rootElement)) {
 			button.click();
 			setActionPerformed(true);
 		} else {

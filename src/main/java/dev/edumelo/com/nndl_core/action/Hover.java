@@ -41,7 +41,7 @@ private static final String TAG = "hover";
 		ExpectedCondition<WebElement> expectedCondition = ExpectedConditions.elementToBeClickable(
 				rootElement.getRootElement().findElement(hoverableElement.getLocator(remoteWebDriver)));
 		WebElement element  = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50)).until(expectedCondition);
-		return runElement(remoteWebDriver, webDriverWait, element, expectedCondition);
+		return runElement(remoteWebDriver, webDriverWait, element, rootElement, expectedCondition);
 	}
 	
 	@Override
@@ -49,15 +49,15 @@ private static final String TAG = "hover";
 		ExpectedCondition<WebElement> expectedCondition = ExpectedConditions.visibilityOfElementLocated(
 				hoverableElement.getLocator(remoteWebDriver));
 		WebElement element  = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50)).until(expectedCondition);
-		return runElement(remoteWebDriver, webDriverWait, element, expectedCondition);
+		return runElement(remoteWebDriver, webDriverWait, element, null, expectedCondition);
 	}
 	
 	public Advice runElement(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait, 
-			WebElement element, ExpectedCondition<WebElement> expectedCondition) {
+			WebElement element, IterationContent rootElement, ExpectedCondition<WebElement> expectedCondition) {
 		
 //		positionBefore(remoteWebDriver, webDriverWait, element, expectedCondition);
 		Actions actions = new Actions(remoteWebDriver.getWebDriver());
-		if(checkCondition(element)) {
+		if(checkCondition(remoteWebDriver, webDriverWait, rootElement)) {
 			actions.moveToElement(element).perform();
 		}
 //		positionAfter(remoteWebDriver, webDriverWait, element, expectedCondition);

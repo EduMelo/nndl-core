@@ -32,19 +32,14 @@ public class ActionRunner {
 	}
 	
 	public Advice run(IterationContent rootElement, Action action) throws ActionException {
-		//XXX Retornar
-//		log.debug("run. RootElement: {}, Action: {}", rootElement, action);
-		
 		Advice advice = null;
 		
 		if(action instanceof LandmarkConditionAction) {
-			advice = ((LandmarkConditionAction) action).runSequentialWait(webDriver, webDriverWait, landmarkWaiter, rootElement);
+			advice = ((LandmarkConditionAction) action).runSequentialWait(webDriver, webDriverWait, landmarkWaiter, 
+					rootElement);
 		} else {
 			advice = action.run(webDriver, webDriverWait, rootElement);			
 		}
-		
-		//XXX Retornar
-//		log.debug("Action {} returned the following advice {}", action, advice);
 		
 		if(action instanceof DataBindExtractor) {
 			Collection<ExtractDataBind> extractData = ((DataBindExtractor) action).getExtractDataBind();

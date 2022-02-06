@@ -3,6 +3,9 @@ package dev.edumelo.com.nndl_core.scroll;
 import java.util.Collection;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dev.edumelo.com.nndl_core.ExtractDataBind;
 import dev.edumelo.com.nndl_core.action.LoopIterationScope;
 import dev.edumelo.com.nndl_core.action.StepElementIterationScope;
@@ -12,9 +15,10 @@ import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
-//@Slf4j
 public class InfiniteScrollFactory {
 
+	private static final Logger log = LoggerFactory.getLogger(InfiniteScrollFactory.class);
+	
 	public static InfiniteScroll create(Class<InfiniteScrollCondition> conditionClass, SeleniumSndlWebDriver remoteWebDriver, 
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement, int scrollCount, boolean autoScrool, Collection<ExtractDataBind> extractData, 
 			LoopIterationScope iterationScope, Class<ScrollObserver> infinitScrollObserverClass, Step iterationStep) {
@@ -31,8 +35,7 @@ public class InfiniteScrollFactory {
 				return conditionClass.getConstructor().newInstance();
 			} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
 				String message = "Error while instantiating Storer class";
-				//XXX Retornar
-//				log.error(message);
+				log.error(message);
 				throw new RuntimeException(message, e);
 			}
 		}
@@ -54,8 +57,7 @@ public class InfiniteScrollFactory {
 						.newInstance(infiniteScrollAdapter);				
 			} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
 				String message = "Error while instantiating Loop classes";
-				//XXX Retornar
-//				log.error(message);
+				log.error(message);
 				throw new RuntimeException(message, e);
 			}
 		} else {

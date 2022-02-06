@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openqa.selenium.Cookie;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.step.StepElement;
@@ -17,6 +19,9 @@ import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
 @SuppressWarnings("unchecked")
 public class LoadCookies extends LandmarkConditionAction {
+	
+	private static final Logger log = LoggerFactory.getLogger(LandmarkConditionAction.class);
+	
 	private static final String TAG = "loadCookies";
 	private static final String RETRIEVER_TAG = "retriever";
 	private static final Object RETRIEVER_PARAMS_TAG = "retrieverParams";
@@ -56,8 +61,7 @@ public class LoadCookies extends LandmarkConditionAction {
 			retriever = retrieverClass.getConstructor().newInstance();
 		} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
 			String message = "Error while instantiating Retriever class";
-			//XXX Retornar
-//			log.error(message);
+			log.error(message);
 			throw new RuntimeException(message, e);
 		}
 		
@@ -80,8 +84,7 @@ public class LoadCookies extends LandmarkConditionAction {
 			return (Class<LoadCookiesRetriever>) Class.forName(className);
 		} catch (ClassNotFoundException e) {
 			String message = String.format("Cannot found class by the name: %s", className);
-			//XXX Retornar
-//			log.error(message);
+			log.error(message);
 			throw new RuntimeException(message);
 		}
 	}

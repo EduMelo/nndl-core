@@ -4,10 +4,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Selenium Hub properties
  */
 public class SeleniumHubProperties {
+	
+	private static final Logger log = LoggerFactory.getLogger(SeleniumHubProperties.class);
 	
 	enum PlataformType {LINUX, ANDROID}
 	enum BrowserType {CHROME, FIREFOX, INTERNETEXPLORER}
@@ -111,8 +116,7 @@ public class SeleniumHubProperties {
 		} else {
 			url = String.format("http://%s:%s@%s:%d/wd/hub", authUser, authPassword, host, port);
 		}
-		//XXX Retornar
-//		log.debug(String.format("Connecting to remote server: %s", url));
+		log.debug(String.format("Connecting to remote server: %s", url));
 		return new URL(url);
 	}
 

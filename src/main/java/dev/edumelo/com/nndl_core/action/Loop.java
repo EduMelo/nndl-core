@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dev.edumelo.com.nndl_core.DataBindExtractor;
 import dev.edumelo.com.nndl_core.ExtractDataBind;
 import dev.edumelo.com.nndl_core.ExtractDataBindCreator;
@@ -23,6 +26,9 @@ import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
 public class Loop extends Action implements DataBindExtractor {
+	
+	private static final Logger log = LoggerFactory.getLogger(Loop.class);
+	
 	private static final int DEFAULT_MAX_LOOP_COUNT = 50;
 	
 	private Class<ScrollObserver> infinitScrollObserverClass;
@@ -66,15 +72,13 @@ public class Loop extends Action implements DataBindExtractor {
 	
 	@Override
 	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) throws ActionException {
-		//XXX Retornar
-//		log.debug("runNested");
+		log.debug("runNested");
 		return runElement(remoteWebDriver, webDriverWait, rootElement);
 	}
 	
 	@Override
 	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
-		//XXX Retornar
-//		log.debug("runAction");
+		log.debug("runAction");
 		return runElement(remoteWebDriver, webDriverWait, null);
 	}
 	
@@ -110,8 +114,7 @@ public class Loop extends Action implements DataBindExtractor {
 		try {
 			infiniteScroll.scroll(maxLoopCount, limit);			
 		} catch(InfiniteScrollMaxLoopCountReached e) {		
-			//XXX Retornar
-//			log.error("Max loop count reached");
+			log.error("Max loop count reached");
 			if(!ignoreMaxLoopCountException) {
 				throw e;
 			}

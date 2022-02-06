@@ -10,6 +10,8 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatus;
 import dev.edumelo.com.nndl_core.step.StepElement;
@@ -20,6 +22,9 @@ import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
 public abstract class Action {
+	
+	private final static Logger log = LoggerFactory.getLogger(Action.class);
+	
 	private static final String TAG = "actions";		
 	private int order;
 	private int waitDuration;
@@ -120,8 +125,7 @@ public abstract class Action {
 			return condition.checkCondition(target);
 		} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
 			String message = "Error while instantiating Condition class";
-			//XXX Retornar
-//			log.error(message);
+			log.error(message);
 			throw new RuntimeException(message, e);
 		}
 	}
@@ -225,8 +229,7 @@ public abstract class Action {
 			}			
 		} catch(ElementNotInteractableException e) {
 			String msg = String.format("Action element not interactable. Action: %s", this);
-			//XXX Retornar
-//			log.error(msg);
+			log.error(msg);
 			throw new RuntimeException(msg, e);
 		}
 		return advice;
@@ -240,8 +243,7 @@ public abstract class Action {
 	}
 
 	private static ActionType indentifyAction(Map<String, ?> mappedAction) {
-		//XXX Retornar
-//		log.debug("identifyAction. mappedAction: {}", mappedAction);
+		log.debug("identifyAction. mappedAction: {}", mappedAction);
 		
 		return Arrays.stream(ActionType.values())
 			.filter(e -> mappedAction.containsKey(e.getActionTag()))

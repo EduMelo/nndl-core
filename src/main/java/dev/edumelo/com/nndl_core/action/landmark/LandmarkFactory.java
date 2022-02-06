@@ -3,12 +3,15 @@ package dev.edumelo.com.nndl_core.action.landmark;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dev.edumelo.com.nndl_core.step.StepElement;
 
-//XXX Retornar
-//@Slf4j
 public class LandmarkFactory {
-
+	
+	public static final Logger log = LoggerFactory.getLogger(Landmark.class);
+	
 	public static Landmark createLandmark(Map<String, ?> landmarkMap, Map<String, StepElement> mappedElements, 
 			LandmarkConditionAggregationType landmarkConditionAggregationType) {
 		LandmarkEnum type = getType(landmarkMap);
@@ -32,8 +35,7 @@ public class LandmarkFactory {
 	}
 
 	private static LandmarkEnum getType(Map<String, ?> landmarkMap) {
-		//XXX Retornar
-//		log.debug(String.format("getType. LandmarkMap: {}", landmarkMap));
+		log.debug(String.format("getType. LandmarkMap: {}", landmarkMap));
 		
 		return Arrays.asList(LandmarkEnum.values()).stream()
 				.filter(l -> landmarkMap.containsKey(l.getTag()))

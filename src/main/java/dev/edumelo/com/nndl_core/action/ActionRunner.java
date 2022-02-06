@@ -11,8 +11,6 @@ import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
-//XXX Retornar
-//@Slf4j
 public class ActionRunner {
 	
 	private final SeleniumSndlWebDriver webDriver;

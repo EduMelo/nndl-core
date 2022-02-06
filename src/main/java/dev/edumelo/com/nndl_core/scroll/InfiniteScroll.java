@@ -4,10 +4,14 @@ import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 
 public class InfiniteScroll {
+	
+	private static final Logger log = LoggerFactory.getLogger(InfiniteScroll.class);
 
 	private final SeleniumSndlWebDriver remoteWebDriver;
 	private final int scrollCount;
@@ -99,8 +103,7 @@ public class InfiniteScroll {
 	 * @throws InfiniteScrollMaxLoopCountReached 
 	 */
 	public void scroll(long maxLoopCount, Long limit) throws InfiniteScrollMaxLoopCountReached {
-		//XXX Retornar
-//		log.debug("scroll: maxLoopCount: {}, scrollObservers: {}", maxLoopCount, scrollObservers);
+		log.debug("scroll: maxLoopCount: {}, scrollObservers: {}", maxLoopCount, scrollObservers);
 
 		int actualLoopCount = 0;
 		int breakCount = 0;
@@ -113,15 +116,13 @@ public class InfiniteScroll {
 			//MaxLoopCount is an exit escape for the loop and limit is for reach a limitted result count
 			if(actualLoopCount > maxLoopCount) {
 				String msg = String.format("The infite scroll reached the maxLoopCount: %d", maxLoopCount);
-				//XXX Retornar
-//			    log.info(msg);
+			    log.info(msg);
 				throw new InfiniteScrollMaxLoopCountReached(msg);
 			}
 			
 			if(limit != null && currentLimit >= limit) {
 				String msg = String.format("Limit reached: %d", limit);
-				//XXX Retornar
-//			    log.info(msg);
+			    log.info(msg);
 			    break;
 			}
 
@@ -132,8 +133,7 @@ public class InfiniteScroll {
 					continue mainLoop;
 				} catch (ScrollStopException e) {
 					String msg = String.format("Infinite scroll interrupted by the following error: %s", e.getMessage());
-					//XXX Retornar
-//					log.error(msg);
+					log.error(msg);
 					throw new RuntimeException(msg, e);
 				}
 			}
@@ -143,8 +143,7 @@ public class InfiniteScroll {
 				scrollToTheLastCreatedElement();				
 			}
 			long newHeight = getBodyScrollSize();
-			//XXX Retornar
-//			log.debug(String.format("Last height %d. New height %d", lastHeight, newHeight));
+			log.debug(String.format("Last height %d. New height %d", lastHeight, newHeight));
 			if(newHeight == lastHeight) {
 				breakCount++;
 				if(breakCount > maxBreakCount) {

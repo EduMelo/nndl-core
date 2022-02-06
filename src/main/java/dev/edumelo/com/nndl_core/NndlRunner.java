@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.text.StrSubstitutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.collect.ImmutableSet;
@@ -21,9 +23,10 @@ import dev.edumelo.com.nndl_core.step.StepRunner;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
-//XXX Retornar
-//@Slf4j
 public class NndlRunner {
+	
+	private static final Logger log = LoggerFactory.getLogger(NndlRunner.class);
+	
 	private static final String ENTRY_STEP_TAG = "entryStep";
 	private static final String ASYNCHRONOUS_STEPS_TAG = "asynchronousSteps";
 
@@ -94,8 +97,7 @@ public class NndlRunner {
 			return replaceTags(yamlString, variableSubstitutionMap);
 		} catch (IOException e) {
 			String msg = "";
-			//XXX Retornar
-//			log.error(msg);
+			log.error(msg);
 			throw new RuntimeException(msg, e);
 		}
 	}

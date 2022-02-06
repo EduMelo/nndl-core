@@ -2,6 +2,9 @@ package dev.edumelo.com.nndl_core.action;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dev.edumelo.com.nndl_core.ExtractDataBindCreator;
 import dev.edumelo.com.nndl_core.scroll.InfiniteScrollCondition;
 import dev.edumelo.com.nndl_core.scroll.ScrollObserver;
@@ -10,6 +13,9 @@ import dev.edumelo.com.nndl_core.step.StepElement;
 
 @SuppressWarnings("unchecked")
 public class LoopExtractor {
+	
+	private static final Logger log = LoggerFactory.getLogger(LoopExtractor.class);
+	
 	public static final String TAG = "loop";
 	private static final String AUTO_SCROLL_TAG = "autoScroll";
 	private static final String SCROLL_COUNT_TAG = "scrollCount";
@@ -58,8 +64,7 @@ public class LoopExtractor {
 			return (Class<ScrollObserver>) Class.forName(className);
 		} catch (ClassNotFoundException e) {
 			String message = String.format("Cannot found class by the name: %s", className);
-			//XXX Retornar
-//			log.error(message);
+			log.error(message);
 			throw new RuntimeException(message);
 		}
 	}
@@ -85,8 +90,7 @@ public class LoopExtractor {
 				return (Class<InfiniteScrollCondition>) Class.forName(className);			
 			} catch (ClassNotFoundException e) {
 				String message = String.format("Cannot found class by name: %s", className);
-				//XXX Retornar
-//				log.error(message);
+				log.error(message);
 				throw new RuntimeException(message, e);
 			}			
 		}
@@ -100,8 +104,7 @@ public class LoopExtractor {
 				return (Class<ExtractDataBindCreator>) Class.forName(className);
 			} catch (ClassNotFoundException e) {
 				String message = String.format("Cannot found class by the name: %s", className);
-				//XXX Retornar
-//				log.error(message);
+				log.error(message);
 				throw new RuntimeException(message, e);
 			}			
 		}

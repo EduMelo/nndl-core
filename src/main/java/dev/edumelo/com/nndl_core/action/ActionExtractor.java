@@ -3,14 +3,17 @@ package dev.edumelo.com.nndl_core.action;
 import java.util.Map;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatus;
 import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatusFactory;
 import dev.edumelo.com.nndl_core.step.StepElement;
 
-//XXX Retornar
-//@Slf4j
 @SuppressWarnings("unchecked")
 public class ActionExtractor {
+
+	private static final Logger log = LoggerFactory.getLogger(ActionExtractor.class);
 	
 	private static final String POSITION_AFTER = "positionAfter";
 	private static final String POSITION_BEFORE = "positionBefore";
@@ -69,7 +72,7 @@ public class ActionExtractor {
 				return (Class<ActionCondition>) Class.forName(className);			
 			} catch (ClassNotFoundException e) {
 				String message = String.format("Cannot found class by name: %s", className);
-//				log.error(message);
+				log.error(message);
 				throw new RuntimeException(message, e);
 			}
 		}

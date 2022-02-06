@@ -3,8 +3,12 @@ package dev.edumelo.com.nndl_core.webdriver;
 import java.net.MalformedURLException;
 
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SeleniumSndlWebDriver implements NndlWebDriver {
+	
+	private static final Logger log = LoggerFactory.getLogger(SeleniumSndlWebDriver.class);
 	
 	private RemoteWebDriver webDriver;
 	private final BrowserControllerDriverConfiguration browserCOnfiguration;
@@ -24,8 +28,7 @@ public class SeleniumSndlWebDriver implements NndlWebDriver {
 			this.webDriver = browserCOnfiguration.createRemoteDriver();
 		} catch (MalformedURLException e) {
 			String msg = "Mal formed URL while creating web driver";
-			//XXX Retornar
-//			log.error(msg);
+			log.error(msg);
 			throw new RuntimeException(msg, e);
 		}
 	}

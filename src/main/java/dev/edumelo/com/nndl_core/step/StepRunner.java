@@ -6,6 +6,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dev.edumelo.com.nndl_core.ExtractDataBind;
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionRunner;
@@ -19,8 +22,11 @@ import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class StepRunner {
-
+	
+	private static final Logger log = LoggerFactory.getLogger(StepRunner.class);
+	
 	private final SeleniumSndlWebDriver webDriver;
 	private final SeleniumSndlWebDriverWaiter webDriverWait;
 	private ActionRunner actionRunner;
@@ -40,7 +46,6 @@ public class StepRunner {
 		return extractDataBindList;
 	}
 
-	@SuppressWarnings({ "rawtypes" })
 	public Collection<ExtractDataBind> runSteps(String entryStep, Map<String, Step> steps, Collection extractDataBindList) {
 		this.steps = steps;
 		extractDataBindList = new ArrayList<ExtractDataBind>();
@@ -51,7 +56,6 @@ public class StepRunner {
 		
 	}
 	
-	@SuppressWarnings({ "rawtypes" })
 	public int runStep(Step step, IterationContent rootElement) {
 		LinkedList<Action> runningActions = step.getActions();
 		int stepsRunned = 0;
@@ -74,8 +78,7 @@ public class StepRunner {
 				runningActions = nextRunningActions;
 			} catch (StepBreakerActionNotPerformed e) {
 				String msg = "Step breaker action not performed.";
-				//XXX Retornar
-//				log.error(msg);
+				log.error(msg);
 				String stepTreatmentName = e.getStepTreatment();
 				if(stepTreatmentName != null) {
 					Step stepTreatment = step.getSubSteps().get(stepTreatmentName);
@@ -110,8 +113,7 @@ public class StepRunner {
 				}				
 			} catch(Exception e) {
 				String msg = String.format("Action not performed. Action: %s", action);
-				//XXX Retornar
-//				log.error(msg);
+				log.error(msg);
 				switch (requirementStatus.getType()) {
 					case NON_REQUIRED:
 						break;

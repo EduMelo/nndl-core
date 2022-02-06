@@ -5,6 +5,8 @@ import java.util.Collection;
 
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.ExtraExpectedConditions;
 import dev.edumelo.com.nndl_core.ExtractDataBind;
@@ -16,6 +18,9 @@ import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
 public class DefaultScrollObserver implements ScrollObserver {
+	
+	private static final Logger log = LoggerFactory.getLogger(DefaultScrollObserver.class);
+	
 	private final SeleniumSndlWebDriver webDriver;
     private final SeleniumSndlWebDriverWaiter webDriverWait;
     private Step iterationStep;
@@ -106,8 +111,7 @@ public class DefaultScrollObserver implements ScrollObserver {
     		}  				    		
     	} catch (StaleElementReferenceException e) {
     		String msg = "DefaultInfiniteScrollObserver execution error";
-    		//XXX Retornar
-//    		log.error(msg);
+    		log.error(msg);
     	}
 		return 0;
 	}

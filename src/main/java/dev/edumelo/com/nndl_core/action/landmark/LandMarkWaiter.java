@@ -10,15 +10,18 @@ import java.util.concurrent.ExecutionException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
-//XXX Retornar
-//@Slf4j
 public class LandMarkWaiter {
+	
+	private static final Logger log = LoggerFactory.getLogger(LandMarkWaiter.class);
+	
 	private SeleniumSndlWebDriver webDriver;
 	private SeleniumSndlWebDriverWaiter webDriverWait;
 
@@ -28,8 +31,7 @@ public class LandMarkWaiter {
 	}
 
 	public Advice wait(LandmarkConditionAggregation landmarkConditionAggregation) throws LandmarkException {
-		//XXX Retornar
-//		log.debug("wait. landmarkConditionAggregation: {}", landmarkConditionAggregation);
+		log.debug("wait. landmarkConditionAggregation: {}", landmarkConditionAggregation);
 		if(landmarkConditionAggregation.getType() == LandmarkConditionAggregationType.LANDMARK_NOT_SETTED) {
 			return new ContinueAdvice();
 		}
@@ -49,23 +51,20 @@ public class LandMarkWaiter {
 							try {
 								Thread.sleep(cooldown.getCooldown());
 							} catch (InterruptedException e) {
-								//XXX Retornar
-//								log.debug("Landmark CoolDown wait interrupt. Landmark: {}", landmark);
+								log.debug("Landmark CoolDown wait interrupt. Landmark: {}", landmark);
 							}
 						} else {
 							try {
 								webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(landmark.getTimeout())).until(ExpectedConditions
 										.visibilityOfElementLocated(locator));							
 							} catch(WebDriverException e) {
-								//XXX Retornar
-//								log.debug("Landmark wait interrupt. Landmark: {}", landmark);
+								log.debug("Landmark wait interrupt. Landmark: {}", landmark);
 								exceptionCapture.setExceptionCaptured(true);
 								completableFuture.complete(landmark.getLandMarkAdvice());
 								return;
 							}							
 						}
-						//XXX Retornar
-//						log.debug("Landmark properly found. Landmark: {}", landmark);
+						log.debug("Landmark properly found. Landmark: {}", landmark);
 						completableFuture.complete(landmark.getLandMarkAdvice());
 					})
 			);
@@ -98,8 +97,7 @@ public class LandMarkWaiter {
 		try {
 			return c.get();
 		} catch (InterruptedException | ExecutionException e) {
-			//XXX Retornar
-//			log.error("Thread execution error: {}", e);
+			log.error("Thread execution error: {}", e);
 			return null;
 		}
 	}

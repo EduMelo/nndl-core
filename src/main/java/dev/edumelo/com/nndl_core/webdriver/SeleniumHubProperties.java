@@ -4,21 +4,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
 /**
  * Selenium Hub properties
  */
-//@Component
-//@EnableConfigurationProperties
-//@ConfigurationProperties(prefix="grfnkl.seleniumhub")
-//XXX Retornar
-//@Slf4j
-@NoArgsConstructor
-@Data
-@ToString
 public class SeleniumHubProperties {
 	
 	enum PlataformType {LINUX, ANDROID}
@@ -34,6 +22,64 @@ public class SeleniumHubProperties {
 	private String authUser;
 	private String authPassword;
 	
+	public SeleniumHubProperties() {
+	}
+
+	public String getEnvironment() {
+		return environment;
+	}
+	public void setEnvironment(String environment) {
+		this.environment = environment;
+	}
+	public String getBrowserVersion() {
+		return browserVersion;
+	}
+	public void setBrowserVersion(String browserVersion) {
+		this.browserVersion = browserVersion;
+	}
+	public Boolean getWindowMaximize() {
+		return windowMaximize;
+	}
+	public void setWindowMaximize(Boolean windowMaximize) {
+		this.windowMaximize = windowMaximize;
+	}
+	public Long getImplicitWait() {
+		return implicitWait;
+	}
+	public void setImplicitWait(Long implicitWait) {
+		this.implicitWait = implicitWait;
+	}
+	public String getHost() {
+		return host;
+	}
+	public void setHost(String host) {
+		this.host = host;
+	}
+	public Integer getPort() {
+		return port;
+	}
+	public void setPort(Integer port) {
+		this.port = port;
+	}
+	public String getAuthUser() {
+		return authUser;
+	}
+	public void setAuthUser(String authUser) {
+		this.authUser = authUser;
+	}
+	public String getAuthPassword() {
+		return authPassword;
+	}
+	public void setAuthPassword(String authPassword) {
+		this.authPassword = authPassword;
+	}
+	public void setBrowser(String browser) {
+		this.browser = browser;
+	}
+	public void setPlataform(String plataform) {
+		this.plataform = plataform;
+	}
+
 	/**
 	 * @return The selenium hub plataform to be used
 	 */
@@ -69,5 +115,12 @@ public class SeleniumHubProperties {
 //		log.debug(String.format("Connecting to remote server: %s", url));
 		return new URL(url);
 	}
-	
+
+	@Override
+	public String toString() {
+		return "SeleniumHubProperties [environment=" + environment + ", browser=" + browser + ", browserVersion="
+				+ browserVersion + ", plataform=" + plataform + ", windowMaximize=" + windowMaximize + ", implicitWait="
+				+ implicitWait + ", host=" + host + ", port=" + port + ", authUser=" + authUser + ", authPassword="
+				+ authPassword + "]";
+	}
 }

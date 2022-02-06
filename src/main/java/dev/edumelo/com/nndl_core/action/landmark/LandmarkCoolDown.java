@@ -5,15 +5,18 @@ import org.openqa.selenium.By;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
-import lombok.Data;
 
-@Data
-//XXX Retornar
-//@Slf4j
 public class LandmarkCoolDown implements Landmark {
 	private static final String TAG = "cooldown";
 	private long cooldown;
 	
+	public long getCooldown() {
+		return cooldown;
+	}
+	public void setCooldown(long cooldown) {
+		this.cooldown = cooldown;
+	}
+
 	/**
 	 * @param cooldown The cooldown in mileseconds
 	 */

@@ -14,12 +14,7 @@ import dev.edumelo.com.nndl_core.step.StepRunner;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
-import lombok.Data;
 
-@Data
-//@Slf4j
-//@Service
-//@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class DefaultScrollObserver implements ScrollObserver {
 	private final SeleniumSndlWebDriver webDriver;
     private final SeleniumSndlWebDriverWaiter webDriverWait;
@@ -42,11 +37,56 @@ public class DefaultScrollObserver implements ScrollObserver {
         this.runner = adapter.getRunner();
     }
     
-    public void setIterationScope(String iterationScope) {
-    	this.iterationScope = iterationScope;
-    }
+    public Step getIterationStep() {
+		return iterationStep;
+	}
+	public void setIterationStep(Step iterationStep) {
+		this.iterationStep = iterationStep;
+	}
+	public StepRunner getRunner() {
+		return runner;
+	}
+	public void setRunner(StepRunner runner) {
+		this.runner = runner;
+	}
+	public InfiniteScrollCondition getInfiniteScrollCondition() {
+		return infiniteScrollCondition;
+	}
+	public void setInfiniteScrollCondition(InfiniteScrollCondition infiniteScrollCondition) {
+		this.infiniteScrollCondition = infiniteScrollCondition;
+	}
+	public Collection<ExtractDataBind> getList() {
+		return list;
+	}
+	public void setList(Collection<ExtractDataBind> list) {
+		this.list = list;
+	}
+	public IterationContent getRootElement() {
+		return rootElement;
+	}
+	public void setRootElement(IterationContent rootElement) {
+		this.rootElement = rootElement;
+	}
+	public StepElement getElement() {
+		return element;
+	}
+	public void setElement(StepElement element) {
+		this.element = element;
+	}
+	public String getIterationScope() {
+		return iterationScope;
+	}
+	public void setIterationScope(String iterationScope) {
+		this.iterationScope = iterationScope;
+	}
+	public SeleniumSndlWebDriver getWebDriver() {
+		return webDriver;
+	}
+	public SeleniumSndlWebDriverWaiter getWebDriverWait() {
+		return webDriverWait;
+	}
 
-    public int execute(int loopCount) throws ScrollContinueException, ScrollStopException {
+	public int execute(int loopCount) throws ScrollContinueException, ScrollStopException {
     	try {
     		if(rootElement != null) {
     			return webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))

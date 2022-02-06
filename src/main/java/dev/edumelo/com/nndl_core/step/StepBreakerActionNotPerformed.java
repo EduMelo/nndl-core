@@ -1,8 +1,5 @@
 package dev.edumelo.com.nndl_core.step;
 
-import lombok.Getter;
-
-@Getter
 public class StepBreakerActionNotPerformed extends Exception {
 	/**
 	 * 
@@ -13,6 +10,13 @@ public class StepBreakerActionNotPerformed extends Exception {
 	public StepBreakerActionNotPerformed(String msg, Exception e, String stepTreatment) {
 		super(msg, e);
 		this.stepTreatment = stepTreatment;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	public String getStepTreatment() {
+		return stepTreatment;
 	}
 
 	public StepBreakerActionNotPerformed(String msg) {

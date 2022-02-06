@@ -2,15 +2,16 @@ package dev.edumelo.com.nndl_core.action;
 
 import java.util.Arrays;
 
-import lombok.Getter;
-
 public enum LoopIterationScopeType {
 	PAGE_ELEMENT("pageElement"),
 	LIST("list");
 
-	@Getter
 	private String tag;
 	
+	public String getTag() {
+		return tag;
+	}
+
 	LoopIterationScopeType(String tag) {
 		this.tag = tag;
 	}

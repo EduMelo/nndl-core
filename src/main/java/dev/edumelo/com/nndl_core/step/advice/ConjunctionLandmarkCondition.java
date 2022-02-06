@@ -9,9 +9,7 @@ import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAggregation;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAggregationType;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkFactory;
 import dev.edumelo.com.nndl_core.step.StepElement;
-import lombok.ToString;
 
-@ToString
 public class ConjunctionLandmarkCondition extends LandmarkConditionAggregation {
 	private static final String TAG = "landmarkConditions";
 	private List<Landmark> landmarkConditions;
@@ -47,4 +45,8 @@ public class ConjunctionLandmarkCondition extends LandmarkConditionAggregation {
 //		  .collect(Collectors.toList());
 	}
 
+	@Override
+	public String toString() {
+		return "ConjunctionLandmarkCondition [landmarkConditions=" + landmarkConditions + "]";
+	}
 }

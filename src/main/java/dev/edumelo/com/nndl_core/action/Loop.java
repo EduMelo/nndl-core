@@ -21,11 +21,7 @@ import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
-import lombok.ToString;
 
-//XXX Retornar
-//@SLF4J
-@ToString
 public class Loop extends Action implements DataBindExtractor {
 	private static final int DEFAULT_MAX_LOOP_COUNT = 50;
 	
@@ -60,7 +56,7 @@ public class Loop extends Action implements DataBindExtractor {
 	
 	@Override
 	public String getTag() {
-		return LoopExtractor.getTAG();
+		return LoopExtractor.getTag();
 	}
 	
 	@Override
@@ -128,4 +124,12 @@ public class Loop extends Action implements DataBindExtractor {
 		
 	}
 
+	@Override
+	public String toString() {
+		return "Loop [infinitScrollObserverClass=" + infinitScrollObserverClass + ", resultFillerClass="
+				+ resultFillerClass + ", conditionClass=" + conditionClass + ", extractorObserver=" + extractorObserver
+				+ ", extractData=" + extractData + ", iterationStep=" + iterationStep + ", iterationScope="
+				+ iterationScope + ", scrollCount=" + scrollCount + ", limit=" + limit + ", autoScrool=" + autoScrool
+				+ ", ignoreMaxLoopCountException=" + ignoreMaxLoopCountException + "]";
+	}
 }

@@ -11,9 +11,7 @@ import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
-import lombok.ToString;
 
-@ToString
 public class Goto extends LandmarkConditionAction {
 	private static final String TAG = "gotoUrl";
 	private URL url;
@@ -60,5 +58,10 @@ public class Goto extends LandmarkConditionAction {
 	public void runPreviousModification(ActionModificator modificiator) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public String toString() {
+		return "Goto [url=" + url + "]";
 	}
 }

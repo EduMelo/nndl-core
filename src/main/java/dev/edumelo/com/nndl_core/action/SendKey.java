@@ -18,11 +18,7 @@ import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
-import lombok.ToString;
 
-//XXX Retornar
-//@Slf4j
-@ToString
 public class SendKey extends LandmarkConditionAction {
 	private static final String TAG = "sendKey";
 	private static final String TARGET_TAG = "targetElement";
@@ -129,5 +125,10 @@ public class SendKey extends LandmarkConditionAction {
 	public void runPreviousModification(ActionModificator modificiator) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public String toString() {
+		return "SendKey [key=" + key + ", targetElement=" + targetElement + ", ignoreRoot=" + ignoreRoot + "]";
 	}
 }

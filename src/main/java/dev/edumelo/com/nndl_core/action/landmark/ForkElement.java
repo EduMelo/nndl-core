@@ -8,9 +8,7 @@ import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.SwapStepAdvice;
 import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
-import lombok.ToString;
 
-@ToString
 public class ForkElement implements Landmark {
 	public static final String TAG = "element";
 	public static final String FORK_TAG = "fork";
@@ -59,5 +57,10 @@ public class ForkElement implements Landmark {
 	private StepElement extractElement(Map<String, StepElement> mappedElements, Map<String, ?> mappedForkElement) {
 		String elementKey = (String) mappedForkElement.get(TAG);
 		return (StepElement) mappedElements.get(elementKey);
+	}
+
+	@Override
+	public String toString() {
+		return "ForkElement [element=" + element + ", fork=" + fork + ", timeout=" + timeout + "]";
 	}
 }

@@ -9,15 +9,15 @@ import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
-import lombok.Getter;
 
-@Getter
-//Retornar
-//@Slf4j
 public abstract class LandmarkConditionAction extends Action {
 
 	private LandmarkConditionAggregation landmarkConditionAggregation;
 	
+	public LandmarkConditionAggregation getLandmarkConditionAggregation() {
+		return landmarkConditionAggregation;
+	}
+
 	protected void setLandMarkConditionAgregation(Map<String, ?> mappedAction,
 			Map<String, StepElement> mappedElements) {
 		this.landmarkConditionAggregation = LandmarkConditionAggregation.createLandmarkConditionAggregation(mappedElements, mappedAction);

@@ -9,9 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import dev.edumelo.com.nndl_core.action.Action;
-import lombok.Data;
 
-@Data
 public class Step {
 	private static final String TAG = "steps";
 	private static final Object SUBSTEP_TAG = "subSteps";
@@ -21,11 +19,44 @@ public class Step {
 	private LinkedList<Action> actions;
 	private Map<String, Step> subSteps;
 	private boolean limitCountInvalidate = false;
-	
-	public static String getTag() {
-		return Step.TAG;
+
+	public String getName() {
+		return name;
 	}
-	
+	public void setName(String name) {
+		this.name = name;
+	}
+	public Map<String, StepElement> getElements() {
+		return elements;
+	}
+	public void setElements(Map<String, StepElement> elements) {
+		this.elements = elements;
+	}
+	public LinkedList<Action> getActions() {
+		return actions;
+	}
+	public void setActions(LinkedList<Action> actions) {
+		this.actions = actions;
+	}
+	public Map<String, Step> getSubSteps() {
+		return subSteps;
+	}
+	public void setSubSteps(Map<String, Step> subSteps) {
+		this.subSteps = subSteps;
+	}
+	public boolean isLimitCountInvalidate() {
+		return limitCountInvalidate;
+	}
+	public void setLimitCountInvalidate(boolean limitCountInvalidate) {
+		this.limitCountInvalidate = limitCountInvalidate;
+	}
+	public static String getTag() {
+		return TAG;
+	}
+	public static Object getSubstepTag() {
+		return SUBSTEP_TAG;
+	}
+
 	@SuppressWarnings("unchecked")
 	public Step(Map<String, ?> mappedStep) {
 		this.name = (String) mappedStep.get("name");

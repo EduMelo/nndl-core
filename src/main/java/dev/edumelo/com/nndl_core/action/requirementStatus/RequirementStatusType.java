@@ -2,9 +2,6 @@ package dev.edumelo.com.nndl_core.action.requirementStatus;
 
 import java.util.Arrays;
 
-import lombok.Getter;
-
-@Getter
 public enum RequirementStatusType {
 	REQUIRED("required"), 
 	NON_REQUIRED("nonRequired"),
@@ -17,6 +14,10 @@ public enum RequirementStatusType {
 		this.tag = tag;
 	}
 	
+	public String getTag() {
+		return tag;
+	}
+
 	public static RequirementStatusType getType(String tag) {
 		return Arrays.stream(RequirementStatusType.values())
 			.filter(e -> e.getTag().equals(tag))

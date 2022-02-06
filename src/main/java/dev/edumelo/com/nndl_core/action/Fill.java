@@ -18,9 +18,7 @@ import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
-import lombok.ToString;
 
-@ToString
 public class Fill extends Action implements DataBindExtractor {
 	private static final String TAG = "fill";
 	private static final String TARGET_TAG = "targertElement";
@@ -92,6 +90,12 @@ public class Fill extends Action implements DataBindExtractor {
 			return mappedElements.get(elementName);
 		}
 		return null;
+	}
+
+	@Override
+	public String toString() {
+		return "Fill [extractor=" + extractor + ", extractDataBindList=" + extractDataBindList + ", targetElement="
+				+ targetElement + "]";
 	}
 
 }

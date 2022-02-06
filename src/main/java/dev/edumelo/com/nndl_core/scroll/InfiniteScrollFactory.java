@@ -44,16 +44,8 @@ public class InfiniteScrollFactory {
 			Class<ScrollObserver> infinitScrollObserverClass, Step iterationStep) {		
 		StepElementIterationScope stepElementIterationScope = (StepElementIterationScope) iterationScope;
 		
-		InfiniteScrollAdapter infiniteScrollAdapter = InfiniteScrollAdapter.builder()
-				.element(stepElementIterationScope.getStepElement())
-				.extractDataBindCollection(extractData)
-				.infiniteScrollCondition(scrollCondition)
-				.iterationStep(iterationStep)
-				.rootElement(rootElement)
-				.runner(new StepRunner(remoteWebDriver, webDriverWait, extractData))
-				.webDriver(remoteWebDriver)
-				.webDriverWait(webDriverWait)
-				.build();
+		InfiniteScrollAdapter infiniteScrollAdapter = new InfiniteScrollAdapter(remoteWebDriver, webDriverWait, iterationStep, 
+				new StepRunner(remoteWebDriver, webDriverWait, extractData), scrollCondition, extractData, rootElement, stepElementIterationScope.getStepElement());
 
 		if(infinitScrollObserverClass != null) {
 			try {

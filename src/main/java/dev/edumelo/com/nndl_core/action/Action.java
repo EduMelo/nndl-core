@@ -18,10 +18,7 @@ import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
-import lombok.Data;
 
-@Data
-//@Slf4j
 public abstract class Action {
 	private static final String TAG = "actions";		
 	private int order;
@@ -40,6 +37,67 @@ public abstract class Action {
 	public abstract void runPreviousModification(ActionModificator modificiator);
 	public abstract Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) throws ActionException;
 	public abstract Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException;
+	
+	public int getOrder() {
+		return order;
+	}
+	public void setOrder(int order) {
+		this.order = order;
+	}
+	public int getWaitDuration() {
+		return waitDuration;
+	}
+	public void setWaitDuration(int waitDuration) {
+		this.waitDuration = waitDuration;
+	}
+	public RequirementStatus getRequirementStatus() {
+		return requirementStatus;
+	}
+	public void setRequirementStatus(RequirementStatus requirementStatus) {
+		this.requirementStatus = requirementStatus;
+	}
+	public Class<ActionCondition> getConditionClass() {
+		return conditionClass;
+	}
+	public void setConditionClass(Class<ActionCondition> conditionClass) {
+		this.conditionClass = conditionClass;
+	}
+	public StepElement getConditionElement() {
+		return conditionElement;
+	}
+	public void setConditionElement(StepElement conditionElement) {
+		this.conditionElement = conditionElement;
+	}
+	public boolean isLimitRequirement() {
+		return limitRequirement;
+	}
+	public void setLimitRequirement(boolean limitRequirement) {
+		this.limitRequirement = limitRequirement;
+	}
+	public boolean isActionPerformed() {
+		return actionPerformed;
+	}
+	public void setActionPerformed(boolean actionPerformed) {
+		this.actionPerformed = actionPerformed;
+	}
+	public Position getPositionBefore() {
+		return positionBefore;
+	}
+	public void setPositionBefore(Position positionBefore) {
+		this.positionBefore = positionBefore;
+	}
+	public Position getPositionAfter() {
+		return positionAfter;
+	}
+	public void setPositionAfter(Position positionAfter) {
+		this.positionAfter = positionAfter;
+	}
+	public int getOnEach() {
+		return onEach;
+	}
+	public void setOnEach(int onEach) {
+		this.onEach = onEach;
+	}
 	
 	protected boolean checkCondition(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) {

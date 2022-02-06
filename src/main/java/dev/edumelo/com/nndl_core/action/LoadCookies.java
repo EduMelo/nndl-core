@@ -1,5 +1,6 @@
 package dev.edumelo.com.nndl_core.action;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,11 +14,7 @@ import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
-import lombok.ToString;
 
-//XXX Retornar
-//@Slf4j
-@ToString
 @SuppressWarnings("unchecked")
 public class LoadCookies extends LandmarkConditionAction {
 	private static final String TAG = "loadCookies";
@@ -95,4 +92,9 @@ public class LoadCookies extends LandmarkConditionAction {
 		
 	}
 
+	@Override
+	public String toString() {
+		return "LoadCookies [retrieverClass=" + retrieverClass + ", retrieverParams=" + Arrays.toString(retrieverParams)
+				+ "]";
+	}
 }

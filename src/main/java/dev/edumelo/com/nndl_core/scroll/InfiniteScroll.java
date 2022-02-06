@@ -6,12 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
-import lombok.RequiredArgsConstructor;
 
-//@Slf4j
-@RequiredArgsConstructor
-//@Service
-//@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class InfiniteScroll {
 
 	private final SeleniumSndlWebDriver remoteWebDriver;
@@ -20,6 +15,15 @@ public class InfiniteScroll {
 	private final List<ScrollObserver> scrollObservers;
 	private int maxScrollReached;
 	private int maxBreakCount = 25;
+
+	public InfiniteScroll(SeleniumSndlWebDriver remoteWebDriver, int scrollCount, boolean autoScrool,
+			List<ScrollObserver> scrollObservers) {
+		super();
+		this.remoteWebDriver = remoteWebDriver;
+		this.scrollCount = scrollCount;
+		this.autoScrool = autoScrool;
+		this.scrollObservers = scrollObservers;
+	}
 
 	private int getMaxScrollReached() {
 		return this.maxScrollReached;

@@ -3,11 +3,6 @@ package dev.edumelo.com.nndl_core.action.requirementStatus;
 import java.util.Map;
 import java.util.Objects;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
-@AllArgsConstructor
-@Data
 public class RequirementStatus {
 	public static final String TAG = "requirementStatus";
 	private static final String TYPE_TAG = "type";
@@ -16,7 +11,43 @@ public class RequirementStatus {
 	private RequirementStatusType type;
 	private int retries;
 	private String stepTreatment;
-
+	
+	public RequirementStatus(RequirementStatusType type, int retries, String stepTreatment) {
+		this.type = type;
+		this.retries = retries;
+		this.stepTreatment = stepTreatment;
+	}
+	
+	public RequirementStatusType getType() {
+		return type;
+	}
+	public void setType(RequirementStatusType type) {
+		this.type = type;
+	}
+	public int getRetries() {
+		return retries;
+	}
+	public void setRetries(int retries) {
+		this.retries = retries;
+	}
+	public String getStepTreatment() {
+		return stepTreatment;
+	}
+	public void setStepTreatment(String stepTreatment) {
+		this.stepTreatment = stepTreatment;
+	}
+	public static String getTag() {
+		return TAG;
+	}
+	public static String getTypeTag() {
+		return TYPE_TAG;
+	}
+	public static String getRetriesTag() {
+		return RETRIES_TAG;
+	}
+	public static String getStepTreatmentTag() {
+		return STEP_TREATMENT_TAG;
+	}
 	public RequirementStatus(RequirementStatusType type) {
 		this.type = type;
 	}

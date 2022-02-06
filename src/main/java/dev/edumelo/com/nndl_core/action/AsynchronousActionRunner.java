@@ -7,10 +7,7 @@ import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
-import lombok.extern.slf4j.Slf4j;
 
-//XXX Retornar
-//@Slf4j
 public class AsynchronousActionRunner {
 	
 	private final SeleniumSndlWebDriver remoteWebDriver;

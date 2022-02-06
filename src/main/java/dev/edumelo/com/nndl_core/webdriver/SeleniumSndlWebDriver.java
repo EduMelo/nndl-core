@@ -4,16 +4,14 @@ import java.net.MalformedURLException;
 
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import lombok.RequiredArgsConstructor;
-
-//@Service
-//XXX Retornar
-//@Slf4j
-@RequiredArgsConstructor
 public class SeleniumSndlWebDriver implements NndlWebDriver {
 	
 	private RemoteWebDriver webDriver;
 	private final BrowserControllerDriverConfiguration browserCOnfiguration;
+
+	public SeleniumSndlWebDriver(BrowserControllerDriverConfiguration browserCOnfiguration) {
+		this.browserCOnfiguration = browserCOnfiguration;
+	}
 
 	@Override
 	@SuppressWarnings("unchecked")

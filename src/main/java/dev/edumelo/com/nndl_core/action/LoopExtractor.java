@@ -7,13 +7,9 @@ import dev.edumelo.com.nndl_core.scroll.InfiniteScrollCondition;
 import dev.edumelo.com.nndl_core.scroll.ScrollObserver;
 import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.step.StepElement;
-import lombok.Getter;
 
-//XXX Retornar
-//@Slf4j
 @SuppressWarnings("unchecked")
 public class LoopExtractor {
-	@Getter
 	public static final String TAG = "loop";
 	private static final String AUTO_SCROLL_TAG = "autoScroll";
 	private static final String SCROLL_COUNT_TAG = "scrollCount";
@@ -24,8 +20,11 @@ public class LoopExtractor {
 	private static final String LIMIT_TAG = "limit";
 	private static final String IGNORE_MAX_LOOP_COUNT_EXCEPTION = "ignoreMaxLoopCountException";
 	private static final int DEFAULT_SCROLL_DEGREE = 15;
-
 	
+	public static String getTag() {
+		return TAG;
+	}
+
 	public static boolean extractAutoScroll(Map<String, ?> mappedAction) {
 		Object autoScrollValue = mappedAction.get(AUTO_SCROLL_TAG);
 		if(autoScrollValue != null) {

@@ -2,11 +2,12 @@ package dev.edumelo.com.nndl_core.action;
 
 import java.util.List;
 
-import lombok.Getter;
-
-@Getter
 public class ListIterationScope implements LoopIterationScope {
 	private List<String> list;
+
+	public List<String> getList() {
+		return list;
+	}
 
 	@Override
 	public LoopIterationScopeType getType() {

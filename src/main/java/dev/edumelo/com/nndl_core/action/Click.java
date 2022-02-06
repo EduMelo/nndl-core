@@ -13,9 +13,7 @@ import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
-import lombok.ToString;
 
-@ToString
 public class Click extends LandmarkConditionAction {
 	private static final String TAG = "elementClick";
 	private StepElement clickableElement;
@@ -72,5 +70,10 @@ public class Click extends LandmarkConditionAction {
 	public void runPreviousModification(ActionModificator modificiator) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public String toString() {
+		return "Click [clickableElement=" + clickableElement + "]";
 	}
 }

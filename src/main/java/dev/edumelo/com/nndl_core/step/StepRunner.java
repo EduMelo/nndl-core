@@ -18,10 +18,7 @@ import dev.edumelo.com.nndl_core.step.advice.SwapStepAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
-import lombok.Getter;
 
-//XXX Retornar
-//@Slf4j
 public class StepRunner {
 
 	private final SeleniumSndlWebDriver webDriver;
@@ -29,7 +26,6 @@ public class StepRunner {
 	private ActionRunner actionRunner;
 	private Map<String, Step> steps;
 	
-	@Getter
 	private Collection extractDataBindList;
 	
 	public StepRunner(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait, Collection extractDataBindList) {
@@ -38,6 +34,10 @@ public class StepRunner {
 		Collection<ExtractDataBind> extractDataBindCollection = new ArrayList<ExtractDataBind>();
 		this.extractDataBindList = extractDataBindList;
 		this.actionRunner = new ActionRunner(webDriver, webDriverWait, extractDataBindCollection);
+	}
+
+	public Collection getExtractDataBindList() {
+		return extractDataBindList;
 	}
 
 	@SuppressWarnings({ "rawtypes" })

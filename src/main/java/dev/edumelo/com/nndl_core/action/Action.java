@@ -194,6 +194,9 @@ public abstract class Action {
 			case ELEMENT_PAINT:
 				createdAction = new Paint(mappedAction, mappedElements);
 				break;
+			case ELEMENT_MARK:
+				createdAction = new ElementMark(mappedAction, mappedElements);
+				break;
 			case ACTION_TRIGGERER:
 				createdAction = new ActionTriggerer(mappedAction, mappedElements);
 				break;

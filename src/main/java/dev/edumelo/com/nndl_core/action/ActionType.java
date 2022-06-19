@@ -11,6 +11,7 @@ public enum ActionType {
 	LOOP("loop"),
 	FILL("fill"),
 	ELEMENT_PAINT("elementPaint"),
+	ELEMENT_MARK("elementMark"),
 	ACTION_TRIGGERER("actionTriggerer");
 	
 	private String actionTag;

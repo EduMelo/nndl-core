@@ -71,4 +71,9 @@ public class StepElement {
 		return By.cssSelector(this.matchExp);
 	}
 
+	@Override
+	public String toString() {
+		return "StepElement [name=" + name + ", matchExp=" + matchExp + ", ignoreRoot=" + ignoreRoot + "]";
+	}
+
 }

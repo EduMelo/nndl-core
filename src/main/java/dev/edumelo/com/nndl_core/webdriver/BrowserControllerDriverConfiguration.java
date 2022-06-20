@@ -1,6 +1,9 @@
 package dev.edumelo.com.nndl_core.webdriver;
 
+import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -8,12 +11,15 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.ie.InternetExplorerOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Browser controller driver
  */
 public class BrowserControllerDriverConfiguration {
 
+	private Logger log = LoggerFactory.getLogger(BrowserControllerDriverConfiguration.class);
 	private final SeleniumHubProperties properties;
 
 	public BrowserControllerDriverConfiguration(SeleniumHubProperties properties) {
@@ -42,7 +48,19 @@ public class BrowserControllerDriverConfiguration {
 		case CHROME:
 		default:
 			ChromeOptions chromeOptions = new ChromeOptions();
-			chromeOptions.addArguments("--blink-settings=imagesEnabled=false","--disable-images","--user-gesture-required");
+			chromeOptions.addArguments(
+					"--start-maximized",
+					"--blink-settings=imagesEnabled=false",
+					"--disable-notifications"
+			);
+			
+			try {
+				URL extensionUrl = ClassLoader.getSystemResource("youtube_no_buffer_stop_auto_playing.crx");
+				File extensionFile = new File(extensionUrl.toURI());
+				chromeOptions.addExtensions(extensionFile);
+			} catch (URISyntaxException e) {
+				log.error("An error occurred when tried to load chrome extensions");
+			}
 			options = chromeOptions;
 		}
 

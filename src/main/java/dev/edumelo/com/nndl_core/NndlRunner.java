@@ -38,7 +38,7 @@ public class NndlRunner {
 		this.webDriverWait = webDriverWait;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public Collection<ExtractDataBind> run(String sndlFile, Collection extractDataBindList, Map<String, Object> variableSubstitutionMap) {
 		String yamlString = getYamlString(sndlFile, variableSubstitutionMap); 
 		Map<String, Object> yaml = getYamlMap(yamlString, variableSubstitutionMap);
@@ -102,6 +102,7 @@ public class NndlRunner {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private Map<String, Object> getYamlMap(String yamlString, Map<String, Object> variableSubstitutionMap) {
 		Yaml yaml = new Yaml();
 		Map<String, Object> loadedYaml = yaml.load(yamlString);

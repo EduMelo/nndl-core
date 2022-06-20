@@ -41,7 +41,9 @@ public class BrowserControllerDriverConfiguration {
 			break;
 		case CHROME:
 		default:
-			options = new ChromeOptions();
+			ChromeOptions chromeOptions = new ChromeOptions();
+			chromeOptions.addArguments("--blink-settings=imagesEnabled=false","--disable-images","--user-gesture-required");
+			options = chromeOptions;
 		}
 
 		options.setCapability("plataform", properties.getPlataform().name());

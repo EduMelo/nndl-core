@@ -1,7 +1,9 @@
 package dev.edumelo.com.nndl_core.webdriver;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -26,6 +28,8 @@ public class SeleniumHubProperties {
 	private Integer port;
 	private String authUser;
 	private String authPassword;
+	private String[] browserArguments;
+	private File[] extensionUrlSpecs;
 	
 	public SeleniumHubProperties() {
 	}
@@ -84,6 +88,18 @@ public class SeleniumHubProperties {
 	public void setPlataform(String plataform) {
 		this.plataform = plataform;
 	}
+	public String[] getBrowserArguments() {
+		return browserArguments;
+	}
+	public void setBrowserArguments(String[] browserArguments) {
+		this.browserArguments = browserArguments;
+	}
+	public File[] getExtensionFile() {
+		return extensionUrlSpecs;
+	}
+	public void setExtensionFile(File... extensionUrlSpec) {
+		this.extensionUrlSpecs = extensionUrlSpec;
+	}
 
 	/**
 	 * @return The selenium hub plataform to be used
@@ -125,6 +141,8 @@ public class SeleniumHubProperties {
 		return "SeleniumHubProperties [environment=" + environment + ", browser=" + browser + ", browserVersion="
 				+ browserVersion + ", plataform=" + plataform + ", windowMaximize=" + windowMaximize + ", implicitWait="
 				+ implicitWait + ", host=" + host + ", port=" + port + ", authUser=" + authUser + ", authPassword="
-				+ authPassword + "]";
+				+ authPassword + ", browserArguments=" + Arrays.toString(browserArguments) + ", extensionUrlSpec="
+				+ Arrays.toString(extensionUrlSpecs) + "]";
 	}
+
 }

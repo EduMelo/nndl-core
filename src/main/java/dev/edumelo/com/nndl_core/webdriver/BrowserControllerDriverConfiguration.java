@@ -52,4 +52,9 @@ public class BrowserControllerDriverConfiguration {
 		return options;
 	}
 
+	@Override
+	public String toString() {
+		return "BrowserControllerDriverConfiguration [properties=" + properties + "]";
+	}
+
 }

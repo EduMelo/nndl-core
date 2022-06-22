@@ -33,7 +33,9 @@ public class BrowserControllerDriverConfiguration {
 
 		switch (properties.getBrowser()) {
 		case FIREFOX:
-			options = new FirefoxOptions();
+			FirefoxOptions firefoxOptions = new FirefoxOptions();
+			firefoxOptions.addArguments(properties.getBrowserArguments());
+			options = firefoxOptions;
 			break;
 		case INTERNETEXPLORER:
 			options = new InternetExplorerOptions();
@@ -42,10 +44,10 @@ public class BrowserControllerDriverConfiguration {
 		default:
 			ChromeOptions chromeOptions = new ChromeOptions();
 			chromeOptions.addArguments(properties.getBrowserArguments());
-			chromeOptions.addExtensions(properties.getExtensionFile());
+			chromeOptions.addExtensions(properties.getExtensionFiles());
 			options = chromeOptions;
 		}
-
+		
 		options.setCapability("plataform", properties.getPlataform().name());
 		options.setCapability("version", properties.getBrowserVersion());
 

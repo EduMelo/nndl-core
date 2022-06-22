@@ -3,7 +3,9 @@ package dev.edumelo.com.nndl_core.webdriver;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -29,7 +31,8 @@ public class SeleniumHubProperties {
 	private String authUser;
 	private String authPassword;
 	private String[] browserArguments;
-	private File[] extensionUrlSpecs;
+	private String[] extensions;
+	private List<File> extensionFiles;
 	
 	public SeleniumHubProperties() {
 	}
@@ -94,11 +97,20 @@ public class SeleniumHubProperties {
 	public void setBrowserArguments(String[] browserArguments) {
 		this.browserArguments = browserArguments;
 	}
-	public File[] getExtensionFile() {
-		return extensionUrlSpecs;
+	public String[] getExtensions() {
+		return extensions;
 	}
-	public void setExtensionFile(File... extensionUrlSpec) {
-		this.extensionUrlSpecs = extensionUrlSpec;
+	public void setExtensions(String... extensions) {
+		this.extensions = extensions;
+	}
+	public List<File> getExtensionFiles() {
+		return extensionFiles;
+	}
+	public void addExtensionFile(File extensionFile) {
+		if(extensionFiles == null) {
+			extensionFiles = new ArrayList<>();
+		}
+		extensionFiles.add(extensionFile);
 	}
 
 	/**
@@ -142,7 +154,7 @@ public class SeleniumHubProperties {
 				+ browserVersion + ", plataform=" + plataform + ", windowMaximize=" + windowMaximize + ", implicitWait="
 				+ implicitWait + ", host=" + host + ", port=" + port + ", authUser=" + authUser + ", authPassword="
 				+ authPassword + ", browserArguments=" + Arrays.toString(browserArguments) + ", extensionUrlSpec="
-				+ Arrays.toString(extensionUrlSpecs) + "]";
+				+ Arrays.toString(extensions) + "]";
 	}
 
 }

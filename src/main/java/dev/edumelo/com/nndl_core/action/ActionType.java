@@ -5,6 +5,7 @@ public enum ActionType {
 	STORE_COOKIES("storeCookies"),
 	LOAD_COOKIES("loadCookies"),
 	FILL_INPUT("fillInput"),
+	CLEAR_INPUT("clearInput"),
 	ELEMENT_CLICK("elementClick"),
 	HOVER("hover"),
 	SEND_KEY("sendKey"),

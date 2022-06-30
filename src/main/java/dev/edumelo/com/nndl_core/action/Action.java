@@ -173,6 +173,9 @@ public abstract class Action {
 			case FILL_INPUT:
 				createdAction = new FillInput(mappedAction, mappedElements);
 				break;
+			case CLEAR_INPUT:
+				createdAction = new ClearInput(mappedAction, mappedElements);
+				break;
 			case GOTO:
 				createdAction = new Goto(mappedAction, mappedElements);
 				break;

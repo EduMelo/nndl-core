@@ -39,7 +39,8 @@ public class NndlRunner {
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	public Collection<ExtractDataBind> run(String sndlFile, Collection extractDataBindList, Map<String, Object> variableSubstitutionMap) {
+	public Collection<ExtractDataBind> run(String sndlFile, Collection extractDataBindList,
+			Map<String, Object> variableSubstitutionMap) {
 		String yamlString = getYamlString(sndlFile, variableSubstitutionMap); 
 		Map<String, Object> yaml = getYamlMap(yamlString, variableSubstitutionMap);
 		

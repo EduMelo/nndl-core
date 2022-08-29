@@ -43,12 +43,12 @@ public class NndlRunner {
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public Collection<ExtractDataBind> run(String sndlFile, Collection extractDataBindList,
-			Map<String, Object> variableSubstitutionMap, ContextAdapter... adapters) {
+			ContextAdapter... adapters) {
 		String sessionId = UUID.randomUUID().toString();
 		ContextAdapterHandler.createContext(sessionId, adapters);
 		
-		String yamlString = getYamlString(sndlFile, variableSubstitutionMap); 
-		Map<String, Object> yaml = getYamlMap(yamlString, variableSubstitutionMap);
+		String yamlString = getYamlString(sessionId, sndlFile); 
+		Map<String, Object> yaml = getYamlMap(sessionId, yamlString);
 		
 		Map<String, Step> steps = instantiateSteps((List<Map<String, ?>>) yaml.get(Step.getTag()));
 		Collection<String> asynchronousStepsNames = getAsynchronousStepNames(yaml);
@@ -95,14 +95,15 @@ public class NndlRunner {
 		return ss.replace(yamlString);
 	}
 
-	private String getYamlString(String sndlFile, Map<String, Object> variableSubstitutionMap) {
+	private String getYamlString(String sessionId, String sndlFile) {
 		InputStream input = this.getClass()
 				.getClassLoader()
 				.getResourceAsStream(sndlFile);
 		
 		try {		
 			String yamlString = IOUtils.toString(input, "UTF-8");
-			return replaceTags(yamlString, variableSubstitutionMap);
+			return replaceTags(yamlString, ContextAdapterHandler
+					.getVariableSubstitutionMap(sessionId));
 		} catch (IOException e) {
 			String msg = "";
 			log.error(msg);
@@ -111,7 +112,7 @@ public class NndlRunner {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Map<String, Object> getYamlMap(String yamlString, Map<String, Object> variableSubstitutionMap) {
+	private Map<String, Object> getYamlMap(String sessionId, String yamlString) {
 		Yaml yaml = new Yaml();
 		Map<String, Object> loadedYaml = yaml.load(yamlString);
 		Object imp = loadedYaml.get("import");
@@ -124,7 +125,7 @@ public class NndlRunner {
 		}
 		
 		for (String sndlImport : imports) {
-			String file = getYamlString(sndlImport, variableSubstitutionMap);
+			String file = getYamlString(sessionId, sndlImport);
 			Map<String, Object> importMap = yaml.load(file);
 			List<Object> originalSteps = (List<Object>) loadedYaml.get("steps");
 			List<Object> importedSteps = (List<Object>) importMap.get("steps");

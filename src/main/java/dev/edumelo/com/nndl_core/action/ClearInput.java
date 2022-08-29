@@ -39,18 +39,21 @@ public class ClearInput extends Action {
 	}
 
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
-			IterationContent rootElement) throws ActionException {
+	public Advice runNested(String sessionId, SeleniumSndlWebDriver webDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
+					throws ActionException {
 		//TODO parametrized duration
-		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50)).until(ExpectedConditions.elementToBeClickable(
+		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
+				.until(ExpectedConditions.elementToBeClickable(
 				rootElement.getRootElement().findElement(inputElement.getLocator(webDriver))));
 		return runElement(input);
 	}
 
 	@Override
-	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
-			throws ActionException {
-		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50)).until(ExpectedConditions.elementToBeClickable(
+	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
+		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
+				.until(ExpectedConditions.elementToBeClickable(
 				inputElement.getLocator(webDriver)));		
 		
 		setActionPerformed(true);

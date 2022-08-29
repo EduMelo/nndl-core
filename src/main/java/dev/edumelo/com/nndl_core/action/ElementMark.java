@@ -40,8 +40,9 @@ public class ElementMark extends Action {
 	}
 	
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
-			IterationContent rootElement) throws ActionException {
+	public Advice runNested(String sessionId, SeleniumSndlWebDriver webDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
+					throws ActionException {
 		WebElement target = null;
 		if(isTargetSpecial(markableElement)) {
 			target = webDriver.getWebDriver().switchTo().activeElement();
@@ -61,10 +62,11 @@ public class ElementMark extends Action {
 
 
 	@Override
-	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
-			throws ActionException {
+	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
 		WebElement element =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
-				.until(ExpectedConditions.presenceOfElementLocated(markableElement.getLocator(webDriver)));
+				.until(ExpectedConditions.presenceOfElementLocated(markableElement
+						.getLocator(webDriver)));
 		setActionPerformed(true);
 		return runElement(webDriver, webDriverWait, null, element);
 	}

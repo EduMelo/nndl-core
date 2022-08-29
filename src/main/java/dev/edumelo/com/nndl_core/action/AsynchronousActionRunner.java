@@ -31,12 +31,13 @@ public class AsynchronousActionRunner {
 //		return CompletableFuture.completedFuture(null);
 //	}
 
-	public void run(IterationContent rootElement, Action action) {
+	public void run(String sessionId, IterationContent rootElement, Action action) {
 //		CompletableFuture.supplyAsync(() -> asyncRun(action));
 //		((LandmarkConditionAction) action).runPrecedentWait(remoteWebDriver, webDriverWait, landmarkWaiter);
 		CompletableFuture.runAsync(() -> {
 			try {
-				((LandmarkConditionAction) action).runPrecedentWait(remoteWebDriver, webDriverWait, landmarkWaiter, rootElement);
+				((LandmarkConditionAction) action).runPrecedentWait(sessionId, remoteWebDriver,
+						webDriverWait, landmarkWaiter, rootElement);
 			} catch (ActionException e) {
 				String msg = String.format("AsynchronousActionRunner exception. Exception: %s", e.toString());
 				log.error(msg);

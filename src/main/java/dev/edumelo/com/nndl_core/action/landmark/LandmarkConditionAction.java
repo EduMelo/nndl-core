@@ -33,19 +33,21 @@ public abstract class LandmarkConditionAction extends Action {
 		return landmarkWaiter.wait(landmarkConditionAggregation);
 	}
 
-	public Advice runSequentialWait(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait, 
+	public Advice runSequentialWait(String sessionId, SeleniumSndlWebDriver webDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait, 
 			LandMarkWaiter landmarkWaiter, IterationContent rootElement) throws ActionException {
 		log.debug("runSequentialWait: rootElement:{}", rootElement);	
-		this.run(webDriver, webDriverWait, rootElement);
+		this.run(sessionId, webDriver, webDriverWait, rootElement);
 		return wait(landmarkWaiter, landmarkConditionAggregation);
 	}
 
 	
-	public void runPrecedentWait(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait, 
+	public void runPrecedentWait(String sessionId, SeleniumSndlWebDriver webDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait, 
 			LandMarkWaiter landmarkWaiter, IterationContent rootElement) throws ActionException {
 		log.debug("runPrecedentWait: rootElement:{}", rootElement);
 		wait(landmarkWaiter, landmarkConditionAggregation);
-		this.run(webDriver, webDriverWait, rootElement);
+		this.run(sessionId, webDriver, webDriverWait, rootElement);
 	}
 	
 }

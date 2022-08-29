@@ -32,13 +32,15 @@ public class Goto extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {	
+	public Advice runNested(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {	
 		remoteWebDriver.getWebDriver().get(this.url.toExternalForm());
 		return new ContinueAdvice();
 	}
 	
 	@Override
-	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {	
+	public Advice runAction(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait) {	
 		remoteWebDriver.getWebDriver().get(this.url.toExternalForm());
 		
 		setActionPerformed(true);

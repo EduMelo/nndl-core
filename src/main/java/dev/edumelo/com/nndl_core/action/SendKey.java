@@ -46,7 +46,8 @@ public class SendKey extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
+	public Advice runNested(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
 		WebElement target = null;
 		if(isTargetSpecial(targetElement)) {
 			target = remoteWebDriver.getWebDriver().switchTo().activeElement();
@@ -73,10 +74,12 @@ public class SendKey extends LandmarkConditionAction {
 
 
 	@Override
-	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {
+	public Advice runAction(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait) {
 		WebElement target = null;
 		if(targetElement != null) {
-			target =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50)).until(ExpectedConditions.elementToBeClickable(
+			target =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
+					.until(ExpectedConditions.elementToBeClickable(
 					targetElement.getLocator(remoteWebDriver)));
 		} else {
 			target = runElement(remoteWebDriver);

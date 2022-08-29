@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -18,6 +19,8 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.collect.ImmutableSet;
 
+import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapter;
+import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
 import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.step.StepRunner;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
@@ -39,14 +42,19 @@ public class NndlRunner {
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	public Collection<ExtractDataBind> run(String sndlFile, Collection extractDataBindList, Map<String, Object> variableSubstitutionMap) {
+	public Collection<ExtractDataBind> run(String sndlFile, Collection extractDataBindList,
+			Map<String, Object> variableSubstitutionMap, ContextAdapter... adapters) {
+		String sessionId = UUID.randomUUID().toString();
+		ContextAdapterHandler.createContext(sessionId, adapters);
+		
 		String yamlString = getYamlString(sndlFile, variableSubstitutionMap); 
 		Map<String, Object> yaml = getYamlMap(yamlString, variableSubstitutionMap);
 		
 		Map<String, Step> steps = instantiateSteps((List<Map<String, ?>>) yaml.get(Step.getTag()));
 		Collection<String> asynchronousStepsNames = getAsynchronousStepNames(yaml);
 		
-		StepRunner stepRunner = new StepRunner(webDriver, webDriverWait, extractDataBindList);
+		StepRunner stepRunner = new StepRunner(sessionId, webDriver, webDriverWait,
+				extractDataBindList);
 		if(asynchronousStepsNames != null) {
 			Map<String, Step> asynchronousSteps = extractedAsynchronousSteps(steps, asynchronousStepsNames);			
 			stepRunner.runAsynchronousSteps(null, asynchronousSteps);

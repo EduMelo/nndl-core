@@ -40,8 +40,10 @@ public abstract class Action {
 	public abstract String getTag();
 	public abstract boolean isIgnoreRoot();
 	public abstract void runPreviousModification(ActionModificator modificiator);
-	public abstract Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) throws ActionException;
-	public abstract Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException;
+	public abstract Advice runNested(String sessionId, SeleniumSndlWebDriver webDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) throws ActionException;
+	public abstract Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException;
 	
 	public int getOrder() {
 		return order;
@@ -220,7 +222,9 @@ public abstract class Action {
 	}
 	
 	
-	public Advice run(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) throws ActionException {		
+	public Advice run(String sessionId, SeleniumSndlWebDriver webDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
+					throws ActionException {		
 		if(!isLoopCountAccepted(rootElement)) {
 			return new ContinueAdvice();
 		}
@@ -229,9 +233,9 @@ public abstract class Action {
 		
 		try {
 			if(rootElement != null && !isIgnoreRoot()) {
-				advice = runNested(webDriver, webDriverWait, rootElement);
+				advice = runNested(sessionId, webDriver, webDriverWait, rootElement);
 			} else {
-				advice = runAction(webDriver, webDriverWait);
+				advice = runAction(sessionId, webDriver, webDriverWait);
 			}			
 		} catch(ElementNotInteractableException e) {
 			String msg = String.format("Action element not interactable. Action: %s", this);

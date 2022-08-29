@@ -35,7 +35,8 @@ public class FillInput extends Action {
 	}
 
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
+	public Advice runNested(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
 		//TODO parametrized duration
 		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50)).until(ExpectedConditions.elementToBeClickable(
 				rootElement.getRootElement().findElement(inputElement.getLocator(remoteWebDriver))));
@@ -43,8 +44,10 @@ public class FillInput extends Action {
 	}
 	
 	@Override
-	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {	
-		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50)).until(ExpectedConditions.elementToBeClickable(
+	public Advice runAction(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait) {	
+		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
+				.until(ExpectedConditions.elementToBeClickable(
 				inputElement.getLocator(remoteWebDriver)));		
 		
 		setActionPerformed(true);

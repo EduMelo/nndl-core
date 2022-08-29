@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
+import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -46,26 +47,31 @@ public class LoadCookies extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
-		return runElement(remoteWebDriver, webDriverWait);
+	public Advice runNested(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
+		return runElement(sessionId, remoteWebDriver, webDriverWait);
 	}
 	
 	@Override
-	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {	
-		return runElement(remoteWebDriver, webDriverWait);
+	public Advice runAction(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait) {	
+		return runElement(sessionId, remoteWebDriver, webDriverWait);
 	}
 	
-	public Advice runElement(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {
-		LoadCookiesRetriever retriever;
-		try {
-			retriever = retrieverClass.getConstructor().newInstance();
-		} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
-			String message = "Error while instantiating Retriever class";
-			log.error(message);
-			throw new RuntimeException(message, e);
-		}
+	public Advice runElement(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait) {
+//		LoadCookiesRetriever retriever;
+//		try {
+//			retriever = retrieverClass.getConstructor().newInstance();
+//		} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
+//			String message = "Error while instantiating Retriever class";
+//			log.error(message);
+//			throw new RuntimeException(message, e);
+//		}
 		
-		Set<Cookie> cookies = retriever.getCookies((Object[]) retrieverParams);
+//		Set<Cookie> cookies = retriever.getCookies((Object[]) retrieverParams);
+		Set<Cookie> cookies = ContextAdapterHandler.retrieveCookies(sessionId,
+				(Object[]) retrieverParams);
 		cookies.stream().forEach(remoteWebDriver.getWebDriver().manage()::addCookie);
 		remoteWebDriver.getWebDriver().navigate().refresh();
 		
@@ -97,7 +103,7 @@ public class LoadCookies extends LandmarkConditionAction {
 
 	@Override
 	public String toString() {
-		return "LoadCookies [retrieverClass=" + retrieverClass + ", retrieverParams=" + Arrays.toString(retrieverParams)
-				+ "]";
+		return "LoadCookies [retrieverClass=" + retrieverClass + ", retrieverParams="
+				+ Arrays.toString(retrieverParams) + "]";
 	}
 }

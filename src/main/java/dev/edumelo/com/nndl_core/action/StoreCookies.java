@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
+import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -50,27 +51,30 @@ public class StoreCookies extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
-		return runElement(remoteWebDriver);
+	public Advice runNested(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
+		return runElement(sessionId, remoteWebDriver);
 	}
 	
 	@Override
-	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {
-		return runElement(remoteWebDriver);
+	public Advice runAction(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait) {
+		return runElement(sessionId, remoteWebDriver);
 	}
 	
-	public Advice runElement(SeleniumSndlWebDriver remoteWebDriver) {
-		CookiesStorer storer;
-		try {
-			storer = storerClass.getConstructor().newInstance();
-		} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
-			String message = "Error while instantiating Storer class";
-			log.error(message);
-			throw new RuntimeException(message, e);
-		}
-		
+	public Advice runElement(String sessionId, SeleniumSndlWebDriver remoteWebDriver) {
+//		CookiesStorer storer;
+//		try {
+//			storer = storerClass.getConstructor().newInstance();
+//		} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
+//			String message = "Error while instantiating Storer class";
+//			log.error(message);
+//			throw new RuntimeException(message, e);
+//		}
+//		
 		Set<Cookie> cookies = remoteWebDriver.getWebDriver().manage().getCookies();
-		storer.storeCookies((Object[]) storerParams, cookies);
+//		storer.storeCookies((Object[]) storerParams, cookies);
+		ContextAdapterHandler.storeCookies(sessionId, (Object[]) storerParams, cookies);
 		
 		setActionPerformed(true);
 		return new ContinueAdvice();

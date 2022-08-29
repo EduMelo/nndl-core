@@ -37,18 +37,24 @@ private static final String TAG = "hover";
 	}
 	
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
+	public Advice runNested(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
 		ExpectedCondition<WebElement> expectedCondition = ExpectedConditions.elementToBeClickable(
-				rootElement.getRootElement().findElement(hoverableElement.getLocator(remoteWebDriver)));
-		WebElement element  = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50)).until(expectedCondition);
+				rootElement.getRootElement().findElement(hoverableElement
+						.getLocator(remoteWebDriver)));
+		WebElement element  = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
+				.until(expectedCondition);
 		return runElement(remoteWebDriver, webDriverWait, element, rootElement, expectedCondition);
 	}
 	
 	@Override
-	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {	
-		ExpectedCondition<WebElement> expectedCondition = ExpectedConditions.visibilityOfElementLocated(
+	public Advice runAction(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait) {	
+		ExpectedCondition<WebElement> expectedCondition = ExpectedConditions
+				.visibilityOfElementLocated(
 				hoverableElement.getLocator(remoteWebDriver));
-		WebElement element  = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50)).until(expectedCondition);
+		WebElement element  = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
+				.until(expectedCondition);
 		return runElement(remoteWebDriver, webDriverWait, element, null, expectedCondition);
 	}
 	

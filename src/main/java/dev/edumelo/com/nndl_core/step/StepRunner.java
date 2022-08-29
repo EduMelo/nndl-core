@@ -31,15 +31,18 @@ public class StepRunner {
 	private final SeleniumSndlWebDriverWaiter webDriverWait;
 	private ActionRunner actionRunner;
 	private Map<String, Step> steps;
+	private String sessionId;
 	
 	private Collection extractDataBindList;
 	
-	public StepRunner(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait, Collection extractDataBindList) {
+	public StepRunner(String sessionId, SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait, Collection extractDataBindList) {
+		this.sessionId = sessionId;
 		this.webDriver = webDriver;
 		this.webDriverWait = webDriverWait;
 		Collection<ExtractDataBind> extractDataBindCollection = new ArrayList<ExtractDataBind>();
 		this.extractDataBindList = extractDataBindList;
-		this.actionRunner = new ActionRunner(webDriver, webDriverWait, extractDataBindCollection);
+		this.actionRunner = new ActionRunner(sessionId, webDriver, webDriverWait,
+				extractDataBindCollection);
 	}
 
 	public Collection getExtractDataBindList() {
@@ -97,7 +100,8 @@ public class StepRunner {
 		return stepsRunned;
 	}
 	
-	public LinkedList<Action> runStepActions(ActionRunner actionRunner, LinkedList<Action> runningActions, IterationContent rootElement) 
+	public LinkedList<Action> runStepActions(ActionRunner actionRunner,
+			LinkedList<Action> runningActions, IterationContent rootElement) 
 			throws StepBreakerActionNotPerformed, RunBreakerActionNotPerformed {
 		
 		int actionsRestarted = 0;
@@ -164,7 +168,7 @@ public class StepRunner {
 		for (Step step : steps.values()) {
 			LinkedList<Action> runningActions = step.getActions();
 			for (Action action : runningActions) {
-				actionRunner.run(rootElement, action);
+				actionRunner.run(sessionId, rootElement, action);
 			}
 		}
 	}

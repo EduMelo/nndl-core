@@ -19,14 +19,14 @@ import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
-public class Fill extends Action implements DataBindExtractor {
-	private static final String TAG = "fill";
+public class Extract extends Action implements DataBindExtractor {
+	private static final String TAG = "extract";
 	private static final String TARGET_TAG = "targertElement";
 	private ExtractDataBindCreator extractor;
 	private List<ExtractDataBind> extractDataBindList;
 	private StepElement targetElement;
 	
-	public Fill(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+	public Extract(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
 		extractor = getExtractoClass(mappedAction);
 		targetElement = getTargetElement(mappedAction, mappedElements);
 		this.extractDataBindList = new ArrayList<ExtractDataBind>();

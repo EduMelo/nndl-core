@@ -193,8 +193,8 @@ public abstract class Action {
 			case LOOP:
 				createdAction = new Loop(mappedAction, mappedSubSteps, mappedElements);
 				break;
-			case FILL:
-				createdAction = new Fill(mappedAction, mappedElements);
+			case EXTRACT:
+				createdAction = new Extract(mappedAction, mappedElements);
 				break;
 			case ELEMENT_PAINT:
 				createdAction = new Paint(mappedAction, mappedElements);

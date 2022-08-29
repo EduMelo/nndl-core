@@ -10,7 +10,7 @@ public enum ActionType {
 	HOVER("hover"),
 	SEND_KEY("sendKey"),
 	LOOP("loop"),
-	FILL("fill"),
+	EXTRACT("extract"),
 	ELEMENT_PAINT("elementPaint"),
 	ELEMENT_MARK("elementMark"),
 	ACTION_TRIGGERER("actionTriggerer");

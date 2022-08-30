@@ -1,12 +1,10 @@
 package dev.edumelo.com.nndl_core.scroll;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dev.edumelo.com.nndl_core.ExtractDataBind;
 import dev.edumelo.com.nndl_core.action.LoopIterationScope;
 import dev.edumelo.com.nndl_core.action.StepElementIterationScope;
 import dev.edumelo.com.nndl_core.step.Step;
@@ -22,14 +20,14 @@ public class InfiniteScrollFactory {
 	public static InfiniteScroll create(String sessionId,
 			Class<InfiniteScrollCondition> conditionClass, SeleniumSndlWebDriver remoteWebDriver, 
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement,
-			int scrollCount, boolean autoScrool, Collection<ExtractDataBind> extractData, 
-			LoopIterationScope iterationScope, Class<ScrollObserver> infinitScrollObserverClass,
-			Step iterationStep) {
+			int scrollCount, boolean autoScrool, LoopIterationScope iterationScope, 
+			Class<ScrollObserver> infinitScrollObserverClass, Step iterationStep) {
 		InfiniteScrollCondition scrollCondition = createInfiniteScrollCondition(conditionClass);
 		ScrollObserver extractorObserver = createExtractorObserver(sessionId, remoteWebDriver,
-				webDriverWait, rootElement, scrollCondition, extractData, 
-				iterationScope, infinitScrollObserverClass, iterationStep);
-		InfiniteScroll infiniteScroll = new InfiniteScroll(remoteWebDriver, scrollCount, autoScrool, List.of(extractorObserver));
+				webDriverWait, rootElement, scrollCondition, iterationScope,
+				infinitScrollObserverClass, iterationStep);
+		InfiniteScroll infiniteScroll = new InfiniteScroll(remoteWebDriver, scrollCount, autoScrool,
+				List.of(extractorObserver));
 		return infiniteScroll;
 	}
 	
@@ -49,15 +47,15 @@ public class InfiniteScrollFactory {
 	private static ScrollObserver createExtractorObserver(String sessionId,
 			SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait, 
 			IterationContent rootElement, InfiniteScrollCondition scrollCondition,
-			Collection<ExtractDataBind> extractData, LoopIterationScope iterationScope, 
-			Class<ScrollObserver> infinitScrollObserverClass, Step iterationStep) {		
+			LoopIterationScope iterationScope, Class<ScrollObserver> infinitScrollObserverClass,
+			Step iterationStep) {		
 		StepElementIterationScope stepElementIterationScope = 
 				(StepElementIterationScope) iterationScope;
 		
-		InfiniteScrollAdapter infiniteScrollAdapter = new InfiniteScrollAdapter(remoteWebDriver,
-				webDriverWait, iterationStep, new StepRunner(sessionId, remoteWebDriver,
-						webDriverWait, extractData), scrollCondition, extractData, rootElement,
-				stepElementIterationScope.getStepElement());
+		InfiniteScrollAdapter infiniteScrollAdapter = new InfiniteScrollAdapter(sessionId,
+				remoteWebDriver, webDriverWait, iterationStep,
+				new StepRunner(sessionId, remoteWebDriver, webDriverWait), scrollCondition,
+				rootElement, stepElementIterationScope.getStepElement());
 
 		if(infinitScrollObserverClass != null) {
 			try {

@@ -1,7 +1,6 @@
 package dev.edumelo.com.nndl_core.scroll;
 
 import java.time.Duration;
-import java.util.Collection;
 
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -9,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.ExtraExpectedConditions;
-import dev.edumelo.com.nndl_core.ExtractDataBind;
 import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.StepRunner;
@@ -26,23 +24,29 @@ public class DefaultScrollObserver implements ScrollObserver {
     private Step iterationStep;
     private StepRunner runner;
     private InfiniteScrollCondition infiniteScrollCondition;
-    private Collection<ExtractDataBind> list;
     private IterationContent rootElement;
     private StepElement element;
     private String iterationScope;
+    private String sessionId;
      
     public DefaultScrollObserver(InfiniteScrollAdapter adapter) {
         this.webDriver = adapter.getWebDriver();
         this.webDriverWait = adapter.getWebDriverWait();
         this.iterationStep = adapter.getIterationStep();
         this.infiniteScrollCondition = adapter.getInfiniteScrollCondition();
-        this.list = adapter.getExtractDataBindCollection();
+        this.sessionId = adapter.getSessionId();
         this.rootElement = adapter.getRootElement();
         this.element = adapter.getElement();
         this.runner = adapter.getRunner();
     }
     
-    public Step getIterationStep() {
+    public String getSessionId() {
+		return sessionId;
+	}
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+	public Step getIterationStep() {
 		return iterationStep;
 	}
 	public void setIterationStep(Step iterationStep) {
@@ -59,12 +63,6 @@ public class DefaultScrollObserver implements ScrollObserver {
 	}
 	public void setInfiniteScrollCondition(InfiniteScrollCondition infiniteScrollCondition) {
 		this.infiniteScrollCondition = infiniteScrollCondition;
-	}
-	public Collection<ExtractDataBind> getList() {
-		return list;
-	}
-	public void setList(Collection<ExtractDataBind> list) {
-		this.list = list;
 	}
 	public IterationContent getRootElement() {
 		return rootElement;

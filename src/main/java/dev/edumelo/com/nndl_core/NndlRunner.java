@@ -40,26 +40,26 @@ public class NndlRunner {
 		this.webDriver = webDriver;
 		this.webDriverWait = webDriverWait;
 	}
-
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	public Collection<ExtractDataBind> run(String sndlFile, Collection extractDataBindList,
-			ContextAdapter... adapters) {
+	
+	@SuppressWarnings("unchecked")
+	public NndlResult run(String sndlFile, ContextAdapter... adapters) {
 		String sessionId = UUID.randomUUID().toString();
 		ContextAdapterHandler.createContext(sessionId, adapters);
 		
 		String yamlString = getYamlString(sessionId, sndlFile); 
 		Map<String, Object> yaml = getYamlMap(sessionId, yamlString);
-		
 		Map<String, Step> steps = instantiateSteps((List<Map<String, ?>>) yaml.get(Step.getTag()));
 		Collection<String> asynchronousStepsNames = getAsynchronousStepNames(yaml);
 		
-		StepRunner stepRunner = new StepRunner(sessionId, webDriver, webDriverWait,
-				extractDataBindList);
+		StepRunner stepRunner = new StepRunner(sessionId, webDriver, webDriverWait);
 		if(asynchronousStepsNames != null) {
 			Map<String, Step> asynchronousSteps = extractedAsynchronousSteps(steps, asynchronousStepsNames);			
 			stepRunner.runAsynchronousSteps(null, asynchronousSteps);
 		}
-		return stepRunner.runSteps((String) yaml.get(ENTRY_STEP_TAG), steps, extractDataBindList);
+		stepRunner.runSteps((String) yaml.get(ENTRY_STEP_TAG), steps);
+		NndlResult result = new NndlResult(ContextAdapterHandler.getExtractedData(sessionId));
+		ContextAdapterHandler.expireSession(sessionId);
+		return result;
 	}
 	
 	@SuppressWarnings("unchecked")

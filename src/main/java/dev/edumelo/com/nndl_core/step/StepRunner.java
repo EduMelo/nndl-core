@@ -22,9 +22,7 @@ import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public class StepRunner {
-	
 	private static final Logger log = LoggerFactory.getLogger(StepRunner.class);
 	
 	private final SeleniumSndlWebDriver webDriver;
@@ -33,30 +31,19 @@ public class StepRunner {
 	private Map<String, Step> steps;
 	private String sessionId;
 	
-	private Collection extractDataBindList;
-	
-	public StepRunner(String sessionId, SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait, Collection extractDataBindList) {
+	public StepRunner(String sessionId, SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait) {
 		this.sessionId = sessionId;
 		this.webDriver = webDriver;
 		this.webDriverWait = webDriverWait;
 		Collection<ExtractDataBind> extractDataBindCollection = new ArrayList<ExtractDataBind>();
-		this.extractDataBindList = extractDataBindList;
 		this.actionRunner = new ActionRunner(sessionId, webDriver, webDriverWait,
 				extractDataBindCollection);
 	}
 
-	public Collection getExtractDataBindList() {
-		return extractDataBindList;
-	}
-
-	public Collection<ExtractDataBind> runSteps(String entryStep, Map<String, Step> steps, Collection extractDataBindList) {
+	public void runSteps(String entryStep, Map<String, Step> steps) {
 		this.steps = steps;
-		extractDataBindList = new ArrayList<ExtractDataBind>();
 		Step runningStep = steps.get(entryStep);			
 		runStep(runningStep, null);
-		
-		return extractDataBindList;
-		
 	}
 	
 	public int runStep(Step step, IterationContent rootElement) {
@@ -91,11 +78,6 @@ public class StepRunner {
 					break;					
 				}
 			}		
-			
-			Collection<ExtractDataBind> extractData = actionRunner.getExtractDataBindList();
-			if(extractDataBindList != null && extractData != null) {
-				extractDataBindList.addAll(extractData);			
-			}
 		}
 		return stepsRunned;
 	}

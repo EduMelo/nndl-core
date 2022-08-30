@@ -5,7 +5,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dev.edumelo.com.nndl_core.ExtractDataBindCreator;
+import dev.edumelo.com.nndl_core.contextAdapter.ExtractDataBindAdapter;
 import dev.edumelo.com.nndl_core.scroll.InfiniteScrollCondition;
 import dev.edumelo.com.nndl_core.scroll.ScrollObserver;
 import dev.edumelo.com.nndl_core.step.Step;
@@ -97,11 +97,11 @@ public class LoopExtractor {
 		return null;
 	}
 	
-	public static Class<ExtractDataBindCreator> extractResultFillerClass(Map<String, ?> mappedAction) {
+	public static Class<ExtractDataBindAdapter> extractResultFillerClass(Map<String, ?> mappedAction) {
 		String className = (String) mappedAction.get(FILL_TAG);
 		if(className != null) {
 			try {
-				return (Class<ExtractDataBindCreator>) Class.forName(className);
+				return (Class<ExtractDataBindAdapter>) Class.forName(className);
 			} catch (ClassNotFoundException e) {
 				String message = String.format("Cannot found class by the name: %s", className);
 				log.error(message);

@@ -1,17 +1,12 @@
 package dev.edumelo.com.nndl_core.action;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import dev.edumelo.com.nndl_core.DataBindExtractor;
-import dev.edumelo.com.nndl_core.ExtractDataBind;
-import dev.edumelo.com.nndl_core.ExtractDataBindCreator;
+import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -19,17 +14,15 @@ import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
-public class Extract extends Action implements DataBindExtractor {
+public class Extract extends Action {
 	private static final String TAG = "extract";
 	private static final String TARGET_TAG = "targertElement";
-	private ExtractDataBindCreator extractor;
-	private List<ExtractDataBind> extractDataBindList;
+	private String extractDataBindAdapterName;
 	private StepElement targetElement;
 	
 	public Extract(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		extractor = getExtractoClass(mappedAction);
+		extractDataBindAdapterName = getExtractoClass(mappedAction);
 		targetElement = getTargetElement(mappedAction, mappedElements);
-		this.extractDataBindList = new ArrayList<ExtractDataBind>();
 	}
 
 	@Override
@@ -52,7 +45,7 @@ public class Extract extends Action implements DataBindExtractor {
 	public Advice runNested(String sessionId, SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
 					throws ActionException {
-		return runElement(rootElement.getRootElement());
+		return runElement(sessionId, rootElement.getRootElement());
 	}
 
 	@Override
@@ -63,26 +56,17 @@ public class Extract extends Action implements DataBindExtractor {
 				.until(ExpectedConditions.elementToBeClickable(
 				targetElement.getLocator(webDriver)));
 		
-		return runElement(target);
+		return runElement(sessionId, target);
 	}
 	
-	public Advice runElement(WebElement element) {
-		extractDataBindList.add(extractor.createFromElement(element));
+	public Advice runElement(String sessionId, WebElement element) {
+		ContextAdapterHandler.addExtractedData(sessionId, extractDataBindAdapterName, element);
+//		extractDataBindList.add(extractor.createFromElement(element));
 		return new ContinueAdvice();
 	}
-
-	@Override
-	public Collection<ExtractDataBind> getExtractDataBind() {
-		return extractDataBindList;
-	}
 	
-	private ExtractDataBindCreator getExtractoClass(Map<String, ?> mappedAction) {
-		String value = (String) mappedAction.get(TAG);
-		try {
-			return (ExtractDataBindCreator) Class.forName(value).getConstructor().newInstance();
-		} catch (ReflectiveOperationException e) {
-			throw new RuntimeException("Extractor class could not be instantiate", e );
-		}
+	private String getExtractoClass(Map<String, ?> mappedAction) {
+		return (String) mappedAction.get(TAG);
 	}
 	
 	private StepElement getTargetElement(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
@@ -96,8 +80,10 @@ public class Extract extends Action implements DataBindExtractor {
 
 	@Override
 	public String toString() {
-		return "Fill [extractor=" + extractor + ", extractDataBindList=" + extractDataBindList + ", targetElement="
-				+ targetElement + "]";
+		return "Extract [extractDataBindAdapterName=" + extractDataBindAdapterName
+				+ ", targetElement=" + targetElement + "]";
 	}
+	
+	
 
 }

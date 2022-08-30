@@ -1,15 +1,13 @@
 package dev.edumelo.com.nndl_core.action;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dev.edumelo.com.nndl_core.DataBindExtractor;
 import dev.edumelo.com.nndl_core.ExtractDataBind;
-import dev.edumelo.com.nndl_core.ExtractDataBindCreator;
+import dev.edumelo.com.nndl_core.contextAdapter.ExtractDataBindAdapter;
 import dev.edumelo.com.nndl_core.scroll.InfiniteScroll;
 import dev.edumelo.com.nndl_core.scroll.InfiniteScrollCondition;
 import dev.edumelo.com.nndl_core.scroll.InfiniteScrollFactory;
@@ -25,14 +23,14 @@ import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
-public class Loop extends Action implements DataBindExtractor {
+public class Loop extends Action {
 	
 	private static final Logger log = LoggerFactory.getLogger(Loop.class);
 	
 	private static final int DEFAULT_MAX_LOOP_COUNT = 50;
 	
 	private Class<ScrollObserver> infinitScrollObserverClass;
-	private Class<ExtractDataBindCreator> resultFillerClass;
+	private Class<ExtractDataBindAdapter> resultFillerClass;
 	private Class<InfiniteScrollCondition> conditionClass;
 	private ScrollObserver extractorObserver;
 	private Collection<ExtractDataBind> extractData;
@@ -53,11 +51,6 @@ public class Loop extends Action implements DataBindExtractor {
 		this.autoScrool = LoopExtractor.extractAutoScroll(mappedAction);
 		this.limit = LoopExtractor.extractLimit(mappedAction);
 		this.ignoreMaxLoopCountException = LoopExtractor.extractIgnoreMaxLoopCountException(mappedAction);
-	}
-
-	@Override
-	public Collection<ExtractDataBind> getExtractDataBind() {
-		return extractData;
 	}
 	
 	@Override
@@ -109,13 +102,12 @@ public class Loop extends Action implements DataBindExtractor {
 		listScroll.scroll(maxLoopCount, limit);
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
 	private void runInfiniteScroll(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement,
 			int maxLoopCount) throws InfiniteScrollMaxLoopCountReached {
-		extractData = new HashSet();
-		InfiniteScroll infiniteScroll = InfiniteScrollFactory.create(sessionId, conditionClass, remoteWebDriver, webDriverWait, rootElement, scrollCount, autoScrool, 
-				extractData, iterationScope, infinitScrollObserverClass, iterationStep);
+		InfiniteScroll infiniteScroll = InfiniteScrollFactory.create(sessionId, conditionClass,
+				remoteWebDriver, webDriverWait, rootElement, scrollCount, autoScrool,
+				iterationScope, infinitScrollObserverClass, iterationStep);
 		try {
 			infiniteScroll.scroll(maxLoopCount, limit);			
 		} catch(InfiniteScrollMaxLoopCountReached e) {		

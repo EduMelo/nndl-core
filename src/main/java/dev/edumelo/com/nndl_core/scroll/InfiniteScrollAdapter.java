@@ -1,8 +1,5 @@
 package dev.edumelo.com.nndl_core.scroll;
 
-import java.util.Collection;
-
-import dev.edumelo.com.nndl_core.ExtractDataBind;
 import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.StepRunner;
@@ -16,23 +13,30 @@ public class InfiniteScrollAdapter {
     private Step iterationStep;
     private StepRunner runner;
     private InfiniteScrollCondition infiniteScrollCondition;
-    private Collection<ExtractDataBind> extractDataBindCollection;
     private IterationContent rootElement;
     private StepElement element;
+    private String sessionId;
 	
-    public InfiniteScrollAdapter(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
-			Step iterationStep, StepRunner runner, InfiniteScrollCondition infiniteScrollCondition,
-			Collection<ExtractDataBind> extractDataBindCollection, IterationContent rootElement, StepElement element) {
+    public InfiniteScrollAdapter(String sessionId, SeleniumSndlWebDriver webDriver,
+    		SeleniumSndlWebDriverWaiter webDriverWait, Step iterationStep, StepRunner runner,
+    		InfiniteScrollCondition infiniteScrollCondition, IterationContent rootElement,
+    		StepElement element) {
+    	this.sessionId = sessionId;
 		this.webDriver = webDriver;
 		this.webDriverWait = webDriverWait;
 		this.iterationStep = iterationStep;
 		this.runner = runner;
 		this.infiniteScrollCondition = infiniteScrollCondition;
-		this.extractDataBindCollection = extractDataBindCollection;
 		this.rootElement = rootElement;
 		this.element = element;
 	}
-
+    
+	public String getSessionId() {
+		return sessionId;
+	}
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
 	public SeleniumSndlWebDriver getWebDriver() {
 		return webDriver;
 	}
@@ -47,9 +51,6 @@ public class InfiniteScrollAdapter {
 	}
 	public InfiniteScrollCondition getInfiniteScrollCondition() {
 		return infiniteScrollCondition;
-	}
-	public Collection<ExtractDataBind> getExtractDataBindCollection() {
-		return extractDataBindCollection;
 	}
 	public IterationContent getRootElement() {
 		return rootElement;

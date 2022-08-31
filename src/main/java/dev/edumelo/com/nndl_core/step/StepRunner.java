@@ -98,7 +98,8 @@ public class StepRunner {
 					return checkNextActions(parametrizedAdvice);
 				}				
 			} catch(Exception e) {
-				String msg = String.format("Action not performed. Action: %s", action);
+				String msg = String.format("Action not performed. Action: %s, stackTrace: %s",
+						action, e.getStackTrace());
 				log.error(msg);
 				switch (requirementStatus.getType()) {
 					case NON_REQUIRED:

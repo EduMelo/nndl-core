@@ -16,12 +16,15 @@ import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 public class ElementMark extends Action {
 	private static final String TAG = "elementMark";
 	private static final String MARK_TAG = "mark";
+	private static final String IGNORE_ROOT_TAG = "ignoreRoot";
 	private StepElement markableElement;
 	private String mark;
+	private boolean ignoreRoot;
 	
 	public ElementMark(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
 		markableElement = getElement(mappedAction, mappedElements);
 		mark = getMark(mappedAction);
+		extractIgnoreRoot(mappedAction, mappedElements);
 	}
 	
 	@Override
@@ -29,9 +32,17 @@ public class ElementMark extends Action {
 		return TAG;
 	}
 	
+	private void extractIgnoreRoot(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+		Object value = mappedAction.get(IGNORE_ROOT_TAG);
+		if(value != null) {
+			ignoreRoot = (Boolean) value;
+		}
+		ignoreRoot = false;
+	}
+	
 	@Override
 	public boolean isIgnoreRoot() {
-		return markableElement.isIgnoreRoot();
+		return ignoreRoot;
 	}
 
 	@Override

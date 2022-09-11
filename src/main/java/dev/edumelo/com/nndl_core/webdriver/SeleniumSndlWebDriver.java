@@ -16,6 +16,10 @@ public class SeleniumSndlWebDriver implements NndlWebDriver {
 	public SeleniumSndlWebDriver(BrowserControllerDriverConfiguration browserCOnfiguration) {
 		this.browserCOnfiguration = browserCOnfiguration;
 	}
+	
+	public BrowserControllerDriverConfiguration getBrowserCOnfiguration() {
+		return browserCOnfiguration;
+	}
 
 	@Override
 	@SuppressWarnings("unchecked")

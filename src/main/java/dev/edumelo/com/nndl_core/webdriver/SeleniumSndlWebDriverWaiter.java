@@ -10,9 +10,13 @@ public class SeleniumSndlWebDriverWaiter implements NndlWebDriverWaiter {
 	
 	public SeleniumSndlWebDriverWaiter(BrowserControllerDriverConfiguration browserCOnfiguration,
 			SeleniumSndlWebDriver webDriver) {
-		super();
 		this.browserCOnfiguration = browserCOnfiguration;
 		this.webDriver = webDriver;
+	}
+
+	public SeleniumSndlWebDriverWaiter(SeleniumSndlWebDriver webDriver) {
+		this.webDriver = webDriver;
+		this.browserCOnfiguration = webDriver.getBrowserCOnfiguration();
 	}
 
 	@Override

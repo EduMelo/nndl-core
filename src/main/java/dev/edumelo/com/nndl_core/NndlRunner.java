@@ -23,6 +23,7 @@ import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapter;
 import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
 import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.step.StepRunner;
+import dev.edumelo.com.nndl_core.webdriver.BrowserControllerDriverConfiguration;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
@@ -33,33 +34,44 @@ public class NndlRunner {
 	private static final String ENTRY_STEP_TAG = "entryStep";
 	private static final String ASYNCHRONOUS_STEPS_TAG = "asynchronousSteps";
 
-	private final SeleniumSndlWebDriver webDriver;
-	private final SeleniumSndlWebDriverWaiter webDriverWait;
+	private final BrowserControllerDriverConfiguration browserControllerDriverConfiguration;
+	private SeleniumSndlWebDriver webDriver;
+	private SeleniumSndlWebDriverWaiter webDriverWait;
 	
-	public NndlRunner(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait) {
-		this.webDriver = webDriver;
-		this.webDriverWait = webDriverWait;
+	public NndlRunner(BrowserControllerDriverConfiguration browserControllerDriverConfiguration) {
+		this.browserControllerDriverConfiguration = browserControllerDriverConfiguration;
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	public NndlResult run(String sndlFile, ContextAdapter... adapters) {
-		String sessionId = UUID.randomUUID().toString();
-		ContextAdapterHandler.createContext(sessionId, adapters);
-		
-		String yamlString = getYamlString(sessionId, sndlFile); 
-		Map<String, Object> yaml = getYamlMap(sessionId, yamlString);
-		Map<String, Step> steps = instantiateSteps((List<Map<String, ?>>) yaml.get(Step.getTag()));
-		Collection<String> asynchronousStepsNames = getAsynchronousStepNames(yaml);
-		
-		StepRunner stepRunner = new StepRunner(sessionId, webDriver, webDriverWait);
-		if(asynchronousStepsNames != null) {
-			Map<String, Step> asynchronousSteps = extractedAsynchronousSteps(steps, asynchronousStepsNames);			
-			stepRunner.runAsynchronousSteps(null, asynchronousSteps);
+		try {
+			webDriver = new SeleniumSndlWebDriver(browserControllerDriverConfiguration);
+			webDriverWait = new SeleniumSndlWebDriverWaiter(webDriver);
+			webDriver.refreshWebDriver();
+			webDriverWait.refreshWaiter();
+			
+			String sessionId = UUID.randomUUID().toString();
+			ContextAdapterHandler.createContext(sessionId, adapters);
+			
+			String yamlString = getYamlString(sessionId, sndlFile); 
+			Map<String, Object> yaml = getYamlMap(sessionId, yamlString);
+			@SuppressWarnings("unchecked")
+			Map<String, Step> steps = instantiateSteps((List<Map<String, ?>>) yaml.get(Step.getTag()));
+			Collection<String> asynchronousStepsNames = getAsynchronousStepNames(yaml);
+			
+			StepRunner stepRunner = new StepRunner(sessionId, webDriver, webDriverWait);
+			if(asynchronousStepsNames != null) {
+				Map<String, Step> asynchronousSteps = extractedAsynchronousSteps(steps, asynchronousStepsNames);			
+				stepRunner.runAsynchronousSteps(null, asynchronousSteps);
+			}
+			stepRunner.runSteps((String) yaml.get(ENTRY_STEP_TAG), steps);
+			NndlResult result = new NndlResult(ContextAdapterHandler.getExtractedData(sessionId));
+			ContextAdapterHandler.expireSession(sessionId);
+			return result;			
+		} finally {
+			if(webDriver != null) {
+				webDriver.quitWebDriver();				
+			}
 		}
-		stepRunner.runSteps((String) yaml.get(ENTRY_STEP_TAG), steps);
-		NndlResult result = new NndlResult(ContextAdapterHandler.getExtractedData(sessionId));
-		ContextAdapterHandler.expireSession(sessionId);
-		return result;
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -38,7 +38,9 @@ public class SeleniumSndlWebDriver implements NndlWebDriver {
 	}
 	
 	public void quitWebDriver() {
-		this.webDriver.quit();
+		if(this.webDriver != null) {
+			this.webDriver.quit();			
+		}
 	}
 
 }

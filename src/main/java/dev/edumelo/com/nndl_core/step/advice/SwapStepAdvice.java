@@ -2,7 +2,7 @@ package dev.edumelo.com.nndl_core.step.advice;
 
 import java.util.Objects;
 
-public class SwapStepAdvice extends DefaultAdvice {
+public class SwapStepAdvice extends RunControllerAdvice {
 	private String advisedStep;
 	
 	@Override

@@ -9,7 +9,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
-import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
@@ -60,9 +59,8 @@ public class Extract extends Action {
 	}
 	
 	public Advice runElement(String sessionId, WebElement element) {
-		ContextAdapterHandler.addExtractedData(sessionId, extractDataBindAdapterName, element);
-//		extractDataBindList.add(extractor.createFromElement(element));
-		return new ContinueAdvice();
+		return ContextAdapterHandler.addExtractedData(sessionId, extractDataBindAdapterName,
+				element);
 	}
 	
 	private String getExtractoClass(Map<String, ?> mappedAction) {

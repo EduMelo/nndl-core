@@ -25,7 +25,10 @@ public class LoopExtractor {
 	private static final String EXECUTE_CONDITIONS = "executeConditions";
 	private static final String LIMIT_TAG = "limit";
 	private static final String IGNORE_MAX_LOOP_COUNT_EXCEPTION = "ignoreMaxLoopCountException";
+	private static final String THROW_TIMEOUT = "throwTimeout";
+	private static final String TIMEOUT_WAIT = "timeoutWait";
 	private static final int DEFAULT_SCROLL_DEGREE = 15;
+	private static final int DEFAULT_TIMEOUT_WAIT = 50;
 	
 	public static String getTag() {
 		return TAG;
@@ -118,5 +121,21 @@ public class LoopExtractor {
 			return false;
 		}
 		return (boolean) ignoreMaxLoopCountExceptionValue;
+	}
+
+	public static Boolean extratctThrowTimeout(Map<String, ?> mappedAction) {
+		Object throwTimeout = mappedAction.get(THROW_TIMEOUT);
+		if(throwTimeout == null) {
+			return null;
+		}
+		return (Boolean) throwTimeout;
+	}
+
+	public static Integer extractElementTimeoutWait(Map<String, ?> mappedAction) {
+		Object elementTimeoutWait = mappedAction.get(TIMEOUT_WAIT);
+		if(elementTimeoutWait == null) {
+			return DEFAULT_TIMEOUT_WAIT;
+		}
+		return (Integer) elementTimeoutWait;
 	}
 }

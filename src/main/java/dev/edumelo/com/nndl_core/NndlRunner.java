@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableSet;
 
 import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapter;
 import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
+import dev.edumelo.com.nndl_core.step.RunStopperException;
 import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.step.StepRunner;
 import dev.edumelo.com.nndl_core.webdriver.BrowserControllerDriverConfiguration;
@@ -43,15 +44,14 @@ public class NndlRunner {
 	}
 
 	public NndlResult run(String sndlFile, ContextAdapter... adapters) {
+		String sessionId = UUID.randomUUID().toString();
+		ContextAdapterHandler.createContext(sessionId, adapters);
 		try {
 			webDriver = new SeleniumSndlWebDriver(browserControllerDriverConfiguration);
 			webDriverWait = new SeleniumSndlWebDriverWaiter(webDriver);
 			webDriver.refreshWebDriver();
 			webDriverWait.refreshWaiter();
-			
-			String sessionId = UUID.randomUUID().toString();
-			ContextAdapterHandler.createContext(sessionId, adapters);
-			
+						
 			String yamlString = getYamlString(sessionId, sndlFile); 
 			Map<String, Object> yaml = getYamlMap(sessionId, yamlString);
 			@SuppressWarnings("unchecked")
@@ -64,14 +64,16 @@ public class NndlRunner {
 				stepRunner.runAsynchronousSteps(null, asynchronousSteps);
 			}
 			stepRunner.runSteps((String) yaml.get(ENTRY_STEP_TAG), steps);
-			NndlResult result = new NndlResult(ContextAdapterHandler.getExtractedData(sessionId));
-			ContextAdapterHandler.expireSession(sessionId);
-			return result;			
+		} catch(RunStopperException e) {
+			log.debug("Received advice to stop the run");
 		} finally {
 			if(webDriver != null) {
 				webDriver.quitWebDriver();				
 			}
 		}
+		NndlResult result = new NndlResult(ContextAdapterHandler.getExtractedData(sessionId));
+		ContextAdapterHandler.expireSession(sessionId);
+		return result;
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -21,11 +21,12 @@ public class InfiniteScrollFactory {
 			Class<InfiniteScrollCondition> conditionClass, SeleniumSndlWebDriver remoteWebDriver, 
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement,
 			int scrollCount, boolean autoScrool, LoopIterationScope iterationScope, 
-			Class<ScrollObserver> infinitScrollObserverClass, Step iterationStep) {
+			Class<ScrollObserver> infinitScrollObserverClass, Step iterationStep,
+			Boolean throwTimeout, Integer elementTimeoutWait) {
 		InfiniteScrollCondition scrollCondition = createInfiniteScrollCondition(conditionClass);
 		ScrollObserver extractorObserver = createExtractorObserver(sessionId, remoteWebDriver,
 				webDriverWait, rootElement, scrollCondition, iterationScope,
-				infinitScrollObserverClass, iterationStep);
+				infinitScrollObserverClass, iterationStep, throwTimeout, elementTimeoutWait);
 		InfiniteScroll infiniteScroll = new InfiniteScroll(remoteWebDriver, scrollCount, autoScrool,
 				List.of(extractorObserver));
 		return infiniteScroll;
@@ -48,14 +49,15 @@ public class InfiniteScrollFactory {
 			SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait, 
 			IterationContent rootElement, InfiniteScrollCondition scrollCondition,
 			LoopIterationScope iterationScope, Class<ScrollObserver> infinitScrollObserverClass,
-			Step iterationStep) {		
+			Step iterationStep, Boolean throwTimeout, Integer elementTimeoutWait) {
 		StepElementIterationScope stepElementIterationScope = 
 				(StepElementIterationScope) iterationScope;
 		
 		InfiniteScrollAdapter infiniteScrollAdapter = new InfiniteScrollAdapter(sessionId,
 				remoteWebDriver, webDriverWait, iterationStep,
 				new StepRunner(sessionId, remoteWebDriver, webDriverWait), scrollCondition,
-				rootElement, stepElementIterationScope.getStepElement());
+				rootElement, stepElementIterationScope.getStepElement(), throwTimeout,
+				elementTimeoutWait);
 
 		if(infinitScrollObserverClass != null) {
 			try {

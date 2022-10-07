@@ -18,7 +18,7 @@ public class InfiniteScroll {
 	private final boolean autoScrool;
 	private final List<ScrollObserver> scrollObservers;
 	private int maxScrollReached;
-	private int maxBreakCount = 25;
+	private int maxBreakCount = 50;
 
 	public InfiniteScroll(SeleniumSndlWebDriver remoteWebDriver, int scrollCount, boolean autoScrool,
 			List<ScrollObserver> scrollObservers) {
@@ -43,7 +43,7 @@ public class InfiniteScroll {
 	 * @return The current twitter user page`s body scroll Height measure in pixels
 	 */
 	private Long getBodyScrollSize() {
-		return (Long) remoteWebDriver.getWebDriver().executeScript("return document.body.scrollHeight");
+		return (Long) remoteWebDriver.getWebDriver().executeScript("return Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight )");
 	}
 	
 	/**

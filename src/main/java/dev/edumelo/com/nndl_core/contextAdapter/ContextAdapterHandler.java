@@ -17,6 +17,9 @@ import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.ExtractDataBind;
+import dev.edumelo.com.nndl_core.step.advice.Advice;
+import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
+import dev.edumelo.com.nndl_core.step.advice.RunControllerAdvice;
 
 public class ContextAdapterHandler {
 
@@ -75,7 +78,7 @@ public class ContextAdapterHandler {
 		.forEach(c->c.storeCookies(storerParams, cookies));
 	}
 
-	public static void addExtractedData(String sessionId, String extractDataBindAdapterName,
+	public static Advice addExtractedData(String sessionId, String extractDataBindAdapterName,
 			WebElement element) {
 		List<ExtractDataBind> list = adapters.get(sessionId).stream()
 			.filter(a -> a instanceof ExtractDataBindAdapter)
@@ -90,6 +93,13 @@ public class ContextAdapterHandler {
 		} else {
 			storedData.addAll(list);
 		}
+		
+		return list
+				.stream()
+				.map(ExtractDataBind::suggestedAdvice)
+				.filter(a -> a instanceof RunControllerAdvice)
+				.findAny()
+				.orElse(new ContinueAdvice());
 	}
 	
 	public static Map<String, List<ExtractDataBind>> getExtractedData(String sessionId) {

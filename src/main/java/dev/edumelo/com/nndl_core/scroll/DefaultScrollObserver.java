@@ -3,6 +3,7 @@ package dev.edumelo.com.nndl_core.scroll;
 import java.time.Duration;
 
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,8 @@ public class DefaultScrollObserver implements ScrollObserver {
     private StepElement element;
     private String iterationScope;
     private String sessionId;
+    private Boolean throwTimeout;
+    private Integer elementTimeoutWait;
      
     public DefaultScrollObserver(InfiniteScrollAdapter adapter) {
         this.webDriver = adapter.getWebDriver();
@@ -38,6 +41,8 @@ public class DefaultScrollObserver implements ScrollObserver {
         this.rootElement = adapter.getRootElement();
         this.element = adapter.getElement();
         this.runner = adapter.getRunner();
+        this.throwTimeout = adapter.isThrowTimeout();
+        this.elementTimeoutWait = adapter.getElementTimeoutWait();
     }
     
     public String getSessionId() {
@@ -92,17 +97,21 @@ public class DefaultScrollObserver implements ScrollObserver {
 	public int execute(int loopCount) throws ScrollContinueException, ScrollStopException {
     	try {
     		if(rootElement != null) {
-    			return webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
-    					.until(ExtraExpectedConditions.presenceOfNestedElementsLocatedBy(rootElement.getRootElement(), element.getLocator(webDriver))).stream()
+    			return webDriverWait.getWebDriverWaiter().withTimeout(
+    						Duration.ofSeconds(elementTimeoutWait))
+    					.until(ExtraExpectedConditions.presenceOfNestedElementsLocatedBy(
+    							rootElement.getRootElement(), element.getLocator(webDriver)))
+    					.stream()
     					.filter(e -> infiniteScrollCondition.checkCondition(e))
     					.map(e -> new IterationContent(e, loopCount))
     					.map(e -> runner.runStep(iterationStep, e))
     					.reduce(0, Integer::sum);
     		} else {
-    			return webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
-    					.until(ExpectedConditions.presenceOfAllElementsLocatedBy(element.getLocator(webDriver))).stream()
+    			return webDriverWait.getWebDriverWaiter().withTimeout(
+    						Duration.ofSeconds(elementTimeoutWait))
+    					.until(ExpectedConditions.presenceOfAllElementsLocatedBy(element
+    							.getLocator(webDriver))).stream()
     					.filter(e -> infiniteScrollCondition.checkCondition(e))
-//    					.peek(e -> webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50)).until(ExpectedConditions.elementToBeClickable(e)))
     					.map(e -> new IterationContent(e, loopCount))
     					.map(e -> runner.runStep(iterationStep, e))
     					.reduce(0, Integer::sum);
@@ -110,6 +119,11 @@ public class DefaultScrollObserver implements ScrollObserver {
     	} catch (StaleElementReferenceException e) {
     		String msg = "DefaultInfiniteScrollObserver execution error";
     		log.error(msg);
+    	} catch (TimeoutException e) {
+    		log.error("Timeout to locate element: "+element);
+    		if(throwTimeout) {
+    			throw e;
+    		}
     	}
 		return 0;
 	}

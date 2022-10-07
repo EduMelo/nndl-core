@@ -40,6 +40,8 @@ public class Loop extends Action {
 	private Long limit;
 	private boolean autoScrool;
 	private boolean ignoreMaxLoopCountException;
+	private Boolean throwTimeout;
+    private Integer elementTimeoutWait;
 	
 	public Loop(Map<String, ?> mappedAction, Map<String, ?> mappedSubSteps, Map<String, StepElement> mappedElements) {
 		this.infinitScrollObserverClass = LoopExtractor.extractInfiniteScrollObserversClass(mappedAction);
@@ -51,6 +53,8 @@ public class Loop extends Action {
 		this.autoScrool = LoopExtractor.extractAutoScroll(mappedAction);
 		this.limit = LoopExtractor.extractLimit(mappedAction);
 		this.ignoreMaxLoopCountException = LoopExtractor.extractIgnoreMaxLoopCountException(mappedAction);
+		this.throwTimeout = LoopExtractor.extratctThrowTimeout(mappedAction);
+		this.elementTimeoutWait = LoopExtractor.extractElementTimeoutWait(mappedAction);
 	}
 	
 	@Override
@@ -107,7 +111,8 @@ public class Loop extends Action {
 			int maxLoopCount) throws InfiniteScrollMaxLoopCountReached {
 		InfiniteScroll infiniteScroll = InfiniteScrollFactory.create(sessionId, conditionClass,
 				remoteWebDriver, webDriverWait, rootElement, scrollCount, autoScrool,
-				iterationScope, infinitScrollObserverClass, iterationStep);
+				iterationScope, infinitScrollObserverClass, iterationStep, throwTimeout,
+				elementTimeoutWait);
 		try {
 			infiniteScroll.scroll(maxLoopCount, limit);			
 		} catch(InfiniteScrollMaxLoopCountReached e) {		

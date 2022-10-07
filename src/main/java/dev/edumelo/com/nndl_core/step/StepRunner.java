@@ -96,10 +96,17 @@ public class StepRunner {
 				if(advice.getType() == AdviceType.SWAP_STEP) {
 					SwapStepAdvice parametrizedAdvice = (SwapStepAdvice) advice;
 					return checkNextActions(parametrizedAdvice);
-				}				
+				}
+				if(advice.getType() == AdviceType.STOP_RUN) {
+					throw new RunStopperException();
+				}
 			} catch(Exception e) {
 				String msg = String.format("Action not performed. Action: %s, stackTrace: %s",
 						action, e.getStackTrace());
+				if(e instanceof RunStopperException) {
+					throw (RunStopperException) e;
+				}
+				
 				log.error(msg);
 				switch (requirementStatus.getType()) {
 					case NON_REQUIRED:

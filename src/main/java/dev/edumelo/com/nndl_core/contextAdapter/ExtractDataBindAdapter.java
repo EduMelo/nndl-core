@@ -4,7 +4,7 @@ import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.ExtractDataBind;
 
-public interface ExtractDataBindAdapter extends ContextAdapter  {
+public interface ExtractDataBindAdapter<T extends ExtractDataBind> extends ContextAdapter  {
 
 	public ExtractDataBind createFromElement(WebElement element);
 	

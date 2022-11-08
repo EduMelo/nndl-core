@@ -94,7 +94,8 @@ public class DefaultScrollObserver implements ScrollObserver {
 		return webDriverWait;
 	}
 
-	public int execute(int loopCount) throws ScrollContinueException, ScrollStopException {
+	public int execute(SeleniumSndlWebDriver webDriver, int loopCount)
+			throws ScrollContinueException, ScrollStopException {
     	try {
     		if(rootElement != null) {
     			return webDriverWait.getWebDriverWaiter().withTimeout(

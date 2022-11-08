@@ -20,6 +20,7 @@ import dev.edumelo.com.nndl_core.ExtractDataBind;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.step.advice.RunControllerAdvice;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 
 public class ContextAdapterHandler {
 
@@ -78,12 +79,12 @@ public class ContextAdapterHandler {
 		.forEach(c->c.storeCookies(storerParams, cookies));
 	}
 
-	public static Advice addExtractedData(String sessionId, String extractDataBindAdapterName,
-			WebElement element) {
+	public static Advice addExtractedData(SeleniumSndlWebDriver webDriver, String sessionId,
+			String extractDataBindAdapterName, WebElement element) {
 		List<ExtractDataBind> list = adapters.get(sessionId).stream()
 			.filter(a -> a instanceof ExtractDataBindAdapter)
-			.map(a -> (ExtractDataBindAdapter) a)
-			.map(e -> e.createFromElement(element))
+			.map(a -> (ExtractDataBindAdapter<?>) a)
+			.map(e -> e.createFromElement(webDriver, element))
 			.collect(Collectors.toList());
 		
 		String key = String.format("%s%s", sessionId, extractDataBindAdapterName);

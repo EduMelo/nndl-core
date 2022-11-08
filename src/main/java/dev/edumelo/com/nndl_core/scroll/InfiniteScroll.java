@@ -128,7 +128,7 @@ public class InfiniteScroll {
 
 			for (ScrollObserver scrollObserver : scrollObservers) {
 				try {
-					currentLimit += scrollObserver.execute(actualLoopCount);
+					currentLimit += scrollObserver.execute(remoteWebDriver, actualLoopCount);
 				} catch(ScrollContinueException e) {
 					continue mainLoop;
 				} catch (ScrollStopException e) {

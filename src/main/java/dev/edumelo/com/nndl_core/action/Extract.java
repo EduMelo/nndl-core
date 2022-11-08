@@ -44,7 +44,7 @@ public class Extract extends Action {
 	public Advice runNested(String sessionId, SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
 					throws ActionException {
-		return runElement(sessionId, rootElement.getRootElement());
+		return runElement(webDriver, sessionId, rootElement.getRootElement());
 	}
 
 	@Override
@@ -55,19 +55,21 @@ public class Extract extends Action {
 				.until(ExpectedConditions.elementToBeClickable(
 				targetElement.getLocator(webDriver)));
 		
-		return runElement(sessionId, target);
+		return runElement(webDriver, sessionId, target);
 	}
 	
-	public Advice runElement(String sessionId, WebElement element) {
-		return ContextAdapterHandler.addExtractedData(sessionId, extractDataBindAdapterName,
-				element);
+	public Advice runElement(SeleniumSndlWebDriver webDriver, String sessionId,
+			WebElement element) {
+		return ContextAdapterHandler.addExtractedData(webDriver, sessionId,
+				extractDataBindAdapterName, element);
 	}
 	
 	private String getExtractoClass(Map<String, ?> mappedAction) {
 		return (String) mappedAction.get(TAG);
 	}
 	
-	private StepElement getTargetElement(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+	private StepElement getTargetElement(Map<String, ?> mappedAction,
+			Map<String, StepElement> mappedElements) {
 		Object elementNameObject = mappedAction.get(TARGET_TAG);
 		if(elementNameObject != null) {
 			String elementName = (String) elementNameObject;

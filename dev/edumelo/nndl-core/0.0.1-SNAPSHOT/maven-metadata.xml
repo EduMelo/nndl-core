@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata modelVersion="1.1.0">
   <groupId>dev.edumelo</groupId>
-  <artifactId>asyncMqtt-api-client</artifactId>
+  <artifactId>nndl-core</artifactId>
   <versioning>
-    <lastUpdated>20221204022128</lastUpdated>
+    <lastUpdated>20221204022710</lastUpdated>
     <snapshot>
-      <timestamp>20221204.022128</timestamp>
+      <timestamp>20221204.022710</timestamp>
       <buildNumber>1</buildNumber>
     </snapshot>
     <snapshotVersions>
       <snapshotVersion>
         <extension>jar</extension>
-        <value>0.0.1-20221204.022128-1</value>
-        <updated>20221204022128</updated>
+        <value>0.0.1-20221204.022710-1</value>
+        <updated>20221204022710</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>pom</extension>
-        <value>0.0.1-20221204.022128-1</value>
-        <updated>20221204022128</updated>
+        <value>0.0.1-20221204.022710-1</value>
+        <updated>20221204022710</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>

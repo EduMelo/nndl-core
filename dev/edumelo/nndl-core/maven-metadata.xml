@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
   <groupId>dev.edumelo</groupId>
-  <artifactId>asyncMqtt-api-client</artifactId>
+  <artifactId>nndl-core</artifactId>
   <versioning>
     <versions>
       <version>0.0.1-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20221204022128</lastUpdated>
+    <lastUpdated>20221204022710</lastUpdated>
   </versioning>
 </metadata>

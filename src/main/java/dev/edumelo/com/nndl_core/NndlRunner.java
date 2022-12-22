@@ -1,7 +1,5 @@
 package dev.edumelo.com.nndl_core;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,11 +9,8 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -46,24 +41,43 @@ public class NndlRunner {
 	public NndlResult run(String sndlFile, ContextAdapter... adapters) {
 		String sessionId = UUID.randomUUID().toString();
 		ContextAdapterHandler.createContext(sessionId, adapters);
+						
+		String yamlString = new NndlParser().getYamlString(sessionId, sndlFile);
+		Map<String, Object> yamlStack = new NndlParser().getYamlStack(sessionId, yamlString);
+		run(sessionId, yamlStack);
+		NndlResult result = new NndlResult(ContextAdapterHandler.getExtractedData(sessionId));
+		ContextAdapterHandler.expireSession(sessionId);
+		return result;
+	}
+	
+	public NndlResult runFromStack(ArrayList<String> nndlStack, ContextAdapter... adapters) {
+		String sessionId = UUID.randomUUID().toString();
+		ContextAdapterHandler.createContext(sessionId, adapters);
+		
+		Map<String, Object> yamlStack = new NndlParser().getYamlStack(sessionId, nndlStack);
+		run(sessionId, yamlStack);
+		NndlResult result = new NndlResult(ContextAdapterHandler.getExtractedData(sessionId));
+		ContextAdapterHandler.expireSession(sessionId);
+		return result;
+	}
+
+	private void run(String sessionId, Map<String, Object> yamlStack) {
+		@SuppressWarnings("unchecked")
+		Map<String, Step> steps = instantiateSteps((List<Map<String, ?>>) yamlStack.get(Step.getTag()));
+		Collection<String> asynchronousStepsNames = getAsynchronousStepNames(yamlStack);
+
 		try {
 			webDriver = new SeleniumSndlWebDriver(browserControllerDriverConfiguration);
 			webDriverWait = new SeleniumSndlWebDriverWaiter(webDriver);
 			webDriver.refreshWebDriver();
 			webDriverWait.refreshWaiter();
-						
-			String yamlString = getYamlString(sessionId, sndlFile); 
-			Map<String, Object> yaml = getYamlMap(sessionId, yamlString);
-			@SuppressWarnings("unchecked")
-			Map<String, Step> steps = instantiateSteps((List<Map<String, ?>>) yaml.get(Step.getTag()));
-			Collection<String> asynchronousStepsNames = getAsynchronousStepNames(yaml);
 			
 			StepRunner stepRunner = new StepRunner(sessionId, webDriver, webDriverWait);
 			if(asynchronousStepsNames != null) {
 				Map<String, Step> asynchronousSteps = extractedAsynchronousSteps(steps, asynchronousStepsNames);			
 				stepRunner.runAsynchronousSteps(null, asynchronousSteps);
 			}
-			stepRunner.runSteps((String) yaml.get(ENTRY_STEP_TAG), steps);
+			stepRunner.runSteps((String) yamlStack.get(ENTRY_STEP_TAG), steps);
 		} catch(RunStopperException e) {
 			log.debug("Received advice to stop the run");
 		} finally {
@@ -71,9 +85,6 @@ public class NndlRunner {
 				webDriver.quitWebDriver();				
 			}
 		}
-		NndlResult result = new NndlResult(ContextAdapterHandler.getExtractedData(sessionId));
-		ContextAdapterHandler.expireSession(sessionId);
-		return result;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -102,51 +113,6 @@ public class NndlRunner {
 		return stepList.stream()
 				.map(Step::new)
 				.collect(Collectors.toMap(Step::getName, Function.identity()));
-	}
-
-	private String replaceTags(String yamlString, Map<String, Object> variableSubstitutionMap) {
-		StrSubstitutor ss = new StrSubstitutor(variableSubstitutionMap);		
-		return ss.replace(yamlString);
-	}
-
-	private String getYamlString(String sessionId, String sndlFile) {
-		InputStream input = this.getClass()
-				.getClassLoader()
-				.getResourceAsStream(sndlFile);
-		
-		try {		
-			String yamlString = IOUtils.toString(input, "UTF-8");
-			return replaceTags(yamlString, ContextAdapterHandler
-					.getVariableSubstitutionMap(sessionId));
-		} catch (IOException e) {
-			String msg = "";
-			log.error(msg);
-			throw new RuntimeException(msg, e);
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	private Map<String, Object> getYamlMap(String sessionId, String yamlString) {
-		Yaml yaml = new Yaml();
-		Map<String, Object> loadedYaml = yaml.load(yamlString);
-		Object imp = loadedYaml.get("import");
-		
-		List<String> imports = new ArrayList<>();
-		if(imp instanceof String) {
-			imports.add((String) imp);
-		} else if(imp instanceof List) {
-			imports = (List<String>) imp;
-		}
-		
-		for (String sndlImport : imports) {
-			String file = getYamlString(sessionId, sndlImport);
-			Map<String, Object> importMap = yaml.load(file);
-			List<Object> originalSteps = (List<Object>) loadedYaml.get("steps");
-			List<Object> importedSteps = (List<Object>) importMap.get("steps");
-			originalSteps.addAll(importedSteps);
-		}
-		
-		return loadedYaml;
 	}
 
 }

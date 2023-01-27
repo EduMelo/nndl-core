@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openqa.selenium.Cookie;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
@@ -21,17 +19,12 @@ import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 @SuppressWarnings("unchecked")
 public class LoadCookies extends LandmarkConditionAction {
 	
-	private static final Logger log = LoggerFactory.getLogger(LandmarkConditionAction.class);
-	
 	private static final String TAG = "loadCookies";
-	private static final String RETRIEVER_TAG = "retriever";
 	private static final Object RETRIEVER_PARAMS_TAG = "retrieverParams";
-	private Class<LoadCookiesRetriever> retrieverClass;
 	private String[] retrieverParams;
 
 	public LoadCookies(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
 		Map<String, ?> mappedLoadCookies = (Map<String, ?>) mappedAction.get(TAG);	
-		this.retrieverClass = getCookieRetrieverClass(mappedLoadCookies);
 		this.retrieverParams = getRetrieverParams(mappedLoadCookies);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
 	}
@@ -60,16 +53,6 @@ public class LoadCookies extends LandmarkConditionAction {
 	
 	public Advice runElement(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait) {
-//		LoadCookiesRetriever retriever;
-//		try {
-//			retriever = retrieverClass.getConstructor().newInstance();
-//		} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
-//			String message = "Error while instantiating Retriever class";
-//			log.error(message);
-//			throw new RuntimeException(message, e);
-//		}
-		
-//		Set<Cookie> cookies = retriever.getCookies((Object[]) retrieverParams);
 		Set<Cookie> cookies = ContextAdapterHandler.retrieveCookies(sessionId,
 				(Object[]) retrieverParams);
 		cookies.stream().forEach(remoteWebDriver.getWebDriver().manage()::addCookie);
@@ -83,18 +66,6 @@ public class LoadCookies extends LandmarkConditionAction {
 		return ((List<String>) mappedLoadCookies.get(RETRIEVER_PARAMS_TAG)).toArray(new String[0]);
 	}
 
-	private Class<LoadCookiesRetriever> getCookieRetrieverClass(Map<String, ?> mappedLoadCookies) {		
-		String className = (String) mappedLoadCookies.get(RETRIEVER_TAG);
-		
-		try {
-			return (Class<LoadCookiesRetriever>) Class.forName(className);
-		} catch (ClassNotFoundException e) {
-			String message = String.format("Cannot found class by the name: %s", className);
-			log.error(message);
-			throw new RuntimeException(message);
-		}
-	}
-
 	@Override
 	public void runPreviousModification(ActionModificator modificiator) {
 		// TODO Auto-generated method stub
@@ -103,7 +74,7 @@ public class LoadCookies extends LandmarkConditionAction {
 
 	@Override
 	public String toString() {
-		return "LoadCookies [retrieverClass=" + retrieverClass + ", retrieverParams="
+		return "LoadCookies [retrieverParams="
 				+ Arrays.toString(retrieverParams) + "]";
 	}
 }

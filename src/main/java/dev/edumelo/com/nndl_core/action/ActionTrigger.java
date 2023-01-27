@@ -1,5 +1,7 @@
 package dev.edumelo.com.nndl_core.action;
 
-public interface ActionTrigger {
-	void triggerAction(Object[] params);
+import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapter;
+
+public abstract class  ActionTrigger implements ContextAdapter {
+	public abstract void triggerAction(Object[] params);
 }

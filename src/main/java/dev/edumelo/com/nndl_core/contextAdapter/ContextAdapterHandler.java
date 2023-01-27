@@ -17,6 +17,7 @@ import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.ExtractDataBind;
+import dev.edumelo.com.nndl_core.action.ActionTrigger;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.step.advice.RunControllerAdvice;
@@ -77,6 +78,20 @@ public class ContextAdapterHandler {
 		cookiestoreAdapters.stream()
 		.map(a -> (CookieStorerAdapter) a)
 		.forEach(c->c.storeCookies(storerParams, cookies));
+	}
+	
+	public static void triggerAction(String sessionId, Object[] triggerParams) {
+		List<ContextAdapter> actionTriggerAdapter = adapters.get(sessionId).stream()
+				.filter(a -> a instanceof ActionTrigger)
+				.collect(Collectors.toList());
+		
+		if(CollectionUtils.isEmpty(actionTriggerAdapter)) {
+			throw new RuntimeException("Cannot ge any trigger action adapter");
+		}
+		
+		actionTriggerAdapter.stream()
+		.map(a -> (ActionTrigger) a)
+		.forEach(c -> c.triggerAction(triggerParams));
 	}
 
 	public static Advice addExtractedData(SeleniumSndlWebDriver webDriver, String sessionId,

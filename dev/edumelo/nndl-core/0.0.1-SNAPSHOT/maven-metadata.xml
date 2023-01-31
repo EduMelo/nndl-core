@@ -2,24 +2,24 @@
 <metadata modelVersion="1.1.0">
   <groupId>dev.edumelo</groupId>
   <artifactId>nndl-core</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
   <versioning>
-    <lastUpdated>20230127014047</lastUpdated>
     <snapshot>
-      <timestamp>20230127.014047</timestamp>
+      <timestamp>20230131.214354</timestamp>
       <buildNumber>1</buildNumber>
     </snapshot>
+    <lastUpdated>20230131214354</lastUpdated>
     <snapshotVersions>
       <snapshotVersion>
         <extension>jar</extension>
-        <value>0.0.1-20230127.014047-1</value>
-        <updated>20230127014047</updated>
+        <value>0.0.1-20230131.214354-1</value>
+        <updated>20230131214354</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>pom</extension>
-        <value>0.0.1-20230127.014047-1</value>
-        <updated>20230127014047</updated>
+        <value>0.0.1-20230131.214354-1</value>
+        <updated>20230131214354</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>
-  <version>0.0.1-SNAPSHOT</version>
 </metadata>

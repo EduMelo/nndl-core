@@ -8,9 +8,13 @@ import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
+import dev.edumelo.com.nndl_core.utils.SpecialParamsTranslater;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
+import static java.util.stream.Collectors.*;
+
+import java.util.Arrays;
 
 @SuppressWarnings("unchecked")
 public class ActionTriggerer extends LandmarkConditionAction {
@@ -50,7 +54,12 @@ public class ActionTriggerer extends LandmarkConditionAction {
 	
 	public Advice runElement(String sessionId, SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
-		ContextAdapterHandler.triggerAction(sessionId, (Object[]) triggerParams);
+		String[] translatedParams = Arrays.stream(triggerParams)
+				.map(p -> SpecialParamsTranslater.translateIfSpecial(sessionId, p))
+				.collect(toList())
+				.toArray(new String[0]);
+				
+		ContextAdapterHandler.triggerAction(sessionId, translatedParams);
 		
 		setActionPerformed(true);			
 		return new ContinueAdvice();
@@ -61,7 +70,9 @@ public class ActionTriggerer extends LandmarkConditionAction {
 		if(params == null) {
 			return null;
 		}
-		return ((List<String>) params).toArray(new String[0]);
+		List<String> listParams = ((List<String>) params);
+		
+		return listParams.toArray(new String[0]);
 	}
 
 	@Override

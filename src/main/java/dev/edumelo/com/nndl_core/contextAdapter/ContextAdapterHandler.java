@@ -25,12 +25,23 @@ import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 
 public class ContextAdapterHandler {
 
+	private static final String DRIVER_SESSION_ID_PARAM = "driverSessionId";
 	private static PassiveExpiringMap<String, List<ContextAdapter>> adapters;
 	private static PassiveExpiringMap<String, List<ExtractDataBind>> extractedData;
+	private static PassiveExpiringMap<String, String> driverSessionsIds;
 
 	public static void createContext(String createUuid, ContextAdapter... context) {
 		ConstantTimeToLiveExpirationPolicy<String, List<ContextAdapter>> adapterExpirationPolicy =
 				new ConstantTimeToLiveExpirationPolicy<>(30, TimeUnit.MINUTES);
+		
+		ConstantTimeToLiveExpirationPolicy<String, String>
+		driverSessionsIdsExpirationPolicy = new ConstantTimeToLiveExpirationPolicy<>(30,
+				TimeUnit.MINUTES);
+		
+		if(driverSessionsIds == null) {
+			driverSessionsIds = new PassiveExpiringMap<>(driverSessionsIdsExpirationPolicy,
+					new HashMap<>());
+		}
 		
 		if(adapters == null) {
 			adapters = new PassiveExpiringMap<>(adapterExpirationPolicy, new HashMap<>());
@@ -42,6 +53,21 @@ public class ContextAdapterHandler {
 		if(extractedData == null) {
 			extractedData = new PassiveExpiringMap<>(extractedDataExpirationPolicy, new HashMap<>());
 		}
+	}
+	
+	public static void setDriverSessionId(String sessionId, String driverId) {
+		driverSessionsIds.put(sessionId, driverId);
+	}
+	
+	public static String getDriverSessionId(String sessionId) {
+		return driverSessionsIds.get(sessionId);
+	}
+	
+	public static String getParam(String sessionId, String param) {
+		if(DRIVER_SESSION_ID_PARAM.equals(param)) {
+			return getDriverSessionId(sessionId);
+		}
+		return null;
 	}
 
 	public static Map<String, Object> getVariableSubstitutionMap(String sessionId) {
@@ -130,6 +156,7 @@ public class ContextAdapterHandler {
 
 	public static void expireSession(String sessionId) {
 		adapters.remove(sessionId);
+		driverSessionsIds.remove(sessionId);
 		MapIterator<String, List<ExtractDataBind>> iterator = extractedData.mapIterator();
 		while (iterator.hasNext()) {
 			String key = (String) iterator.next();

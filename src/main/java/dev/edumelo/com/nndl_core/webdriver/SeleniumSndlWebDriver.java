@@ -37,6 +37,13 @@ public class SeleniumSndlWebDriver implements NndlWebDriver {
 		}
 	}
 	
+	public String getSessionId() {
+		if(this.webDriver == null) {
+			return null;
+		}
+		return this.webDriver.getSessionId().toString();
+	}
+	
 	public void quitWebDriver() {
 		if(this.webDriver != null) {
 			this.webDriver.quit();			

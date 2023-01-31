@@ -72,6 +72,8 @@ public class NndlRunner {
 			webDriver.refreshWebDriver();
 			webDriverWait.refreshWaiter();
 			
+			ContextAdapterHandler.setDriverSessionId(sessionId, webDriver.getSessionId());
+			
 			StepRunner stepRunner = new StepRunner(sessionId, webDriver, webDriverWait);
 			if(asynchronousStepsNames != null) {
 				Map<String, Step> asynchronousSteps = extractedAsynchronousSteps(steps, asynchronousStepsNames);			

@@ -38,7 +38,7 @@ public class NndlRunner {
 		this.browserControllerDriverConfiguration = browserControllerDriverConfiguration;
 	}
 
-	public NndlResult run(String sndlFile, ContextAdapter... adapters) {
+	public NndlResult runFromFrile(String sndlFile, ContextAdapter... adapters) {
 		String sessionId = UUID.randomUUID().toString();
 		ContextAdapterHandler.createContext(sessionId, adapters);
 						

@@ -4,21 +4,21 @@ import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
 
 public class SpecialParamsTranslater {
 
-	private static final String CONTEXT_ADAPTER_TAG = "contextAdapter";
+	private static final String WEBDRIVER_SESSION_ID = "webDriverSessionId";
 
-	public static String translateIfSpecial(String sessionId, String rawParams) {
+	public static Object translateIfSpecial(String nndlRunnerSessionId, String rawParams) {
 		if(rawParams == null) {
 			return null;
 		}
 		if(rawParams.startsWith("$")) {
-			return translate(sessionId, rawParams.substring(1));
+			return translate(nndlRunnerSessionId, rawParams.substring(1));
 		}
 		return rawParams;
 	}
 
-	private static String translate(String sessionId, String rawParams) {
-		if(rawParams.startsWith(CONTEXT_ADAPTER_TAG)) {
-			return ContextAdapterHandler.getParam(sessionId, rawParams.split(".")[1]);
+	private static Object translate(String nndlRunnerSessionId, String rawParams) {
+		if(rawParams.startsWith(WEBDRIVER_SESSION_ID)) {
+			return ContextAdapterHandler.getWebDriverSessionId(nndlRunnerSessionId);
 		}
 		return null;
 	}

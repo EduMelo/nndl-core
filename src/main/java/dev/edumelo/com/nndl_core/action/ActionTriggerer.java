@@ -18,17 +18,19 @@ import java.util.Arrays;
 
 @SuppressWarnings("unchecked")
 public class ActionTriggerer extends LandmarkConditionAction {
-	
 	private static final String TAG = "actionTriggerer";
+	private static final String ID_TAG = "id";
 	private static final Object TRIGGER_PARAMS_TAG = "triggerParam";
+	private String triggerId;
 	private String[] triggerParams;
 	
 	public ActionTriggerer(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
 		Map<String, ?> mappedActionTrigger = (Map<String, ?>) mappedAction.get(TAG);
+		triggerId = getTriggerId(mappedActionTrigger);
 		triggerParams = getTriggerParams(mappedActionTrigger);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
 	}
-	
+
 	@Override
 	public String getTag() {
 		return TAG;
@@ -54,15 +56,20 @@ public class ActionTriggerer extends LandmarkConditionAction {
 	
 	public Advice runElement(String sessionId, SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
-		String[] translatedParams = Arrays.stream(triggerParams)
+
+		Object[] translatedParams = Arrays.stream(triggerParams)
 				.map(p -> SpecialParamsTranslater.translateIfSpecial(sessionId, p))
 				.collect(toList())
 				.toArray(new String[0]);
 				
-		ContextAdapterHandler.triggerAction(sessionId, translatedParams);
+		ContextAdapterHandler.triggerAction(sessionId, triggerId, translatedParams);
 		
 		setActionPerformed(true);			
 		return new ContinueAdvice();
+	}
+	
+	private String getTriggerId(Map<String, ?> mappedActionTrigger) {
+		return (String) mappedActionTrigger.get(ID_TAG);
 	}
 	
 	private String[] getTriggerParams(Map<String, ?> mappedActionTrigger) {

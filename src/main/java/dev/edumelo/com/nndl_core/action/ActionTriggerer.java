@@ -14,17 +14,19 @@ import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
 @SuppressWarnings("unchecked")
 public class ActionTriggerer extends LandmarkConditionAction {
-	
 	private static final String TAG = "actionTriggerer";
+	private static final String ID_TAG = "id";
 	private static final Object TRIGGER_PARAMS_TAG = "triggerParam";
+	private String triggerId;
 	private String[] triggerParams;
 	
 	public ActionTriggerer(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
 		Map<String, ?> mappedActionTrigger = (Map<String, ?>) mappedAction.get(TAG);
+		triggerId = getTriggerId(mappedActionTrigger);
 		triggerParams = getTriggerParams(mappedActionTrigger);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
 	}
-	
+
 	@Override
 	public String getTag() {
 		return TAG;
@@ -50,10 +52,16 @@ public class ActionTriggerer extends LandmarkConditionAction {
 	
 	public Advice runElement(String sessionId, SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
-		ContextAdapterHandler.triggerAction(sessionId, (Object[]) triggerParams);
+		Object[] triggerParamsTranslated = ActionTriggererParamsTranslator
+				.translate(sessionId,triggerParams);
+		ContextAdapterHandler.triggerAction(sessionId, triggerId, triggerParamsTranslated);
 		
 		setActionPerformed(true);			
 		return new ContinueAdvice();
+	}
+	
+	private String getTriggerId(Map<String, ?> mappedActionTrigger) {
+		return (String) mappedActionTrigger.get(ID_TAG);
 	}
 	
 	private String[] getTriggerParams(Map<String, ?> mappedActionTrigger) {

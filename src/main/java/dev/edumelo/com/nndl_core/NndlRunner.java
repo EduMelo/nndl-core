@@ -39,44 +39,48 @@ public class NndlRunner {
 	}
 
 	public NndlResult runFromFile(String sndlFile, ContextAdapter... adapters) {
-		String sessionId = initRun(adapters);		
-		String yamlString = new NndlParser().getYamlString(sessionId, sndlFile);
-		Map<String, Object> yamlStack = new NndlParser().getYamlStack(sessionId, yamlString);		
-		return runStack(sessionId, yamlStack);
+		String nndlRunnerSessionId = initRun(adapters);		
+		String yamlString = new NndlParser().getYamlString(nndlRunnerSessionId, sndlFile);
+		Map<String, Object> yamlStack = new NndlParser().getYamlStack(nndlRunnerSessionId,
+				yamlString);		
+		return runStack(nndlRunnerSessionId, yamlStack);
 	}
 	
 	public NndlResult runFromStack(ArrayList<String> nndlStack, ContextAdapter... adapters) {
-		String sessionId = initRun(adapters);
-		Map<String, Object> yamlStack = new NndlParser().getYamlStack(sessionId, nndlStack);		
-		return runStack(sessionId, yamlStack);
+		String nndlRunnerSessionId = initRun(adapters);
+		Map<String, Object> yamlStack = new NndlParser().getYamlStack(nndlRunnerSessionId,
+				nndlStack);		
+		return runStack(nndlRunnerSessionId, yamlStack);
 	}
 	
 	private String initRun(ContextAdapter... adapters) {
-		String sessionId = UUID.randomUUID().toString();
-		ContextAdapterHandler.createContext(sessionId, adapters);
-		return sessionId;
+		String nndlSessionId = UUID.randomUUID().toString();
+		ContextAdapterHandler.createContext(nndlSessionId, adapters);
+		return nndlSessionId;
 	}
 
-	private NndlResult runStack(String sessionId, Map<String, Object> yamlStack) {
+	private NndlResult runStack(String nndlRunnerSessionId, Map<String, Object> yamlStack) {
 		@SuppressWarnings("unchecked")
-		Map<String, Step> steps = instantiateSteps((List<Map<String, ?>>) yamlStack.get(Step.getTag()));
+		Map<String, Step> steps = instantiateSteps((List<Map<String, ?>>) yamlStack.get(Step
+				.getTag()));
 		Collection<String> asynchronousStepsNames = getAsynchronousStepNames(yamlStack);
 		try {
 			webDriver = new SeleniumSndlWebDriver(browserControllerDriverConfiguration);
 			webDriverWait = new SeleniumSndlWebDriverWaiter(webDriver);
 			webDriver.refreshWebDriver();
-			webDriverWait.refreshWaiter();
+			webDriverWait.refreshWaiter();			
+			ContextAdapterHandler.setWebDriverSessionId(nndlRunnerSessionId,
+					webDriver.getSessionId());
 			
-			String seleniumSndlSessionId = webDriver.getSessionId();
-			
-			StepRunner stepRunner = new StepRunner(sessionId, webDriver, webDriverWait);
+			StepRunner stepRunner = new StepRunner(nndlRunnerSessionId, webDriver, webDriverWait);
 			if(asynchronousStepsNames != null) {
-				Map<String, Step> asynchronousSteps = extractedAsynchronousSteps(steps, asynchronousStepsNames);			
+				Map<String, Step> asynchronousSteps = extractedAsynchronousSteps(steps,
+						asynchronousStepsNames);			
 				stepRunner.runAsynchronousSteps(null, asynchronousSteps);
 			}
 			stepRunner.runSteps((String) yamlStack.get(ENTRY_STEP_TAG), steps);
 			
-			NndlResult result = new NndlResult(ContextAdapterHandler.getExtractedData(sessionId));		
+			NndlResult result = new NndlResult(ContextAdapterHandler.getExtractedData(nndlRunnerSessionId));		
 			return result;
 		} catch(RunStopperException e) {
 			log.debug("Received advice to stop the run");
@@ -84,7 +88,7 @@ public class NndlRunner {
 			if(webDriver != null) {
 				webDriver.quitWebDriver();				
 			}
-			ContextAdapterHandler.expireSession(sessionId);
+			ContextAdapterHandler.expireSession(nndlRunnerSessionId);
 		}
 		return null;
 	}

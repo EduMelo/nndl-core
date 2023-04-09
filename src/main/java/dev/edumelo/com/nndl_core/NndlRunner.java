@@ -81,17 +81,20 @@ public class NndlRunner {
 			}
 			stepRunner.runSteps((String) yamlStack.get(ENTRY_STEP_TAG), steps);
 			
-			NndlResult result = new NndlResult(ContextAdapterHandler.getExtractedData(nndlRunnerSessionId));		
+			NndlResult result = new NndlResult(ContextAdapterHandler
+					.getExtractedData(nndlRunnerSessionId));		
 			return result;
 		} catch(RunStopperException e) {
 			log.debug("Received advice to stop the run");
+			NndlResult result = new NndlResult(ContextAdapterHandler
+					.getExtractedData(nndlRunnerSessionId));		
+			return result;
 		} finally {
 			if(webDriver != null) {
 				webDriver.quitWebDriver();				
 			}
 			ContextAdapterHandler.expireSession(nndlRunnerSessionId);
 		}
-		return null;
 	}
 	
 	@SuppressWarnings("unchecked")

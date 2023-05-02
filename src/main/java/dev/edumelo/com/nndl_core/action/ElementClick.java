@@ -14,11 +14,11 @@ import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
-public class Click extends LandmarkConditionAction {
+public class ElementClick extends LandmarkConditionAction {
 	private static final String TAG = "elementClick";
 	private StepElement clickableElement;
 	
-	public Click(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+	public ElementClick(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
 		this.clickableElement = getElement(mappedAction, mappedElements);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
 	}

@@ -161,66 +161,37 @@ public abstract class Action {
 		return Action.TAG;
 	}
 	
-	public static Action createAction(Map<String, StepElement> mappedElements, Map<String, ?> mappedSubSteps, Map<String, ?> mappedAction) {
+	public static Action createAction(Map<String, StepElement> mappedElements,
+			Map<String, ?> mappedSubSteps, Map<String, ?> mappedAction) {
 		ActionType actionType = indentifyAction(mappedAction);
-		Action createdAction = null;
-		
-		switch (actionType) {
-			case ELEMENT_CLICK:
-				createdAction = new Click(mappedAction, mappedElements);
-				break;
-			case HOVER:
-				createdAction = new Hover(mappedAction, mappedElements);
-				break;
-			case FILL_INPUT:
-				createdAction = new FillInput(mappedAction, mappedElements);
-				break;
-			case CLEAR_INPUT:
-				createdAction = new ClearInput(mappedAction, mappedElements);
-				break;
-			case GOTO:
-				createdAction = new Goto(mappedAction, mappedElements);
-				break;
-			case STORE_COOKIES:
-				createdAction = new StoreCookies(mappedAction, mappedElements);
-				break;
-			case LOAD_COOKIES:
-				createdAction = new LoadCookies(mappedAction, mappedElements);
-				break;
-			case SEND_KEY:
-				createdAction = new SendKey(mappedAction, mappedElements);
-				break;
-			case LOOP:
-				createdAction = new Loop(mappedAction, mappedSubSteps, mappedElements);
-				break;
-			case EXTRACT:
-				createdAction = new Extract(mappedAction, mappedElements);
-				break;
-			case ELEMENT_PAINT:
-				createdAction = new Paint(mappedAction, mappedElements);
-				break;
-			case ELEMENT_MARK:
-				createdAction = new ElementMark(mappedAction, mappedElements);
-				break;
-			case ACTION_TRIGGERER:
-				createdAction = new ActionTriggerer(mappedAction, mappedElements);
-				break;
-			default:
-				break;
+		Action createdAction;
+		try {
+			if(actionType.isSubstepsRequired()) {
+				createdAction = actionType.getAction()
+						.getConstructor(Map.class, Map.class, Map.class)
+						.newInstance(mappedAction, mappedSubSteps, mappedElements);				
+			} else {
+				createdAction = actionType.getAction().getConstructor(Map.class, Map.class)
+						.newInstance(mappedAction, mappedElements);
+			}
+				
+			createdAction.setOrder(ActionExtractor.getOrder(mappedAction));
+			createdAction.setRequirementStatus(ActionExtractor.getRequirementStatus(mappedAction));
+			createdAction.setConditionClass(ActionExtractor.getConditionClass(mappedAction));
+			createdAction.setConditionElement(ActionExtractor.getConditionElement(mappedAction,
+					mappedElements));
+			createdAction.setLimitRequirement(ActionExtractor.getLimitRequirement(mappedAction));
+			createdAction.setPositionAfter(ActionExtractor.getPositionAfter(mappedAction));
+			createdAction.setPositionBefore(ActionExtractor.getPositionBefore(mappedAction));
+			createdAction.setOnEach(ActionExtractor.getOnEach(mappedAction));
+			
+			return createdAction;
+		} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
+			throw new RuntimeException("It wasn't possible to instantiate action: "+
+					actionType.name(), e);
 		}
-		
-		createdAction.setOrder(ActionExtractor.getOrder(mappedAction));
-		createdAction.setRequirementStatus(ActionExtractor.getRequirementStatus(mappedAction));
-		createdAction.setConditionClass(ActionExtractor.getConditionClass(mappedAction));
-		createdAction.setConditionElement(ActionExtractor.getConditionElement(mappedAction, mappedElements));
-		createdAction.setLimitRequirement(ActionExtractor.getLimitRequirement(mappedAction));
-		createdAction.setPositionAfter(ActionExtractor.getPositionAfter(mappedAction));
-		createdAction.setPositionBefore(ActionExtractor.getPositionBefore(mappedAction));
-		createdAction.setOnEach(ActionExtractor.getOnEach(mappedAction));
-		
-		return createdAction;
+
 	}
-	
 	
 	public Advice run(String sessionId, SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)

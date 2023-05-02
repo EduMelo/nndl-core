@@ -13,7 +13,7 @@ import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
-public class Paint extends Action {
+public class ElementPaint extends Action {
 	private static final String TAG = "elementPaint";
 	private static final String COLOR_TAG = "color";
 	private static final String IGNORE_ROOT_TAG = "ignoreRoot";
@@ -26,7 +26,7 @@ public class Paint extends Action {
 		return TAG;
 	}
 	
-	public Paint(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+	public ElementPaint(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
 		paintableElement = getElement(mappedAction, mappedElements);
 		color = getColor(mappedAction);
 		extractIgnoreRoot(mappedAction, mappedElements);

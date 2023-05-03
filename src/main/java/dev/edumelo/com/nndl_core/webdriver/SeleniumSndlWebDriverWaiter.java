@@ -5,18 +5,18 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class SeleniumSndlWebDriverWaiter implements NndlWebDriverWaiter {
 
 	private WebDriverWait webDriverWait;
-	private final BrowserControllerDriverConfiguration browserCOnfiguration;
+	private final BrowserControllerDriverConfiguration browserConfiguration;
 	private final SeleniumSndlWebDriver webDriver;
 	
-	public SeleniumSndlWebDriverWaiter(BrowserControllerDriverConfiguration browserCOnfiguration,
+	public SeleniumSndlWebDriverWaiter(BrowserControllerDriverConfiguration browserConfiguration,
 			SeleniumSndlWebDriver webDriver) {
-		this.browserCOnfiguration = browserCOnfiguration;
+		this.browserConfiguration = browserConfiguration;
 		this.webDriver = webDriver;
 	}
 
 	public SeleniumSndlWebDriverWaiter(SeleniumSndlWebDriver webDriver) {
 		this.webDriver = webDriver;
-		this.browserCOnfiguration = webDriver.getBrowserCOnfiguration();
+		this.browserConfiguration = webDriver.getBrowserCOnfiguration();
 	}
 
 	@Override
@@ -26,7 +26,7 @@ public class SeleniumSndlWebDriverWaiter implements NndlWebDriverWaiter {
 	}
 	
 	public void refreshWaiter() {
-		this.webDriverWait = browserCOnfiguration.createWait(webDriver.getWebDriver());
+		this.webDriverWait = browserConfiguration.createWait(webDriver.getWebDriver());
 	}
 
 }

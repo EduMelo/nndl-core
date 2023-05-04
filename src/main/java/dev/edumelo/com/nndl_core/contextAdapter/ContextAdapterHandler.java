@@ -17,7 +17,7 @@ import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.ExtractDataBind;
-import dev.edumelo.com.nndl_core.action.ActionTrigger;
+import dev.edumelo.com.nndl_core.action.impl.triggerer.ActionTrigger;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.step.advice.RunControllerAdvice;

@@ -1,4 +1,4 @@
-package dev.edumelo.com.nndl_core.action;
+package dev.edumelo.com.nndl_core.action.impl;
 
 import java.time.Duration;
 import java.util.Map;
@@ -6,6 +6,8 @@ import java.util.Map;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import dev.edumelo.com.nndl_core.action.Action;
+import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;

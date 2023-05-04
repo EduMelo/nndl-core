@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatus;
 import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatusFactory;
+import dev.edumelo.com.nndl_core.action.utils.Position;
 import dev.edumelo.com.nndl_core.step.StepElement;
 
 @SuppressWarnings("unchecked")

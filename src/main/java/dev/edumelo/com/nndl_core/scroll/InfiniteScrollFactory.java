@@ -5,8 +5,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dev.edumelo.com.nndl_core.action.LoopIterationScope;
-import dev.edumelo.com.nndl_core.action.StepElementIterationScope;
+import dev.edumelo.com.nndl_core.action.impl.loop.LoopIterationScope;
+import dev.edumelo.com.nndl_core.action.impl.loop.StepElementIterationScope;
 import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.step.StepRunner;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;

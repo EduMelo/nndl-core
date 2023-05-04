@@ -1,4 +1,4 @@
-package dev.edumelo.com.nndl_core.action;
+package dev.edumelo.com.nndl_core.action.impl.loop;
 
 import java.util.Collection;
 import java.util.Map;
@@ -7,6 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.ExtractDataBind;
+import dev.edumelo.com.nndl_core.action.Action;
+import dev.edumelo.com.nndl_core.action.ActionException;
+import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.contextAdapter.ExtractDataBindAdapter;
 import dev.edumelo.com.nndl_core.scroll.InfiniteScroll;
 import dev.edumelo.com.nndl_core.scroll.InfiniteScrollCondition;

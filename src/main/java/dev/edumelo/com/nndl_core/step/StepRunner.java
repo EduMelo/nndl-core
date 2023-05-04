@@ -11,10 +11,10 @@ import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.ExtractDataBind;
 import dev.edumelo.com.nndl_core.action.Action;
-import dev.edumelo.com.nndl_core.action.ActionRunner;
-import dev.edumelo.com.nndl_core.action.AsynchronousActionRunner;
 import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatus;
 import dev.edumelo.com.nndl_core.action.requirementStatus.RestartStepRequirementStatus;
+import dev.edumelo.com.nndl_core.action.runner.ActionRunner;
+import dev.edumelo.com.nndl_core.action.runner.AsynchronousActionRunner;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.AdviceType;
 import dev.edumelo.com.nndl_core.step.advice.SwapStepAdvice;

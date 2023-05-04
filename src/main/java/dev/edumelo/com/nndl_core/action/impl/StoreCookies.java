@@ -1,4 +1,4 @@
-package dev.edumelo.com.nndl_core.action;
+package dev.edumelo.com.nndl_core.action.impl;
 
 import java.util.Arrays;
 import java.util.List;
@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.openqa.selenium.Cookie;
 
+import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
 import dev.edumelo.com.nndl_core.step.StepElement;

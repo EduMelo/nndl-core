@@ -27,6 +27,7 @@ public class StoreCookies extends LandmarkConditionAction {
 	private String userHandle;
 	
 	public StoreCookies(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+		super(mappedAction);
 		Map<String, ?> mappedStoreCookies = (Map<String, ?>) mappedAction.get(TAG);
 		
 		this.storerParams = getStorerParams(mappedStoreCookies);

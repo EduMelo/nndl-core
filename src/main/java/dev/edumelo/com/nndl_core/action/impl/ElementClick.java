@@ -1,6 +1,5 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
-import java.time.Duration;
 import java.util.Map;
 
 import org.openqa.selenium.WebElement;
@@ -20,6 +19,7 @@ public class ElementClick extends LandmarkConditionAction {
 	private StepElement clickableElement;
 	
 	public ElementClick(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+		super(mappedAction);
 		this.clickableElement = getElement(mappedAction, mappedElements);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
 	}
@@ -33,12 +33,11 @@ public class ElementClick extends LandmarkConditionAction {
 	public boolean isIgnoreRoot() {
 		return clickableElement.isIgnoreRoot();
 	}
-	
+
 	@Override
 	public Advice runNested(String sessionId, SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {	
-		//TODO parametrized duration
-		WebElement button = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(200))
+		WebElement button = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(ExpectedConditions.elementToBeClickable(
 				rootElement.getRootElement().findElement(clickableElement.getLocator(webDriver))));
 		return runElement(webDriver, webDriverWait, rootElement, button);
@@ -47,8 +46,7 @@ public class ElementClick extends LandmarkConditionAction {
 	@Override
 	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait) {	
-		//TODO parametrized duration
-		WebElement button = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(200))
+		WebElement button = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(ExpectedConditions.elementToBeClickable(
 					clickableElement.getLocator(webDriver)));			
 		return runElement(webDriver, webDriverWait, null, button);

@@ -1,6 +1,5 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
-import java.time.Duration;
 import java.util.Map;
 
 import org.openqa.selenium.WebElement;
@@ -23,6 +22,7 @@ private static final String TAG = "hover";
 	private StepElement hoverableElement;
 	
 	public Hover(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+		super(mappedAction);
 		this.hoverableElement = getElement(mappedAction, mappedElements);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
 	}
@@ -43,7 +43,7 @@ private static final String TAG = "hover";
 		ExpectedCondition<WebElement> expectedCondition = ExpectedConditions.elementToBeClickable(
 				rootElement.getRootElement().findElement(hoverableElement
 						.getLocator(remoteWebDriver)));
-		WebElement element  = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
+		WebElement element  = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(expectedCondition);
 		return runElement(remoteWebDriver, webDriverWait, element, rootElement, expectedCondition);
 	}
@@ -54,7 +54,7 @@ private static final String TAG = "hover";
 		ExpectedCondition<WebElement> expectedCondition = ExpectedConditions
 				.visibilityOfElementLocated(
 				hoverableElement.getLocator(remoteWebDriver));
-		WebElement element  = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
+		WebElement element  = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(expectedCondition);
 		return runElement(remoteWebDriver, webDriverWait, element, null, expectedCondition);
 	}

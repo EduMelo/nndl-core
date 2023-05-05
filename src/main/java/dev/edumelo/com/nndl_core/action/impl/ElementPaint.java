@@ -1,6 +1,5 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
-import java.time.Duration;
 import java.util.Map;
 
 import org.openqa.selenium.WebElement;
@@ -30,6 +29,7 @@ public class ElementPaint extends Action {
 	}
 	
 	public ElementPaint(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+		super(mappedAction);
 		paintableElement = getElement(mappedAction, mappedElements);
 		color = getColor(mappedAction);
 		extractIgnoreRoot(mappedAction, mappedElements);
@@ -82,7 +82,7 @@ public class ElementPaint extends Action {
 			target = webDriver.getWebDriver().switchTo().activeElement();
 		} else {
 			if(paintableElement != null) {
-				target = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
+				target = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 						.until(ExpectedConditions.elementToBeClickable(
 								rootElement.getRootElement().findElement(paintableElement.getLocator(webDriver))));
 			} else {
@@ -97,7 +97,7 @@ public class ElementPaint extends Action {
 	@Override
 	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
-		WebElement element =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
+		WebElement element =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(ExpectedConditions.elementToBeClickable(paintableElement.getLocator(webDriver)));
 		setActionPerformed(true);
 		return runElement(webDriver, webDriverWait, null, element);

@@ -1,6 +1,5 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,7 @@ public class SendKey extends LandmarkConditionAction {
 	private boolean ignoreRoot;
 	
 	public SendKey(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+		super(mappedAction);
 		this.key = getKey(mappedAction, mappedElements);
 		targetElement = getTargetElement(mappedAction, mappedElements);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
@@ -54,7 +54,8 @@ public class SendKey extends LandmarkConditionAction {
 			target = remoteWebDriver.getWebDriver().switchTo().activeElement();
 		} else {
 			if(targetElement != null) {
-				target =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50)).until(ExpectedConditions.elementToBeClickable(
+				target =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
+						.until(ExpectedConditions.elementToBeClickable(
 						rootElement.getRootElement().findElement(targetElement.getLocator(remoteWebDriver))));
 			} else {
 				target = rootElement.getRootElement();
@@ -79,7 +80,7 @@ public class SendKey extends LandmarkConditionAction {
 			SeleniumSndlWebDriverWaiter webDriverWait) {
 		WebElement target = null;
 		if(targetElement != null) {
-			target =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
+			target =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 					.until(ExpectedConditions.elementToBeClickable(
 					targetElement.getLocator(remoteWebDriver)));
 		} else {

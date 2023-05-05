@@ -1,6 +1,5 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
-import java.time.Duration;
 import java.util.Map;
 
 import org.openqa.selenium.WebElement;
@@ -25,6 +24,7 @@ public class ElementMark extends Action {
 	private boolean ignoreRoot;
 	
 	public ElementMark(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+		super(mappedAction);
 		markableElement = getElement(mappedAction, mappedElements);
 		mark = getMark(mappedAction);
 		extractIgnoreRoot(mappedAction, mappedElements);
@@ -62,7 +62,7 @@ public class ElementMark extends Action {
 			target = webDriver.getWebDriver().switchTo().activeElement();
 		} else {
 			if(markableElement != null) {
-				target = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
+				target = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 						.until(ExpectedConditions.elementToBeClickable(
 								rootElement.getRootElement().findElement(markableElement.getLocator(webDriver))));
 			} else {
@@ -78,7 +78,7 @@ public class ElementMark extends Action {
 	@Override
 	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
-		WebElement element =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
+		WebElement element =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(ExpectedConditions.presenceOfElementLocated(markableElement
 						.getLocator(webDriver)));
 		setActionPerformed(true);

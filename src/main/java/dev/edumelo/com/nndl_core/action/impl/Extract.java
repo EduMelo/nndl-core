@@ -1,6 +1,5 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
-import java.time.Duration;
 import java.util.Map;
 
 import org.openqa.selenium.WebElement;
@@ -23,6 +22,7 @@ public class Extract extends Action {
 	private StepElement targetElement;
 	
 	public Extract(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+		super(mappedAction);
 		extractDataBindAdapterName = getExtractoClass(mappedAction);
 		targetElement = getTargetElement(mappedAction, mappedElements);
 	}
@@ -53,8 +53,7 @@ public class Extract extends Action {
 	@Override
 	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
-		//TODO parametrized duration
-		WebElement target =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
+		WebElement target =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(ExpectedConditions.elementToBeClickable(
 				targetElement.getLocator(webDriver)));
 		

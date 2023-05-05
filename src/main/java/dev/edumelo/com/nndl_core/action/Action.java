@@ -26,7 +26,10 @@ public abstract class Action {
 	
 	private final static Logger log = LoggerFactory.getLogger(Action.class);
 	
-	private static final String TAG = "actions";		
+	private static final String TIMEOUT_TAG = "timeout";
+	private static int DEFAULT_TIMEOUT = 50;
+	
+	private static final String TAG = "actions";
 	private int order;
 	private int waitDuration;
 	private RequirementStatus requirementStatus;
@@ -37,6 +40,7 @@ public abstract class Action {
 	private Position positionBefore;
 	private Position positionAfter;
 	private int onEach;
+	private int timeoutSeconds;
 	
 	public abstract String getTag();
 	public abstract boolean isIgnoreRoot();
@@ -45,6 +49,15 @@ public abstract class Action {
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) throws ActionException;
 	public abstract Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException;
+	
+	public Action(Map<String, ?> mappedAction) {
+		Object objectTimeout = mappedAction.get(TIMEOUT_TAG);
+		if(objectTimeout == null) {
+			timeoutSeconds = getDefaultTimeout();
+		} else {
+			timeoutSeconds = (Integer) objectTimeout;
+		}
+	}
 	
 	public int getOrder() {
 		return order;
@@ -105,6 +118,14 @@ public abstract class Action {
 	}
 	public void setOnEach(int onEach) {
 		this.onEach = onEach;
+	}
+	
+	protected int getDefaultTimeout() {
+		return DEFAULT_TIMEOUT;
+	}
+	
+	protected Duration getTimeoutSeconds() {
+		return Duration.ofSeconds(timeoutSeconds);
 	}
 	
 	protected boolean checkCondition(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,

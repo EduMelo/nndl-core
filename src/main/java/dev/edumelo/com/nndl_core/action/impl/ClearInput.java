@@ -1,6 +1,5 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
-import java.time.Duration;
 import java.util.Map;
 
 import org.openqa.selenium.Keys;
@@ -22,6 +21,7 @@ public class ClearInput extends Action {
 	private StepElement inputElement;
 
 	public ClearInput(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+		super(mappedAction);
 		this.inputElement = getElement(mappedAction, mappedElements);
 	}
 
@@ -46,7 +46,7 @@ public class ClearInput extends Action {
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
 					throws ActionException {
 		//TODO parametrized duration
-		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
+		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(ExpectedConditions.elementToBeClickable(
 				rootElement.getRootElement().findElement(inputElement.getLocator(webDriver))));
 		return runElement(input);
@@ -55,7 +55,7 @@ public class ClearInput extends Action {
 	@Override
 	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
-		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
+		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(ExpectedConditions.elementToBeClickable(
 				inputElement.getLocator(webDriver)));		
 		

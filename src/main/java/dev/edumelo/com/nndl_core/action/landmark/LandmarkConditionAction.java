@@ -19,6 +19,10 @@ public abstract class LandmarkConditionAction extends Action {
 
 	private LandmarkConditionAggregation landmarkConditionAggregation;
 	
+	public LandmarkConditionAction(Map<String, ?> mappedAction) {
+		super(mappedAction);
+	}
+
 	public LandmarkConditionAggregation getLandmarkConditionAggregation() {
 		return landmarkConditionAggregation;
 	}

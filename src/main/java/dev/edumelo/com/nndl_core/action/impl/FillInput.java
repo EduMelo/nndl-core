@@ -1,6 +1,5 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
-import java.time.Duration;
 import java.util.Map;
 
 import org.openqa.selenium.WebElement;
@@ -22,6 +21,7 @@ public class FillInput extends Action {
 	private String value;
 	
 	public FillInput(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+		super(mappedAction);
 		this.inputElement = getElement(mappedAction, mappedElements);
 		this.value = getValue(mappedAction);
 	}
@@ -39,8 +39,8 @@ public class FillInput extends Action {
 	@Override
 	public Advice runNested(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
-		//TODO parametrized duration
-		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50)).until(ExpectedConditions.elementToBeClickable(
+		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
+				.until(ExpectedConditions.elementToBeClickable(
 				rootElement.getRootElement().findElement(inputElement.getLocator(remoteWebDriver))));
 		return runElement(input);
 	}
@@ -48,7 +48,7 @@ public class FillInput extends Action {
 	@Override
 	public Advice runAction(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait) {	
-		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
+		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(ExpectedConditions.elementToBeClickable(
 				inputElement.getLocator(remoteWebDriver)));		
 		

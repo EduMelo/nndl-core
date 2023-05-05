@@ -25,6 +25,7 @@ public class LoadCookies extends LandmarkConditionAction {
 	private String[] retrieverParams;
 
 	public LoadCookies(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+		super(mappedAction);
 		Map<String, ?> mappedLoadCookies = (Map<String, ?>) mappedAction.get(TAG);	
 		this.retrieverParams = getRetrieverParams(mappedLoadCookies);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);

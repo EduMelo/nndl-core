@@ -21,7 +21,7 @@ public class ClearInput extends Action {
 	private StepElement inputElement;
 
 	public ClearInput(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		super(mappedAction);
+		super(mappedAction, mappedElements);
 		this.inputElement = getElement(mappedAction, mappedElements);
 	}
 

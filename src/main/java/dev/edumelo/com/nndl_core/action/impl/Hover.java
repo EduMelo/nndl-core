@@ -22,7 +22,7 @@ private static final String TAG = "hover";
 	private StepElement hoverableElement;
 	
 	public Hover(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		super(mappedAction);
+		super(mappedAction, mappedElements);
 		this.hoverableElement = getElement(mappedAction, mappedElements);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
 	}

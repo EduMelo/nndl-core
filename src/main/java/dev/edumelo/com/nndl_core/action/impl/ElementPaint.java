@@ -29,7 +29,7 @@ public class ElementPaint extends Action {
 	}
 	
 	public ElementPaint(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		super(mappedAction);
+		super(mappedAction, mappedElements);
 		paintableElement = getElement(mappedAction, mappedElements);
 		color = getColor(mappedAction);
 		extractIgnoreRoot(mappedAction, mappedElements);

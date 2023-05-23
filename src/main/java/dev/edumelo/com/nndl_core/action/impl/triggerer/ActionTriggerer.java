@@ -27,7 +27,7 @@ public class ActionTriggerer extends LandmarkConditionAction {
 	private String[] triggerParams;
 	
 	public ActionTriggerer(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		super(mappedAction);
+		super(mappedAction, mappedElements);
 		Map<String, ?> mappedActionTrigger = (Map<String, ?>) mappedAction.get(TAG);
 		triggerId = getTriggerId(mappedActionTrigger);
 		triggerParams = getTriggerParams(mappedActionTrigger);

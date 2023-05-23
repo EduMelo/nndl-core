@@ -28,7 +28,7 @@ public class SendKey extends LandmarkConditionAction {
 	private boolean ignoreRoot;
 	
 	public SendKey(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		super(mappedAction);
+		super(mappedAction, mappedElements);
 		this.key = getKey(mappedAction, mappedElements);
 		targetElement = getTargetElement(mappedAction, mappedElements);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);

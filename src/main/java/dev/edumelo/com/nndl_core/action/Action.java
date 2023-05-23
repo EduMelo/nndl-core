@@ -50,7 +50,7 @@ public abstract class Action {
 	public abstract Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException;
 	
-	public Action(Map<String, ?> mappedAction) {
+	public Action(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
 		Object objectTimeout = mappedAction.get(TIMEOUT_TAG);
 		if(objectTimeout == null) {
 			timeoutSeconds = getDefaultTimeout();

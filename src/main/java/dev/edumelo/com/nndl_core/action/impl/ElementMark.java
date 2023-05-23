@@ -24,7 +24,7 @@ public class ElementMark extends Action {
 	private boolean ignoreRoot;
 	
 	public ElementMark(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		super(mappedAction);
+		super(mappedAction, mappedElements);
 		markableElement = getElement(mappedAction, mappedElements);
 		mark = getMark(mappedAction);
 		extractIgnoreRoot(mappedAction, mappedElements);

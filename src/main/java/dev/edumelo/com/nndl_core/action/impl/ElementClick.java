@@ -19,7 +19,7 @@ public class ElementClick extends LandmarkConditionAction {
 	private StepElement clickableElement;
 	
 	public ElementClick(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		super(mappedAction);
+		super(mappedAction, mappedElements);
 		this.clickableElement = getElement(mappedAction, mappedElements);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
 	}

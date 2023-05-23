@@ -47,7 +47,7 @@ public class Loop extends Action {
     private Integer elementTimeoutWait;
 	
 	public Loop(Map<String, ?> mappedAction, Map<String, ?> mappedSubSteps, Map<String, StepElement> mappedElements) {
-		super(mappedAction);
+		super(mappedAction, mappedElements);
 		this.infinitScrollObserverClass = LoopExtractor.extractInfiniteScrollObserversClass(mappedAction);
 		this.resultFillerClass = LoopExtractor.extractResultFillerClass(mappedAction);
 		this.conditionClass = LoopExtractor.extractConditionClass(mappedAction);

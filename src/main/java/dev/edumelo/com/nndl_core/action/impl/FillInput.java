@@ -21,7 +21,7 @@ public class FillInput extends Action {
 	private String value;
 	
 	public FillInput(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		super(mappedAction);
+		super(mappedAction, mappedElements);
 		this.inputElement = getElement(mappedAction, mappedElements);
 		this.value = getValue(mappedAction);
 	}

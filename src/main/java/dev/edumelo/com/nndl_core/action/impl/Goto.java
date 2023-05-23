@@ -18,7 +18,7 @@ public class Goto extends LandmarkConditionAction {
 	private URL url;
 	
 	public Goto(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		super(mappedAction);
+		super(mappedAction, mappedElements);
 		this.url = getUrl(mappedAction);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
 	}

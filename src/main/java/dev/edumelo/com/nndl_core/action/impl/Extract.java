@@ -22,7 +22,7 @@ public class Extract extends Action {
 	private StepElement targetElement;
 	
 	public Extract(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		super(mappedAction);
+		super(mappedAction, mappedElements);
 		extractDataBindAdapterName = getExtractoClass(mappedAction);
 		targetElement = getTargetElement(mappedAction, mappedElements);
 	}

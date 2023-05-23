@@ -24,14 +24,9 @@ public class DownloadFile extends Action {
 	private String fileName;
 	
 	public DownloadFile(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		super(mappedAction);
+		super(mappedAction, mappedElements);
 		this.url = getUrl(mappedAction);
 		this.fileName = getFileName(mappedAction);
-	}
-
-	public DownloadFile(Map<String, ?> mappedAction) {
-		super(mappedAction);
-		this.url = getUrl(mappedAction);
 	}
 
 	private URL getUrl(Map<String, ?> mappedAction) {

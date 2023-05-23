@@ -1,6 +1,7 @@
 package dev.edumelo.com.nndl_core.action;
 
 import dev.edumelo.com.nndl_core.action.impl.ClearInput;
+import dev.edumelo.com.nndl_core.action.impl.DownloadFile;
 import dev.edumelo.com.nndl_core.action.impl.ElementClick;
 import dev.edumelo.com.nndl_core.action.impl.ElementMark;
 import dev.edumelo.com.nndl_core.action.impl.ElementPaint;
@@ -27,7 +28,8 @@ public enum ActionType {
 	EXTRACT("extract", Extract.class, false),
 	ELEMENT_PAINT("elementPaint", ElementPaint.class, false),
 	ELEMENT_MARK("elementMark", ElementMark.class, false),
-	ACTION_TRIGGERER("actionTriggerer", ActionTriggerer.class, false);
+	ACTION_TRIGGERER("actionTriggerer", ActionTriggerer.class, false),
+	DOWNLOAD("downloadFile", DownloadFile.class, false);
 	
 	private String actionTag;
 	private Class<? extends Action> action;

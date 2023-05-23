@@ -45,6 +45,8 @@ public class BrowserControllerDriverConfiguration {
 			ChromeOptions chromeOptions = new ChromeOptions();
 			chromeOptions.addArguments(properties.getBrowserArguments());
 			chromeOptions.addExtensions(properties.getExtensionFiles());
+			chromeOptions.setExperimentalOption("prefs", properties.getExperimentalOptionPrefs());
+			
 			options = chromeOptions;
 		}
 		

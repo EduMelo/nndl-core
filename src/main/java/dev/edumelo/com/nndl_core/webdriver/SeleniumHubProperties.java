@@ -5,7 +5,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -33,8 +35,11 @@ public class SeleniumHubProperties {
 	private String[] browserArguments;
 	private String[] extensions;
 	private List<File> extensionFiles;
+	private Map<String, Object> experimentalOptionsPrefs;
 	
 	public SeleniumHubProperties() {
+		experimentalOptionsPrefs = new HashMap<>();
+		experimentalOptionsPrefs.put("download.default_directory", "/tmp/");
 	}
 
 	public String getEnvironment() {
@@ -111,6 +116,12 @@ public class SeleniumHubProperties {
 			extensionFiles = new ArrayList<>();
 		}
 		extensionFiles.add(extensionFile);
+	}
+	public Map<String, Object> getExperimentalOptionPrefs() {
+		return experimentalOptionsPrefs;
+	}
+	public void addExperimentalOptionPrefs(String key, String value) {
+		experimentalOptionsPrefs.put(key, value);
 	}
 
 	/**

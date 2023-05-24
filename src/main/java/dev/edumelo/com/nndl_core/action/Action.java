@@ -42,6 +42,7 @@ public abstract class Action {
 	private Position positionAfter;
 	private int onEach;
 	private int timeoutSeconds;
+	private SeleniumHubProperties seleniumHubProperties;
 	
 	public abstract String getTag();
 	public abstract boolean isIgnoreRoot();
@@ -53,6 +54,7 @@ public abstract class Action {
 	
 	public Action(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
 			Map<String, StepElement> mappedElements) {
+		this.seleniumHubProperties = seleniumHubProperties;
 		Object objectTimeout = mappedAction.get(TIMEOUT_TAG);
 		if(objectTimeout == null) {
 			timeoutSeconds = getDefaultTimeout();
@@ -121,7 +123,9 @@ public abstract class Action {
 	public void setOnEach(int onEach) {
 		this.onEach = onEach;
 	}
-	
+	protected SeleniumHubProperties getSeleniumHubProperties() {
+		return seleniumHubProperties;
+	}
 	protected int getDefaultTimeout() {
 		return DEFAULT_TIMEOUT;
 	}

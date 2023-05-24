@@ -97,8 +97,8 @@ public class UploadFile extends Action {
 		
 		String[] fileNameArray = url.toString().split("/");
 		String fileName = fileNameArray[fileNameArray.length-1];
-		String fileLocation = String.format("%s%s", SeleniumHubProperties.getDownloadDirectory(),
-				fileName);
+		String fileLocation = String.format("%s%s", getSeleniumHubProperties()
+				.getDownloadDirectory(), fileName);
 		input.sendKeys(fileLocation);
 		
 		setActionPerformed(true);

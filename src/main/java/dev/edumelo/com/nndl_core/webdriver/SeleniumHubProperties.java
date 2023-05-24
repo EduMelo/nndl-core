@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 public class SeleniumHubProperties {
 	
 	private static final Logger log = LoggerFactory.getLogger(SeleniumHubProperties.class);
+	private static String DOWNLOAD_DIRECTORY = "/tmp/";
 	
 	enum PlataformType {LINUX, ANDROID}
 	enum BrowserType {CHROME, FIREFOX, INTERNETEXPLORER}
@@ -39,7 +40,11 @@ public class SeleniumHubProperties {
 	
 	public SeleniumHubProperties() {
 		experimentalOptionsPrefs = new HashMap<>();
-		experimentalOptionsPrefs.put("download.default_directory", "/tmp/");
+		experimentalOptionsPrefs.put("download.default_directory", DOWNLOAD_DIRECTORY);
+	}
+	
+	public static Object getDownloadDirectory() {
+		return DOWNLOAD_DIRECTORY;
 	}
 
 	public String getEnvironment() {
@@ -121,6 +126,9 @@ public class SeleniumHubProperties {
 		return experimentalOptionsPrefs;
 	}
 	public void addExperimentalOptionPrefs(String key, String value) {
+		if(key.equals("download.default_directory")) {
+			DOWNLOAD_DIRECTORY = value;
+		}
 		experimentalOptionsPrefs.put(key, value);
 	}
 

@@ -12,6 +12,7 @@ import dev.edumelo.com.nndl_core.action.impl.Hover;
 import dev.edumelo.com.nndl_core.action.impl.LoadCookies;
 import dev.edumelo.com.nndl_core.action.impl.SendKey;
 import dev.edumelo.com.nndl_core.action.impl.StoreCookies;
+import dev.edumelo.com.nndl_core.action.impl.UploadFile;
 import dev.edumelo.com.nndl_core.action.impl.loop.Loop;
 import dev.edumelo.com.nndl_core.action.impl.triggerer.ActionTriggerer;
 
@@ -29,7 +30,8 @@ public enum ActionType {
 	ELEMENT_PAINT("elementPaint", ElementPaint.class, false),
 	ELEMENT_MARK("elementMark", ElementMark.class, false),
 	ACTION_TRIGGERER("actionTriggerer", ActionTriggerer.class, false),
-	DOWNLOAD("downloadFile", DownloadFile.class, false);
+	DOWNLOAD("downloadFile", DownloadFile.class, false),
+	UPLOAD("uploadFile", UploadFile.class, false);
 	
 	private String actionTag;
 	private Class<? extends Action> action;

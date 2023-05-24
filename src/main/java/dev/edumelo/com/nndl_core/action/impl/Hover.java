@@ -13,6 +13,7 @@ import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
@@ -21,8 +22,9 @@ public class Hover extends LandmarkConditionAction {
 private static final String TAG = "hover";
 	private StepElement hoverableElement;
 	
-	public Hover(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		super(mappedAction, mappedElements);
+	public Hover(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
+			Map<String, StepElement> mappedElements) {
+		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.hoverableElement = getElement(mappedAction, mappedElements);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
 	}

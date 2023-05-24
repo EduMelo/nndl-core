@@ -12,6 +12,7 @@ import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
@@ -21,8 +22,9 @@ public class Extract extends Action {
 	private String extractDataBindAdapterName;
 	private StepElement targetElement;
 	
-	public Extract(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		super(mappedAction, mappedElements);
+	public Extract(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
+			Map<String, StepElement> mappedElements) {
+		super(seleniumHubProperties, mappedAction, mappedElements);
 		extractDataBindAdapterName = getExtractoClass(mappedAction);
 		targetElement = getTargetElement(mappedAction, mappedElements);
 	}

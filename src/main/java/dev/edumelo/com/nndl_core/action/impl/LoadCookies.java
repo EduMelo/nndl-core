@@ -14,6 +14,7 @@ import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
@@ -24,8 +25,9 @@ public class LoadCookies extends LandmarkConditionAction {
 	private static final Object RETRIEVER_PARAMS_TAG = "retrieverParams";
 	private String[] retrieverParams;
 
-	public LoadCookies(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		super(mappedAction, mappedElements);
+	public LoadCookies(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
+			Map<String, StepElement> mappedElements) {
+		super(seleniumHubProperties, mappedAction, mappedElements);
 		Map<String, ?> mappedLoadCookies = (Map<String, ?>) mappedAction.get(TAG);	
 		this.retrieverParams = getRetrieverParams(mappedLoadCookies);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);

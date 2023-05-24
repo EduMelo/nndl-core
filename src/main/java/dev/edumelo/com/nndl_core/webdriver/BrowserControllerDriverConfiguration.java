@@ -19,7 +19,11 @@ public class BrowserControllerDriverConfiguration {
 		this.properties = properties;
 	}
 
-    public WebDriverWait createWait(RemoteWebDriver remoteWebDriver) {
+    public SeleniumHubProperties getProperties() {
+		return properties;
+	}
+
+	public WebDriverWait createWait(RemoteWebDriver remoteWebDriver) {
 	    return new WebDriverWait(remoteWebDriver, 0);
     }
 

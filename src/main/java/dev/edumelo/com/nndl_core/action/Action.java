@@ -19,6 +19,7 @@ import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
@@ -50,7 +51,8 @@ public abstract class Action {
 	public abstract Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException;
 	
-	public Action(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+	public Action(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
+			Map<String, StepElement> mappedElements) {
 		Object objectTimeout = mappedAction.get(TIMEOUT_TAG);
 		if(objectTimeout == null) {
 			timeoutSeconds = getDefaultTimeout();
@@ -183,18 +185,20 @@ public abstract class Action {
 		return Action.TAG;
 	}
 	
-	public static Action createAction(Map<String, StepElement> mappedElements,
-			Map<String, ?> mappedSubSteps, Map<String, ?> mappedAction) {
+	public static Action createAction(SeleniumHubProperties seleniumHubProperties,
+			Map<String, StepElement> mappedElements, Map<String, ?> mappedSubSteps,
+			Map<String, ?> mappedAction) {
 		ActionType actionType = indentifyAction(mappedAction);
 		Action createdAction;
 		try {
 			if(actionType.isSubstepsRequired()) {
 				createdAction = actionType.getAction()
-						.getConstructor(Map.class, Map.class, Map.class)
-						.newInstance(mappedAction, mappedSubSteps, mappedElements);				
+						.getConstructor(SeleniumHubProperties.class, Map.class, Map.class, Map.class)
+						.newInstance(seleniumHubProperties, mappedAction, mappedSubSteps, mappedElements);				
 			} else {
-				createdAction = actionType.getAction().getConstructor(Map.class, Map.class)
-						.newInstance(mappedAction, mappedElements);
+				createdAction = actionType.getAction().getConstructor(SeleniumHubProperties.class,
+						Map.class, Map.class)
+						.newInstance(seleniumHubProperties, mappedAction, mappedElements);
 			}
 				
 			createdAction.setOrder(ActionExtractor.getOrder(mappedAction));

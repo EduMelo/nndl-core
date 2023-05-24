@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import dev.edumelo.com.nndl_core.action.Action;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 
 public class Step {
 	private static final String TAG = "steps";
@@ -58,20 +59,23 @@ public class Step {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Step(Map<String, ?> mappedStep) {
+	public Step(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedStep) {
 		this.name = (String) mappedStep.get("name");
 		this.elements = extractElements((ArrayList<Map<String, ?>>) mappedStep.get(StepElement.getTag()));
-		this.subSteps = extractedSubSteps((ArrayList<Map<String, ?>>) mappedStep.get(SUBSTEP_TAG));
-		this.actions = extractedActions(elements, subSteps, (ArrayList<Map<String, ?>>) mappedStep.get(Action.getActionTag()));
+		this.subSteps = extractedSubSteps(seleniumHubProperties,
+				(ArrayList<Map<String, ?>>) mappedStep.get(SUBSTEP_TAG));
+		this.actions = extractedActions(seleniumHubProperties, elements, subSteps,
+				(ArrayList<Map<String, ?>>) mappedStep.get(Action.getActionTag()));
 	}
 	
-	private Map<String, Step> extractedSubSteps(ArrayList<Map<String, ?>> listedSubSteps) {
+	private Map<String, Step> extractedSubSteps(SeleniumHubProperties seleniumHubProperties,
+			ArrayList<Map<String, ?>> listedSubSteps) {
 		if(listedSubSteps == null || listedSubSteps.size() == 0) {
 			return null;
 		}
 		
 		return listedSubSteps.stream()
-				.map(Step::new)
+				.map(s -> new Step(seleniumHubProperties, s))
 				.collect(Collectors.toMap(Step::getName, Function.identity()));
 	}
 
@@ -84,10 +88,13 @@ public class Step {
 				.collect(Collectors.toMap(StepElement::getName, Function.identity()));
 	}
 
-	private LinkedList<Action> extractedActions(Map<String, StepElement> mappedElements, Map<String, Step> mappedSubSteps, ArrayList<Map<String, ?>> listedActions) {
+	private LinkedList<Action> extractedActions(SeleniumHubProperties seleniumHubProperties,
+			Map<String, StepElement> mappedElements, Map<String, Step> mappedSubSteps,
+			ArrayList<Map<String, ?>> listedActions) {
 		//TODO retirar filtro de não nulo
 		return listedActions.stream()
-				.map(m -> Action.createAction(mappedElements, mappedSubSteps, m))
+				.map(m -> Action.createAction(seleniumHubProperties, mappedElements, mappedSubSteps,
+						m))
 				.filter(Objects::nonNull)
 				.sorted(Comparator.comparing(Action::getOrder))
 				.collect(Collectors.toCollection(LinkedList::new));

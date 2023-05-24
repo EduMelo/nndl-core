@@ -16,6 +16,7 @@ import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
@@ -27,8 +28,9 @@ public class SendKey extends LandmarkConditionAction {
 	private StepElement targetElement;
 	private boolean ignoreRoot;
 	
-	public SendKey(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		super(mappedAction, mappedElements);
+	public SendKey(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
+			Map<String, StepElement> mappedElements) {
+		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.key = getKey(mappedAction, mappedElements);
 		targetElement = getTargetElement(mappedAction, mappedElements);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);

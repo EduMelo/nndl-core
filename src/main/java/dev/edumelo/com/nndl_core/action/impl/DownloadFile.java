@@ -16,6 +16,7 @@ import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
@@ -24,8 +25,9 @@ public class DownloadFile extends Action {
 	private static final String URL_TAG = "url";
 	private URL url;
 	
-	public DownloadFile(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		super(mappedAction, mappedElements);
+	public DownloadFile(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
+			Map<String, StepElement> mappedElements) {
+		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.url = getUrl(mappedAction);
 	}
 

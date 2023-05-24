@@ -23,6 +23,7 @@ import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
@@ -46,8 +47,9 @@ public class Loop extends Action {
 	private Boolean throwTimeout;
     private Integer elementTimeoutWait;
 	
-	public Loop(Map<String, ?> mappedAction, Map<String, ?> mappedSubSteps, Map<String, StepElement> mappedElements) {
-		super(mappedAction, mappedElements);
+	public Loop(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
+			Map<String, ?> mappedSubSteps, Map<String, StepElement> mappedElements) {
+		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.infinitScrollObserverClass = LoopExtractor.extractInfiniteScrollObserversClass(mappedAction);
 		this.resultFillerClass = LoopExtractor.extractResultFillerClass(mappedAction);
 		this.conditionClass = LoopExtractor.extractConditionClass(mappedAction);

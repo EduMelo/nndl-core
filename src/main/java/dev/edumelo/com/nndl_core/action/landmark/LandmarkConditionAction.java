@@ -10,6 +10,7 @@ import dev.edumelo.com.nndl_core.action.ActionException;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
@@ -19,8 +20,9 @@ public abstract class LandmarkConditionAction extends Action {
 
 	private LandmarkConditionAggregation landmarkConditionAggregation;
 	
-	public LandmarkConditionAction(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		super(mappedAction, mappedElements);
+	public LandmarkConditionAction(SeleniumHubProperties seleniumHubProperties,
+			Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+		super(seleniumHubProperties, mappedAction, mappedElements);
 	}
 
 	public LandmarkConditionAggregation getLandmarkConditionAggregation() {

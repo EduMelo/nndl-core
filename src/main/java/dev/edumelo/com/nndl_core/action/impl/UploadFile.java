@@ -28,8 +28,9 @@ public class UploadFile extends Action {
 	private StepElement inputElement;
 	private URL url;
 
-	public UploadFile(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		super(mappedAction, mappedElements);
+	public UploadFile(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
+			Map<String, StepElement> mappedElements) {
+		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.inputElement = getElement(mappedAction, mappedElements);
 		this.url = getUrl(mappedAction);
 	}
@@ -79,8 +80,10 @@ public class UploadFile extends Action {
 		
 		driver.executeScript(code);
 		
-		String waitCode = "var items = document.querySelector('downloads-manager').shadowRoot.getElementById('downloadsList').items;"+"\n"+
-				"if (items.every(e => e.state === 'COMPLETE')) return items.map(e => e.fileUrl || e.file_url);";
+		String waitCode = "var items = document.querySelector('downloads-manager')"+"\n"+
+				".shadowRoot.getElementById('downloadsList').items;"+"\n"+
+				"if (items.every(e => e.state === 'COMPLETE'))"+"\n"+
+				"{return items.map(e => e.fileUrl || e.file_url);}";
 		
 		webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 		.until(ExpectedConditions.jsReturnsValue(waitCode));

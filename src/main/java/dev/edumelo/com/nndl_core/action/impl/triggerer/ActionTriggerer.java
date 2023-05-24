@@ -12,6 +12,7 @@ import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.utils.SpecialParamsTranslater;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 import static java.util.stream.Collectors.*;
@@ -26,8 +27,9 @@ public class ActionTriggerer extends LandmarkConditionAction {
 	private String triggerId;
 	private String[] triggerParams;
 	
-	public ActionTriggerer(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		super(mappedAction, mappedElements);
+	public ActionTriggerer(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
+			Map<String, StepElement> mappedElements) {
+		super(seleniumHubProperties, mappedAction, mappedElements);
 		Map<String, ?> mappedActionTrigger = (Map<String, ?>) mappedAction.get(TAG);
 		triggerId = getTriggerId(mappedActionTrigger);
 		triggerParams = getTriggerParams(mappedActionTrigger);

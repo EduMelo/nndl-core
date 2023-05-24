@@ -20,6 +20,7 @@ import dev.edumelo.com.nndl_core.step.RunStopperException;
 import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.step.StepRunner;
 import dev.edumelo.com.nndl_core.webdriver.BrowserControllerDriverConfiguration;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
@@ -61,7 +62,8 @@ public class NndlRunner {
 
 	private NndlResult runStack(String nndlRunnerSessionId, Map<String, Object> yamlStack) {
 		@SuppressWarnings("unchecked")
-		Map<String, Step> steps = instantiateSteps((List<Map<String, ?>>) yamlStack.get(Step
+		Map<String, Step> steps = instantiateSteps(browserControllerDriverConfiguration.getProperties(),
+				(List<Map<String, ?>>) yamlStack.get(Step
 				.getTag()));
 		Collection<String> asynchronousStepsNames = getAsynchronousStepNames(yamlStack);
 		try {
@@ -119,9 +121,10 @@ public class NndlRunner {
 		return asynchronousSteps;
 	}
 
-	private Map<String, Step> instantiateSteps(List<Map<String, ?>> stepList) {
+	private Map<String, Step> instantiateSteps(SeleniumHubProperties seleniumHubProperties,
+			List<Map<String, ?>> stepList) {
 		return stepList.stream()
-				.map(Step::new)
+				.map(s -> new Step(seleniumHubProperties, s))
 				.collect(Collectors.toMap(Step::getName, Function.identity()));
 	}
 

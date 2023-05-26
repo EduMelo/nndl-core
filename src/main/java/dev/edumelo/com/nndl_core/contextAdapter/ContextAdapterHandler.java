@@ -21,6 +21,7 @@ import dev.edumelo.com.nndl_core.action.impl.triggerer.ActionTrigger;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.step.advice.RunControllerAdvice;
+import dev.edumelo.com.nndl_core.webdriver.BrowserArgumentsContextAdapter;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 
 public class ContextAdapterHandler {
@@ -160,6 +161,17 @@ public class ContextAdapterHandler {
 				iterator.remove();
 			}
 		}
+	}
+
+	public static List<BrowserArgumentsContextAdapter> getBrowserArgumentsContextAdapter(
+			String nndlSessionId) {
+		List<BrowserArgumentsContextAdapter> actionTriggerAdapter = adapters.get(nndlSessionId)
+				.stream()
+				.filter(a -> a instanceof BrowserArgumentsContextAdapter)
+				.map(a -> (BrowserArgumentsContextAdapter) a)
+				.collect(Collectors.toList());
+				
+		return actionTriggerAdapter;
 	}
 	
 }

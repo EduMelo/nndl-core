@@ -107,6 +107,11 @@ public class SeleniumHubProperties {
 	public void setBrowserArguments(String[] browserArguments) {
 		this.browserArguments = browserArguments;
 	}
+	public void removeBrowserArguments(String argument) {
+		List<String> list = new ArrayList<String>(Arrays.asList(this.browserArguments));
+		list.remove(argument);
+		this.browserArguments = list.toArray(new String[0]);
+	}
 	public String[] getExtensions() {
 		return extensions;
 	}

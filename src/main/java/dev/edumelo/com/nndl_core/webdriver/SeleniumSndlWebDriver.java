@@ -1,6 +1,7 @@
 package dev.edumelo.com.nndl_core.webdriver;
 
 import java.net.MalformedURLException;
+import java.util.List;
 
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
@@ -11,16 +12,19 @@ public class SeleniumSndlWebDriver implements NndlWebDriver {
 	
 	private static final Logger log = LoggerFactory.getLogger(SeleniumSndlWebDriver.class);
 	
-	private final BrowserControllerDriverConfiguration browserCOnfiguration;
+	private final BrowserControllerDriverConfiguration browserConfiguration;
 	private RemoteWebDriver webDriver;
 	private SessionId sessionId;
+	private List<BrowserArgumentsContextAdapter> browserArgumentsContextAdapter;
 
-	public SeleniumSndlWebDriver(BrowserControllerDriverConfiguration browserCOnfiguration) {
-		this.browserCOnfiguration = browserCOnfiguration;
+	public SeleniumSndlWebDriver(BrowserControllerDriverConfiguration browserConfiguration,
+			List<BrowserArgumentsContextAdapter> browserArgumentsContextAdapter) {
+		this.browserConfiguration = browserConfiguration;
+		this.browserArgumentsContextAdapter = browserArgumentsContextAdapter;
 	}
 	
 	public BrowserControllerDriverConfiguration getBrowserCOnfiguration() {
-		return browserCOnfiguration;
+		return browserConfiguration;
 	}
 
 	@Override
@@ -35,7 +39,7 @@ public class SeleniumSndlWebDriver implements NndlWebDriver {
 	
 	public void refreshWebDriver() {
 		try {
-			webDriver = browserCOnfiguration.createRemoteDriver();
+			webDriver = browserConfiguration.createRemoteDriver(browserArgumentsContextAdapter);
 			sessionId = webDriver.getSessionId();			
 		} catch (MalformedURLException e) {
 			String msg = "Mal formed URL while creating web driver";

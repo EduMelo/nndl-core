@@ -1,6 +1,10 @@
 package dev.edumelo.com.nndl_core.webdriver;
 
 import java.net.MalformedURLException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -22,23 +26,42 @@ public class BrowserControllerDriverConfiguration {
     public SeleniumHubProperties getProperties() {
 		return properties;
 	}
+    
+    public void removeBrowserArguments(String argument) {
+    	if(properties != null) {
+    		properties.removeBrowserArguments(argument);
+    	}
+    }
 
 	public WebDriverWait createWait(RemoteWebDriver remoteWebDriver) {
 	    return new WebDriverWait(remoteWebDriver, 0);
     }
 
-	public RemoteWebDriver createRemoteDriver() throws MalformedURLException {
-		RemoteWebDriver driver = new RemoteWebDriver(properties.getRemoteDriveUrl(), configOptions());
+	public RemoteWebDriver createRemoteDriver(
+			List<BrowserArgumentsContextAdapter> browserArgumentsContextAdapter)
+					throws MalformedURLException {
+		RemoteWebDriver driver = new RemoteWebDriver(properties.getRemoteDriveUrl(),
+				configOptions(browserArgumentsContextAdapter));
 		return driver;
 	}
 
-	private MutableCapabilities configOptions() {
+	private MutableCapabilities configOptions(
+			List<BrowserArgumentsContextAdapter> browserArgumentsContextAdapter) {
 		MutableCapabilities options;
 
+		String[] browserArguments = properties.getBrowserArguments();
+		for (BrowserArgumentsContextAdapter adapter : browserArgumentsContextAdapter) {
+			browserArguments = Arrays.stream(browserArguments)
+			.map(a -> adapter.adapt(a))
+			.filter(Objects::nonNull)
+			.collect(Collectors.toList())
+			.toArray(new String[0]);
+		}
+		
 		switch (properties.getBrowser()) {
 		case FIREFOX:
 			FirefoxOptions firefoxOptions = new FirefoxOptions();
-			firefoxOptions.addArguments(properties.getBrowserArguments());
+			firefoxOptions.addArguments(browserArguments);
 			options = firefoxOptions;
 			break;
 		case INTERNETEXPLORER:
@@ -47,7 +70,7 @@ public class BrowserControllerDriverConfiguration {
 		case CHROME:
 		default:
 			ChromeOptions chromeOptions = new ChromeOptions();
-			chromeOptions.addArguments(properties.getBrowserArguments());
+			chromeOptions.addArguments(browserArguments);
 			chromeOptions.addExtensions(properties.getExtensionFiles());
 			chromeOptions.setExperimentalOption("prefs", properties.getExperimentalOptionPrefs());
 			

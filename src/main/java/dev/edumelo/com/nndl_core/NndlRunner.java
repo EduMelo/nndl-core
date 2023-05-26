@@ -61,13 +61,13 @@ public class NndlRunner {
 	}
 
 	private NndlResult runStack(String nndlRunnerSessionId, Map<String, Object> yamlStack) {
-		@SuppressWarnings("unchecked")
-		Map<String, Step> steps = instantiateSteps(browserControllerDriverConfiguration.getProperties(),
-				(List<Map<String, ?>>) yamlStack.get(Step
-				.getTag()));
+		@SuppressWarnings("unchecked")		
+		Map<String, Step> steps = instantiateSteps(browserControllerDriverConfiguration
+				.getProperties(), (List<Map<String, ?>>) yamlStack.get(Step.getTag()));
 		Collection<String> asynchronousStepsNames = getAsynchronousStepNames(yamlStack);
 		try {
-			webDriver = new SeleniumSndlWebDriver(browserControllerDriverConfiguration);
+			webDriver = new SeleniumSndlWebDriver(browserControllerDriverConfiguration,
+					ContextAdapterHandler.getBrowserArgumentsContextAdapter(nndlRunnerSessionId));
 			webDriverWait = new SeleniumSndlWebDriverWaiter(webDriver);
 			webDriver.refreshWebDriver();
 			webDriverWait.refreshWaiter();			

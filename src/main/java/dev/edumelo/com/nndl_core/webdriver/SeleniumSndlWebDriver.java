@@ -1,8 +1,10 @@
 package dev.edumelo.com.nndl_core.webdriver;
 
+import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.util.List;
 
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
 import org.slf4j.Logger;
@@ -49,8 +51,12 @@ public class SeleniumSndlWebDriver implements NndlWebDriver {
 	}
 	
 	public void quitWebDriver() {
-		if(this.webDriver != null) {
-			this.webDriver.quit();			
+		try {
+			if(this.webDriver != null) {
+				this.webDriver.quit();			
+			}			
+		} catch(WebDriverException e) {
+			log.error("It wasn't possible to quit the webDriver with sessonId: "+sessionId);
 		}
 	}
 

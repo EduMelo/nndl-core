@@ -101,23 +101,32 @@ public class StepRunner {
 					throw new RunStopperException();
 				}
 			} catch(Exception e) {
-				String msg = String.format("Action not performed. Action: %s, stackTrace: %s",
+				String msgSufix = String.format("Action not performed. ");
+				String msgPrefix = String.format("Action: %s, stackTrace: %s",
 						action, e.getStackTrace());
 				if(e instanceof RunStopperException) {
 					throw (RunStopperException) e;
 				}
 				
-				log.error(msg);
+				String msg = "";
 				switch (requirementStatus.getType()) {
 					case NON_REQUIRED:
+						msg = "Non required action exception. ";
+						log.info(msgSufix+msg+msgPrefix);
 						break;
 					case STEP_BREAKER:
+						msg = "Step breaker action exception. ";
+						log.error(msgSufix+msg+msgPrefix);
 						caughtException = new StepBreakerActionNotPerformed(msg, e, requirementStatus.getStepTreatment());
 						break;
 					case REQUIRED:
+						msg = "Required action exception. ";
+						log.error(msgSufix+msg+msgPrefix);
 						caughtException = new RunBreakerActionNotPerformed(msg, e);
 						break;
 					case RESTART_STEP:
+						msg = "Restart step action exception. ";
+						log.debug(msgSufix+msg+msgPrefix);
 						RestartStepRequirementStatus restartRequirementStatus = (RestartStepRequirementStatus) requirementStatus;
 						if(restartRequirementStatus.getRestartCount() >= actionsRestarted) {
 							iterator = runningActions.iterator();

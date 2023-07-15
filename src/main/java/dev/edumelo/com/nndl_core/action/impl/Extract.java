@@ -19,14 +19,17 @@ import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 public class Extract extends Action {
 	private static final String TAG = "extract";
 	private static final String TARGET_TAG = "targertElement";
+	private static final String FROM_CLIPBOARD_TAG = "fromClipboard";
 	private String extractDataBindAdapterName;
 	private StepElement targetElement;
+	private boolean fromClipboard;
 	
 	public Extract(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
 			Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		extractDataBindAdapterName = getExtractoClass(mappedAction);
 		targetElement = getTargetElement(mappedAction, mappedElements);
+		fromClipboard = getFromClipboard(mappedAction, mappedElements);
 	}
 
 	@Override
@@ -44,32 +47,14 @@ public class Extract extends Action {
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
-					throws ActionException {
-		return runElement(webDriver, sessionId, rootElement.getRootElement());
-	}
-
-	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
-		WebElement target =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(ExpectedConditions.elementToBeClickable(
-				targetElement.getLocator(webDriver)));
-		
-		return runElement(webDriver, sessionId, target);
-	}
 	
-	public Advice runElement(SeleniumSndlWebDriver webDriver, String sessionId,
-			WebElement element) {
-		return ContextAdapterHandler.addExtractedData(webDriver, sessionId,
-				extractDataBindAdapterName, element);
-	}
-	
-	private String getExtractoClass(Map<String, ?> mappedAction) {
-		return (String) mappedAction.get(TAG);
+	private boolean getFromClipboard(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+		Object fromClipboardObject = mappedAction.get(FROM_CLIPBOARD_TAG);
+		if(fromClipboardObject != null) {
+			Boolean fromClipboard = (Boolean) fromClipboardObject;
+			return fromClipboard;
+		}
+		return false;
 	}
 	
 	private StepElement getTargetElement(Map<String, ?> mappedAction,
@@ -81,6 +66,45 @@ public class Extract extends Action {
 		}
 		return null;
 	}
+
+	@Override
+	public Advice runNested(String sessionId, SeleniumSndlWebDriver webDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
+					throws ActionException {
+		if(fromClipboard) {
+			return runElementFromClipboard(webDriver, sessionId);
+		}
+		return runElement(webDriver, sessionId, rootElement.getRootElement());
+	}
+	
+	@Override
+	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
+		if(fromClipboard) {
+			return runElementFromClipboard(webDriver, sessionId);
+		}
+		WebElement target =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
+				.until(ExpectedConditions.elementToBeClickable(
+				targetElement.getLocator(webDriver)));
+		
+		return runElement(webDriver, sessionId, target);
+	}
+	
+	private Advice runElementFromClipboard(SeleniumSndlWebDriver webDriver, String sessionId) {
+		return ContextAdapterHandler.addExtractedData(webDriver, sessionId,
+				ContextAdapterHandler.CLIPBOARD_DATA_BINDER_NAME, null);
+	}
+
+	public Advice runElement(SeleniumSndlWebDriver webDriver, String sessionId,
+			WebElement element) {
+		return ContextAdapterHandler.addExtractedData(webDriver, sessionId,
+				extractDataBindAdapterName, element);
+	}
+	
+	private String getExtractoClass(Map<String, ?> mappedAction) {
+		return (String) mappedAction.get(TAG);
+	}
+	
 
 	@Override
 	public String toString() {

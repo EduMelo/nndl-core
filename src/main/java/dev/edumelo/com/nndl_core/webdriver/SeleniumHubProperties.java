@@ -33,6 +33,7 @@ public class SeleniumHubProperties {
 	private Integer port;
 	private String authUser;
 	private String authPassword;
+	private boolean ssl;
 	private String[] browserArguments;
 	private String[] extensions;
 	private List<File> extensionFiles;
@@ -88,6 +89,12 @@ public class SeleniumHubProperties {
 	}
 	public void setAuthUser(String authUser) {
 		this.authUser = authUser;
+	}
+	public boolean isSsl() {
+		return ssl;
+	}
+	public void setSsl(boolean ssl) {
+		this.ssl = ssl;
 	}
 	public String getAuthPassword() {
 		return authPassword;
@@ -161,12 +168,19 @@ public class SeleniumHubProperties {
 	public URL getRemoteDriveUrl() throws MalformedURLException {
 		String url;
 		if(authUser == null) {
-			url = String.format("http:/%s:%d/wd/hub", host, port);
+			url = String.format("%s:/%s:%d/wd/hub", getProtocol(), host, port);
 		} else {
-			url = String.format("http://%s:%s@%s:%d/wd/hub", authUser, authPassword, host, port);
+			url = String.format("%s://%s:%s@%s:%d/wd/hub", getProtocol(), authUser, authPassword, host, port);
 		}
 		log.debug(String.format("Connecting to remote server: %s", url));
 		return new URL(url);
+	}
+
+	private Object getProtocol() {
+		if(isSsl()) {
+			return "https";
+		}
+		return "http";
 	}
 
 	@Override

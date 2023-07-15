@@ -26,6 +26,8 @@ import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 
 public class ContextAdapterHandler {
 
+	public static final String CLIPBOARD_DATA_BINDER_NAME = ClipboardTextFactory.class.getName();
+	
 	private static PassiveExpiringMap<String, String> sessionsIds;
 	private static PassiveExpiringMap<String, List<ContextAdapter>> adapters;
 	private static PassiveExpiringMap<String, List<ExtractDataBind>> extractedData;
@@ -36,7 +38,9 @@ public class ContextAdapterHandler {
 		if(adapters == null) {
 			adapters = new PassiveExpiringMap<>(adapterExpirationPolicy, new HashMap<>());
 		}
-		adapters.put(nndlSessionId, Arrays.asList(context));
+		List<ContextAdapter> contextAdapters = Arrays.asList(context);
+		contextAdapters.add(new ClipboardTextFactory());
+		adapters.put(nndlSessionId, contextAdapters);
 		
 		ConstantTimeToLiveExpirationPolicy<String, List<ExtractDataBind>> extractedDataExpirationPolicy =
 				new ConstantTimeToLiveExpirationPolicy<>(30, TimeUnit.MINUTES);

@@ -4,6 +4,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
+import org.openqa.selenium.WebDriverException;
+
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -44,10 +46,18 @@ public class Goto extends LandmarkConditionAction {
 	
 	@Override
 	public Advice runAction(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) {	
-		remoteWebDriver.getWebDriver().get(this.url.toExternalForm());
+			SeleniumSndlWebDriverWaiter webDriverWait) {
+		//try-catch added to avoid the error described in https://github.com/SeleniumHQ/selenium/issues/12277
+		try {
+			remoteWebDriver.getWebDriver().get(this.url.toExternalForm());			
+		} catch (WebDriverException ex) {
+			if(!remoteWebDriver.getWebDriver().getCurrentUrl()
+					.startsWith(this.url.toExternalForm())) {
+				throw new RuntimeException("Could not access the url "+this.url.toExternalForm());
+			}
+		}
 		
-		setActionPerformed(true);
+		setActionPerformed(false);
 		return new ContinueAdvice();
 	}
 

@@ -8,6 +8,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionException;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.contextAdapter.ClipboardTextFactory;
 import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
@@ -92,7 +93,7 @@ public class Extract extends Action {
 	
 	private Advice runElementFromClipboard(SeleniumSndlWebDriver webDriver, String sessionId) {
 		return ContextAdapterHandler.addExtractedData(webDriver, sessionId,
-				ContextAdapterHandler.CLIPBOARD_DATA_BINDER_NAME, null);
+				ClipboardTextFactory.class.getName(), null);
 	}
 
 	public Advice runElement(SeleniumSndlWebDriver webDriver, String sessionId,

@@ -20,13 +20,13 @@ jobs:
     - uses: actions/checkout@v3
     - name: Place Settings
       run: |
-        echo "${{ secrets.MAVEN_SETTINGS }}" | base64 -d > /tmp/settings
+        echo "${{ secrets.MAVEN_SETTINGS }}" | base64 -d > ${{ github.workspace }}/settings
     - name: Set up JDK 11
       uses: actions/setup-java@v3
       with:
         java-version: '11'
         distribution: 'temurin'
-        settings-path: /tmp/settings
+        overwrite-settings: false
 
     - name: Publish to GitHub Packages Apache Maven
       run: mvn clean deploy

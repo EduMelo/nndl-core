@@ -39,7 +39,6 @@ public class ContextAdapterHandler {
 		}
 		List<ContextAdapter> contextAdapters = new ArrayList<>();
 		contextAdapters.addAll(Arrays.asList(context));
-		contextAdapters.add(new ClipboardTextFactory());
 		adapters.put(nndlSessionId, contextAdapters);
 		
 		ConstantTimeToLiveExpirationPolicy<String, List<ExtractDataBind>> extractedDataExpirationPolicy =

@@ -31,7 +31,7 @@ jobs:
 
     - name: Download Selenium Server JAR
       run: |
-        curl -L -o selenium-server-4.17.0.jar https://github.com/SeleniumHQ/selenium/releases/download/selenium-4.21.0/selenium-server-4.21.0.jar
+        curl -L -o selenium-server-4.21.0.jar https://github.com/SeleniumHQ/selenium/releases/download/selenium-4.21.0/selenium-server-4.21.0.jar
 
     - name: Install Selenium Server JAR to local Maven repository
       run: |

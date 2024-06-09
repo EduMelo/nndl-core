@@ -1,6 +1,5 @@
 package dev.edumelo.com.nndl_core.webdriver;
 
-import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.util.List;
 

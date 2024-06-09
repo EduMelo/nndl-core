@@ -168,9 +168,9 @@ public class SeleniumHubProperties {
 	public URL getRemoteDriveUrl() throws MalformedURLException {
 		String url;
 		if(authUser == null) {
-			url = String.format("%s:/%s:%d/wd/hub", getProtocol(), host, port);
+			url = String.format("%s://%s:%d", getProtocol(), host, port);
 		} else {
-			url = String.format("%s://%s:%s@%s:%d/wd/hub", getProtocol(), authUser, authPassword, host, port);
+			url = String.format("%s://%s:%s@%s:%d", getProtocol(), authUser, authPassword, host, port);
 		}
 		log.debug(String.format("Connecting to remote server: %s", url));
 		return new URL(url);

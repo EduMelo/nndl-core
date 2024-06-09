@@ -21,12 +21,21 @@ jobs:
     - name: Place Settings
       run: |
         echo "${{ secrets.MAVEN_SETTINGS }}" | base64 -d > ${{ github.workspace }}/settings
+
     - name: Set up JDK 11
       uses: actions/setup-java@v3
       with:
         java-version: '11'
         distribution: 'temurin'
         overwrite-settings: false
+
+    - name: Download Selenium Server JAR
+      run: |
+        curl -L -o selenium-server-4.17.0.jar https://github.com/SeleniumHQ/selenium/releases/download/selenium-4.21.0/selenium-server-4.21.0.jar
+
+    - name: Install Selenium Server JAR to local Maven repository
+      run: |
+        mvn install:install-file -Dfile=selenium-server-4.21.0.jar -DgroupId=org.seleniumhq.selenium -DartifactId=selenium-server -Dversion=4.21.0 -Dpackaging=jar
 
     - name: Publish to GitHub Packages Apache Maven
       run: mvn clean deploy

@@ -1,11 +1,13 @@
 package dev.edumelo.com.nndl_core.webdriver;
 
 import java.net.MalformedURLException;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
@@ -34,7 +36,7 @@ public class BrowserControllerDriverConfiguration {
     }
 
 	public WebDriverWait createWait(RemoteWebDriver remoteWebDriver) {
-	    return new WebDriverWait(remoteWebDriver, 0);
+	    return new WebDriverWait(remoteWebDriver, Duration.ZERO);
     }
 
 	public RemoteWebDriver createRemoteDriver(
@@ -77,8 +79,13 @@ public class BrowserControllerDriverConfiguration {
 			options = chromeOptions;
 		}
 		
-		options.setCapability("plataform", properties.getPlataform().name());
-		options.setCapability("version", properties.getBrowserVersion());
+		if(properties.getPlataform() != null) {
+			options.setCapability("platformName", properties.getPlataform().name());			
+		}
+		
+		if(StringUtils.isNotEmpty(properties.getBrowserVersion())) {
+			options.setCapability("browserVersion", properties.getBrowserVersion());			
+		}
 
 		return options;
 	}

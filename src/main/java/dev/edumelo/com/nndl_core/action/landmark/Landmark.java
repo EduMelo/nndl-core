@@ -1,12 +1,13 @@
 package dev.edumelo.com.nndl_core.action.landmark;
 
-import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
 
 public interface Landmark {
-	By getLocator(NndlWebDriver remoteWebDriver);
 	Advice getLandMarkAdvice();
 	Integer getTimeout();
+	ExpectedCondition<WebElement> visibilityOfElementLocated(NndlWebDriver remoteWebDriver);
 }

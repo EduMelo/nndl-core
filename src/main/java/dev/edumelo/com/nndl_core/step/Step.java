@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 
@@ -91,7 +93,9 @@ public class Step {
 	private LinkedList<Action> extractedActions(SeleniumHubProperties seleniumHubProperties,
 			Map<String, StepElement> mappedElements, Map<String, Step> mappedSubSteps,
 			ArrayList<Map<String, ?>> listedActions) {
-		//TODO retirar filtro de não nulo
+		if(CollectionUtils.isEmpty(listedActions)) {
+			return new LinkedList<>();
+		}
 		return listedActions.stream()
 				.map(m -> Action.createAction(seleniumHubProperties, mappedElements, mappedSubSteps,
 						m))

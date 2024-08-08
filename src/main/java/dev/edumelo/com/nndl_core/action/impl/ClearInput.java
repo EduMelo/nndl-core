@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionException;
@@ -49,8 +48,7 @@ public class ClearInput extends Action {
 					throws ActionException {
 		//TODO parametrized duration
 		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(ExpectedConditions.elementToBeClickable(
-				rootElement.getRootElement().findElement(inputElement.getLocator(webDriver))));
+				.until(inputElement.elementToBeClickable(webDriver));
 		return runElement(input);
 	}
 
@@ -58,8 +56,7 @@ public class ClearInput extends Action {
 	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
 		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(ExpectedConditions.elementToBeClickable(
-				inputElement.getLocator(webDriver)));		
+				.until(inputElement.elementToBeClickable(webDriver));		
 		
 		setActionPerformed(true);
 		return runElement(input);

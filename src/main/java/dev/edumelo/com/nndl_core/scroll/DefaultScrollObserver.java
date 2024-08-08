@@ -4,11 +4,9 @@ import java.time.Duration;
 
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dev.edumelo.com.nndl_core.ExtraExpectedConditions;
 import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.StepRunner;
@@ -100,9 +98,8 @@ public class DefaultScrollObserver implements ScrollObserver {
     		if(rootElement != null) {
     			return webDriverWait.getWebDriverWaiter().withTimeout(
     						Duration.ofSeconds(elementTimeoutWait))
-    					.until(ExtraExpectedConditions.presenceOfNestedElementsLocatedBy(
-    							rootElement.getRootElement(), element.getLocator(webDriver)))
-    					.stream()
+    					.until(element.presenceOfNestedElementsLocatedBy(webDriver,
+    							rootElement.getRootElement())).stream()
     					.filter(e -> infiniteScrollCondition.checkCondition(e))
     					.map(e -> new IterationContent(e, loopCount))
     					.map(e -> runner.runStep(iterationStep, e))
@@ -110,8 +107,7 @@ public class DefaultScrollObserver implements ScrollObserver {
     		} else {
     			return webDriverWait.getWebDriverWaiter().withTimeout(
     						Duration.ofSeconds(elementTimeoutWait))
-    					.until(ExpectedConditions.presenceOfAllElementsLocatedBy(element
-    							.getLocator(webDriver))).stream()
+    					.until(element.presenceOfAllElementsLocatedBy(webDriver)).stream()
     					.filter(e -> infiniteScrollCondition.checkCondition(e))
     					.map(e -> new IterationContent(e, loopCount))
     					.map(e -> runner.runStep(iterationStep, e))

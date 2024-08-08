@@ -5,13 +5,12 @@ import java.util.Map;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
-import dev.edumelo.com.nndl_core.action.ActionModificator;
-import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
@@ -42,9 +41,8 @@ private static final String TAG = "hover";
 	@Override
 	public Advice runNested(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
-		ExpectedCondition<WebElement> expectedCondition = ExpectedConditions.elementToBeClickable(
-				rootElement.getRootElement().findElement(hoverableElement
-						.getLocator(remoteWebDriver)));
+		ExpectedCondition<WebElement> expectedCondition = hoverableElement
+				.elementToBeClickable(remoteWebDriver);
 		WebElement element  = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(expectedCondition);
 		return runElement(remoteWebDriver, webDriverWait, element, rootElement, expectedCondition);
@@ -53,9 +51,8 @@ private static final String TAG = "hover";
 	@Override
 	public Advice runAction(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait) {	
-		ExpectedCondition<WebElement> expectedCondition = ExpectedConditions
-				.visibilityOfElementLocated(
-				hoverableElement.getLocator(remoteWebDriver));
+		ExpectedCondition<WebElement> expectedCondition = hoverableElement
+				.visibilityOfElementLocated(remoteWebDriver);
 		WebElement element  = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(expectedCondition);
 		return runElement(remoteWebDriver, webDriverWait, element, null, expectedCondition);

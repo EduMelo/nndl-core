@@ -1,6 +1,7 @@
 package dev.edumelo.com.nndl_core.action.landmark;
 
-import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,11 +29,6 @@ public class LandmarkCoolDown implements Landmark {
 	public LandmarkCoolDown(long cooldown) {
 		this.cooldown = cooldown;
 	}
-	
-	@Override
-	public By getLocator(NndlWebDriver remoteWebDriver) {
-		return null;
-	}
 
 	@Override
 	public Advice getLandMarkAdvice() {
@@ -48,5 +44,10 @@ public class LandmarkCoolDown implements Landmark {
 		String msg = "Methdo getTimeout for LandmarkCoolDown not implemented";
 		log.error(msg);
 		throw new RuntimeException(msg);
+	}
+	
+	@Override
+	public ExpectedCondition<WebElement> visibilityOfElementLocated(NndlWebDriver remoteWebDriver) {
+		return null;
 	}
 }

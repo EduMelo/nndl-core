@@ -3,7 +3,6 @@ package dev.edumelo.com.nndl_core.action.impl;
 import java.util.Map;
 
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionException;
@@ -65,8 +64,7 @@ public class ElementMark extends Action {
 		} else {
 			if(markableElement != null) {
 				target = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-						.until(ExpectedConditions.elementToBeClickable(
-								rootElement.getRootElement().findElement(markableElement.getLocator(webDriver))));
+						.until(markableElement.elementToBeClickable(webDriver));
 			} else {
 				target = rootElement.getRootElement();
 			}
@@ -81,8 +79,7 @@ public class ElementMark extends Action {
 	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
 		WebElement element =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(ExpectedConditions.presenceOfElementLocated(markableElement
-						.getLocator(webDriver)));
+				.until(markableElement.presenceOfElementLocated(webDriver));
 		setActionPerformed(true);
 		return runElement(webDriver, webDriverWait, null, element);
 	}

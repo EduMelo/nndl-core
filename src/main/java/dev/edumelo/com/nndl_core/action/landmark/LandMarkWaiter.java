@@ -7,9 +7,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +39,6 @@ public class LandMarkWaiter {
 		
 		final LandmarkExceptionCapture exceptionCapture = new LandmarkExceptionCapture();
 		for (Landmark landmark : landmarkConditionAggregation.getLandmarkConditions()) {
-			By locator = landmark.getLocator(webDriver);
 			CompletableFuture<Advice> completableFuture = new CompletableFuture<>();
 			landmarkList.add(completableFuture);
 			threads.add(
@@ -55,8 +52,9 @@ public class LandMarkWaiter {
 							}
 						} else {
 							try {
-								webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(landmark.getTimeout())).until(ExpectedConditions
-										.visibilityOfElementLocated(locator));							
+								webDriverWait.getWebDriverWaiter()
+									.withTimeout(Duration.ofSeconds(landmark.getTimeout()))
+									.until(landmark.visibilityOfElementLocated(webDriver));							
 							} catch(WebDriverException e) {
 								log.debug("Landmark wait interrupt. Landmark: {}", landmark);
 								exceptionCapture.setExceptionCaptured(true);

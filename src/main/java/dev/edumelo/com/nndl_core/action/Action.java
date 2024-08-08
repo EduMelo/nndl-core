@@ -9,7 +9,6 @@ import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,11 +143,10 @@ public abstract class Action {
 			WebElement target;
 			if(rootElement != null) {
 				target = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
-						.until(ExpectedConditions.elementToBeClickable(
-								rootElement.getRootElement().findElement(conditionElement.getLocator(webDriver))));				
+						.until(conditionElement.elementToBeClickable(webDriver));				
 			} else {
 				target = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
-						.until(ExpectedConditions.elementToBeClickable(conditionElement.getLocator(webDriver)));
+						.until(conditionElement.elementToBeClickable(webDriver));
 			}
 			
 			ActionCondition condition = conditionClass.getConstructor().newInstance();

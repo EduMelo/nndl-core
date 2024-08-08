@@ -3,7 +3,6 @@ package dev.edumelo.com.nndl_core.action.impl;
 import java.util.Map;
 
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
@@ -42,8 +41,7 @@ public class FillInput extends Action {
 	public Advice runNested(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
 		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(ExpectedConditions.elementToBeClickable(
-				rootElement.getRootElement().findElement(inputElement.getLocator(remoteWebDriver))));
+				.until(inputElement.elementToBeClickable(remoteWebDriver));
 		return runElement(input);
 	}
 	
@@ -51,8 +49,7 @@ public class FillInput extends Action {
 	public Advice runAction(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait) {	
 		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(ExpectedConditions.elementToBeClickable(
-				inputElement.getLocator(remoteWebDriver)));		
+				.until(inputElement.elementToBeClickable(remoteWebDriver));		
 		
 		setActionPerformed(true);
 		return runElement(input);

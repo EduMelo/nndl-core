@@ -92,8 +92,7 @@ public class UploadFile extends Action {
 		driver.switchTo().window(tabs.get(0));
 		
 		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(ExpectedConditions.presenceOfElementLocated(
-				inputElement.getLocator(webDriver)));
+				.until(inputElement.presenceOfElementLocated(webDriver));
 		
 		String[] fileNameArray = url.toString().split("/");
 		String fileName = fileNameArray[fileNameArray.length-1];

@@ -1,13 +1,24 @@
 package dev.edumelo.com.nndl_core.step;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 
 public class StepElement {
+	private static final String SHADOW_ROOT_TAG = "\\$\\{shadowRoot\\}";
 	private static final String IGNORE_ROOT_TAG = "ignoreRoot";
 	private static final String MATCH_EXP_TAG = "matchExp";
 	private static final String NAME_TAG = "name";
@@ -67,10 +78,135 @@ public class StepElement {
 		setMatchExp(stepElement.getMatchExp());
 	}
 	
-	public By getLocator(NndlWebDriver remoteWebDriver) {
-		return By.cssSelector(this.matchExp);
+	private boolean containsShadowRoot() {
+		Pattern pattern = Pattern.compile(SHADOW_ROOT_TAG);
+		Matcher matcher = pattern.matcher(this.matchExp);
+		return matcher.find();
 	}
-
+	
+	private String[] getMatchExpressions() {
+		return this.matchExp.split(SHADOW_ROOT_TAG);
+	}
+	
+	public ExpectedCondition<WebElement> elementToBeClickable(NndlWebDriver remoteWebDriver) {
+		if(containsShadowRoot()) {
+			if((remoteWebDriver instanceof SeleniumSndlWebDriver)) {
+				throw new RuntimeException();
+			}
+			String[] matchExpressions = getMatchExpressions();
+			SeleniumSndlWebDriver seleniumSndlWebDriver = (SeleniumSndlWebDriver) remoteWebDriver;
+			RemoteWebDriver webDriver = seleniumSndlWebDriver.getWebDriver();
+			WebElement shadowHost = webDriver.findElement(By.cssSelector(matchExpressions[0]));
+			SearchContext shadowRoot = shadowHost.getShadowRoot();
+			return driver -> {
+				WebElement element = shadowRoot.findElement(By.cssSelector(matchExpressions[1]));
+				return (element != null && element.isDisplayed() && element.isEnabled()) ? element : null;
+			};
+		} else {
+			By locator = By.cssSelector(getMatchExpressions()[0]);
+			return ExpectedConditions.elementToBeClickable(locator);			
+		}
+	}
+	
+	public ExpectedCondition<WebElement> nestedElementToBeClickable(NndlWebDriver remoteWebDriver, WebElement rootElement) {
+		if(containsShadowRoot()) {
+			String[] matchExpressions = getMatchExpressions();
+			WebElement shadowHost = rootElement.findElement(By.cssSelector(matchExpressions[0]));
+			SearchContext shadowRoot = shadowHost.getShadowRoot(); 
+			return driver -> {
+				WebElement element = shadowRoot.findElement(By.cssSelector(matchExpressions[1]));
+				return (element != null && element.isDisplayed() && element.isEnabled()) ? element : null;
+			};
+		} else {
+			By locator = By.cssSelector(getMatchExpressions()[0]);
+			return ExpectedConditions.elementToBeClickable(rootElement.findElement(locator));			
+		}
+	}
+	
+	public ExpectedCondition<WebElement> visibilityOfElementLocated(NndlWebDriver remoteWebDriver){
+		if(containsShadowRoot()) {
+			if(!(remoteWebDriver instanceof SeleniumSndlWebDriver)) {
+				throw new RuntimeException();
+			}
+			String[] matchExpressions = getMatchExpressions();
+			SeleniumSndlWebDriver seleniumSndlWebDriver = (SeleniumSndlWebDriver) remoteWebDriver;
+			RemoteWebDriver webDriver = seleniumSndlWebDriver.getWebDriver();
+			WebElement shadowHost = webDriver.findElement(By.cssSelector(matchExpressions[0]));
+			SearchContext shadowRoot = shadowHost.getShadowRoot();
+			return driver -> {
+				WebElement element = shadowRoot.findElement(By.cssSelector(matchExpressions[1]));
+				return (element != null && element.isDisplayed()) ? element : null;
+			};
+		} else {
+			By locator = By.cssSelector(getMatchExpressions()[0]);
+			return ExpectedConditions.visibilityOfElementLocated(locator);			
+		}
+	}
+	
+	public ExpectedCondition<WebElement> presenceOfElementLocated(NndlWebDriver remoteWebDriver){
+		if(containsShadowRoot()) {
+			if(!(remoteWebDriver instanceof SeleniumSndlWebDriver)) {
+				throw new RuntimeException();
+			}
+			String[] matchExpressions = getMatchExpressions();
+			SeleniumSndlWebDriver seleniumSndlWebDriver = (SeleniumSndlWebDriver) remoteWebDriver;
+			RemoteWebDriver webDriver = seleniumSndlWebDriver.getWebDriver();
+			WebElement shadowHost = webDriver.findElement(By.cssSelector(matchExpressions[0]));
+			SearchContext shadowRoot = shadowHost.getShadowRoot();
+			return driver -> {
+				return shadowRoot.findElement(By.cssSelector(matchExpressions[1]));
+			};
+		} else {
+			By locator = By.cssSelector(getMatchExpressions()[0]);
+			return ExpectedConditions.presenceOfElementLocated(locator);			
+		}
+	}
+	
+	public ExpectedCondition<List<WebElement>> presenceOfAllElementsLocatedBy(NndlWebDriver remoteWebDriver){
+		if(containsShadowRoot()) {
+			if(!(remoteWebDriver instanceof SeleniumSndlWebDriver)) {
+				throw new RuntimeException();
+			}
+			String[] matchExpressions = getMatchExpressions();
+			SeleniumSndlWebDriver seleniumSndlWebDriver = (SeleniumSndlWebDriver) remoteWebDriver;
+			RemoteWebDriver webDriver = seleniumSndlWebDriver.getWebDriver();
+			WebElement shadowHost = webDriver.findElement(By.cssSelector(matchExpressions[0]));
+			SearchContext shadowRoot = shadowHost.getShadowRoot();
+			return driver -> {
+				List<WebElement> elements = shadowRoot.findElements(By.cssSelector(matchExpressions[1]));
+				return !elements.isEmpty() ? elements : null;
+			};
+		} else {
+			By locator = By.cssSelector(getMatchExpressions()[0]);
+			return ExpectedConditions.presenceOfAllElementsLocatedBy(locator);			
+		}
+	}
+	
+	public ExpectedCondition<List<WebElement>> presenceOfNestedElementsLocatedBy(
+			SeleniumSndlWebDriver seleniumWebDriver, WebElement rootElement) {
+		By locator = By.cssSelector(getMatchExpressions()[0]);
+		if(containsShadowRoot()) {
+			String[] matchExpressions = getMatchExpressions();
+			WebElement shadowHost = rootElement.findElement(By.cssSelector(matchExpressions[0]));
+			SearchContext shadowRoot = shadowHost.getShadowRoot(); 
+			return new ExpectedCondition<List<WebElement>>() {
+				@Override
+				public List<WebElement> apply(WebDriver driver) {
+					List<WebElement> allChildren = shadowRoot.findElements(locator);
+					return allChildren.isEmpty() ? null : allChildren;
+				}
+			};
+		} else {
+			return new ExpectedCondition<List<WebElement>>() {
+				@Override
+				public List<WebElement> apply(WebDriver driver) {
+					List<WebElement> allChildren = rootElement.findElements(locator);
+					return allChildren.isEmpty() ? null : allChildren;
+				}
+			};
+		}
+	  }
+	
 	@Override
 	public String toString() {
 		return "StepElement [name=" + name + ", matchExp=" + matchExp + ", ignoreRoot=" + ignoreRoot + "]";

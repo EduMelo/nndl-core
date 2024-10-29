@@ -60,6 +60,7 @@ public class LandMarkWaiter {
 							} catch(WebDriverException e) {
 								log.debug("Landmark wait interrupt. Landmark: {}", landmark);
 								exceptionCapture.setExceptionCaptured(true);
+								exceptionCapture.setThrowable(e);
 								completableFuture.complete(landmark.getLandMarkAdvice());
 								return;
 							}							
@@ -82,7 +83,7 @@ public class LandMarkWaiter {
 		threads.forEach(Thread::interrupt);
 		
 		if(exceptionCapture.isExceptionCaptured()) {
-			throw new LandmarkException("Exception captured");
+			throw new LandmarkException("Exception captured", exceptionCapture.getThrowable());
 		}
 		
 		return landmarkList.stream()

@@ -9,7 +9,7 @@ import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionException;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.contextAdapter.ClipboardTextFactory;
-import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
+import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
@@ -69,37 +69,34 @@ public class Extract extends Action {
 	}
 
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
-					throws ActionException {
+	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) throws ActionException {
 		if(fromClipboard) {
-			return runElementFromClipboard(webDriver, sessionId);
+			return runElementFromClipboard(webDriver);
 		}
-		return runElement(webDriver, sessionId, rootElement.getRootElement());
+		return runElement(webDriver, rootElement.getRootElement());
 	}
 	
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
+	public Advice runAction(SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
 		if(fromClipboard) {
-			return runElementFromClipboard(webDriver, sessionId);
+			return runElementFromClipboard(webDriver);
 		}
 		WebElement target =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(ExpectedConditions.elementToBeClickable(
 				targetElement.getLocator(webDriver)));
 		
-		return runElement(webDriver, sessionId, target);
+		return runElement(webDriver, target);
 	}
 	
-	private Advice runElementFromClipboard(SeleniumSndlWebDriver webDriver, String sessionId) {
-		return ContextAdapterHandler.addExtractedData(webDriver, sessionId,
-				ClipboardTextFactory.class.getName(), null);
+	private Advice runElementFromClipboard(SeleniumSndlWebDriver webDriver) {
+		return ThreadLocalManager.addExtractedData(webDriver, ClipboardTextFactory.class.getName(),
+				null);
 	}
 
-	public Advice runElement(SeleniumSndlWebDriver webDriver, String sessionId,
-			WebElement element) {
-		return ContextAdapterHandler.addExtractedData(webDriver, sessionId,
-				extractDataBindAdapterName, element);
+	public Advice runElement(SeleniumSndlWebDriver webDriver, WebElement element) {
+		return ThreadLocalManager.addExtractedData(webDriver, extractDataBindAdapterName, element);
 	}
 	
 	private String getExtractoClass(Map<String, ?> mappedAction) {

@@ -1,6 +1,8 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 
@@ -38,15 +40,14 @@ public class Goto extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {	
+	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) {	
 		remoteWebDriver.getWebDriver().get(this.url.toExternalForm());
 		return new ContinueAdvice();
 	}
 	
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) {
+	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {
 		//try-catch added to avoid the error described in https://github.com/SeleniumHQ/selenium/issues/12277
 		try {
 			remoteWebDriver.getWebDriver().get(this.url.toExternalForm());			
@@ -64,8 +65,8 @@ public class Goto extends LandmarkConditionAction {
 	private URL getUrl(Map<String, ?> mappedAction) {
 		String urlString = (String) mappedAction.get(TAG);
 		try {
-			return new URL(urlString);
-		} catch (MalformedURLException e) {
+			return new URI(urlString).toURL();
+		} catch (MalformedURLException | URISyntaxException e) {
 			throw new RuntimeException(String.format("Cannot create URL from the string: %s ", urlString));
 		}
 	}

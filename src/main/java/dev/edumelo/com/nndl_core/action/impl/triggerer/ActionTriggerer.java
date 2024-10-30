@@ -1,12 +1,15 @@
 package dev.edumelo.com.nndl_core.action.impl.triggerer;
 
+import static java.util.stream.Collectors.toList;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import dev.edumelo.com.nndl_core.action.ActionException;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
-import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
+import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -15,9 +18,6 @@ import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
-import static java.util.stream.Collectors.*;
-
-import java.util.Arrays;
 
 @SuppressWarnings("unchecked")
 public class ActionTriggerer extends LandmarkConditionAction {
@@ -47,27 +47,26 @@ public class ActionTriggerer extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
-					throws ActionException {
-		return runElement(sessionId, webDriver, webDriverWait, rootElement);
+	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) throws ActionException {
+		return runElement(webDriver, webDriverWait, rootElement);
 	}
 	
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
+	public Advice runAction(SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
-		return runElement(sessionId, webDriver, webDriverWait, null);
+		return runElement(webDriver, webDriverWait, null);
 	}
 	
-	public Advice runElement(String sessionId, SeleniumSndlWebDriver webDriver,
+	public Advice runElement(SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
 
 		Object[] translatedParams = Arrays.stream(triggerParams)
-				.map(p -> SpecialParamsTranslater.translateIfSpecial(sessionId, p))
+				.map(p -> SpecialParamsTranslater.translateIfSpecial(p))
 				.collect(toList())
 				.toArray(new String[0]);
 				
-		ContextAdapterHandler.triggerAction(sessionId, triggerId, translatedParams);
+		ThreadLocalManager.triggerAction(triggerId, translatedParams);
 		
 		setActionPerformed(true);			
 		return new ContinueAdvice();

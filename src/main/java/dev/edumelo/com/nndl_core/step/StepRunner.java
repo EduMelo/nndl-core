@@ -29,15 +29,12 @@ public class StepRunner {
 	private final SeleniumSndlWebDriverWaiter webDriverWait;
 	private ActionRunner actionRunner;
 	private Map<String, Step> steps;
-	private String sessionId;
 	
-	public StepRunner(String sessionId, SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait) {
-		this.sessionId = sessionId;
+	public StepRunner(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait) {
 		this.webDriver = webDriver;
 		this.webDriverWait = webDriverWait;
 		Collection<ExtractDataBind> extractDataBindCollection = new ArrayList<ExtractDataBind>();
-		this.actionRunner = new ActionRunner(sessionId, webDriver, webDriverWait,
-				extractDataBindCollection);
+		this.actionRunner = new ActionRunner(webDriver, webDriverWait, extractDataBindCollection);
 	}
 
 	public void runSteps(String entryStep, Map<String, Step> steps) {
@@ -167,7 +164,7 @@ public class StepRunner {
 		for (Step step : steps.values()) {
 			LinkedList<Action> runningActions = step.getActions();
 			for (Action action : runningActions) {
-				actionRunner.run(sessionId, rootElement, action);
+				actionRunner.run(rootElement, action);
 			}
 		}
 	}

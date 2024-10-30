@@ -9,7 +9,7 @@ import org.openqa.selenium.Cookie;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
-import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
+import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -44,21 +44,18 @@ public class LoadCookies extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
-		return runElement(sessionId, remoteWebDriver, webDriverWait);
+	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) {
+		return runElement(remoteWebDriver, webDriverWait);
 	}
 	
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) {	
-		return runElement(sessionId, remoteWebDriver, webDriverWait);
+	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {	
+		return runElement(remoteWebDriver, webDriverWait);
 	}
 	
-	public Advice runElement(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) {
-		Set<Cookie> cookies = ContextAdapterHandler.retrieveCookies(sessionId,
-				(Object[]) retrieverParams);
+	public Advice runElement(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {
+		Set<Cookie> cookies = ThreadLocalManager.retrieveCookies((Object[]) retrieverParams);
 		cookies.stream().forEach(remoteWebDriver.getWebDriver().manage()::addCookie);
 		remoteWebDriver.getWebDriver().navigate().refresh();
 		

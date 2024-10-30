@@ -13,24 +13,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
-import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
+import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
 
 public class NndlParser {
 	private static final Logger log = LoggerFactory.getLogger(NndlParser.class);
 	
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> getYamlStack(String sessionId, ArrayList<String> nndlStack) {
+	public Map<String, Object> getYamlStack(ArrayList<String> nndlStack) {
 		if(CollectionUtils.isEmpty(nndlStack)) {
 			throw new RuntimeException("There should have at last one item on nndlStack");
 		}
 		
 		Yaml yaml = new Yaml();
-		String yamlString = replaceTags(nndlStack.get(0), ContextAdapterHandler
-				.getVariableSubstitutionMap(sessionId));
+		String yamlString = replaceTags(nndlStack.get(0), ThreadLocalManager.getVariableSubstitutionMap());
 		Map<String, Object> loadedYaml = yaml.load(yamlString);
 		for (int i = 1; i < nndlStack.size(); i++) {
-			String yamlImportString = replaceTags(nndlStack.get(i), ContextAdapterHandler
-					.getVariableSubstitutionMap(sessionId));
+			String yamlImportString = replaceTags(nndlStack.get(i), ThreadLocalManager.getVariableSubstitutionMap());
 			Map<String, Object> importMap = yaml.load(yamlImportString);
 			List<Object> originalSteps = (List<Object>) loadedYaml.get("steps");
 			List<Object> importedSteps = (List<Object>) importMap.get("steps");
@@ -41,12 +39,12 @@ public class NndlParser {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> getYamlStack(String sessionId, String yamlString) {
+	public Map<String, Object> getYamlStack(String yamlString) {
 		Yaml yaml = new Yaml();
 		Map<String, Object> loadedYaml = yaml.load(yamlString);
 		List<String> imports = getImports(yamlString);
 		for (String sndlImport : imports) {
-			String file = getYamlString(sessionId, sndlImport);
+			String file = getYamlString(sndlImport);
 			Map<String, Object> importMap = yaml.load(file);
 			List<Object> originalSteps = (List<Object>) loadedYaml.get("steps");
 			List<Object> importedSteps = (List<Object>) importMap.get("steps");
@@ -70,15 +68,14 @@ public class NndlParser {
 		return imports;
 	}
 	
-	public String getYamlString(String sessionId, String sndlFile) {
+	public String getYamlString(String sndlFile) {
 		InputStream input = this.getClass()
 				.getClassLoader()
 				.getResourceAsStream(sndlFile);
 		
 		try {		
 			String yamlString = IOUtils.toString(input, "UTF-8");
-			return replaceTags(yamlString, ContextAdapterHandler
-					.getVariableSubstitutionMap(sessionId));
+			return replaceTags(yamlString, ThreadLocalManager.getVariableSubstitutionMap());
 		} catch (IOException e) {
 			String msg = "";
 			log.error(msg);

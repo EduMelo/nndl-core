@@ -40,8 +40,8 @@ private static final String TAG = "hover";
 	}
 	
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
+	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) {
 		ExpectedCondition<WebElement> expectedCondition = ExpectedConditions.elementToBeClickable(
 				rootElement.getRootElement().findElement(hoverableElement
 						.getLocator(remoteWebDriver)));
@@ -51,8 +51,7 @@ private static final String TAG = "hover";
 	}
 	
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) {	
+	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {	
 		ExpectedCondition<WebElement> expectedCondition = ExpectedConditions
 				.visibilityOfElementLocated(
 				hoverableElement.getLocator(remoteWebDriver));
@@ -64,12 +63,10 @@ private static final String TAG = "hover";
 	public Advice runElement(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait, 
 			WebElement element, IterationContent rootElement, ExpectedCondition<WebElement> expectedCondition) {
 		
-//		positionBefore(remoteWebDriver, webDriverWait, element, expectedCondition);
 		Actions actions = new Actions(remoteWebDriver.getWebDriver());
 		if(checkCondition(remoteWebDriver, webDriverWait, rootElement)) {
 			actions.moveToElement(element).perform();
 		}
-//		positionAfter(remoteWebDriver, webDriverWait, element, expectedCondition);
 		
 		setActionPerformed(true);
 		return new ContinueAdvice();

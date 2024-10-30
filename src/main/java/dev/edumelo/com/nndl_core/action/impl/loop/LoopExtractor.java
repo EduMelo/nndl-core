@@ -100,11 +100,11 @@ public class LoopExtractor {
 		return null;
 	}
 	
-	public static Class<ExtractDataBindAdapter> extractResultFillerClass(Map<String, ?> mappedAction) {
+	public static Class<ExtractDataBindAdapter<?>> extractResultFillerClass(Map<String, ?> mappedAction) {
 		String className = (String) mappedAction.get(FILL_TAG);
 		if(className != null) {
 			try {
-				return (Class<ExtractDataBindAdapter>) Class.forName(className);
+				return (Class<ExtractDataBindAdapter<?>>) Class.forName(className);
 			} catch (ClassNotFoundException e) {
 				String message = String.format("Cannot found class by the name: %s", className);
 				log.error(message);

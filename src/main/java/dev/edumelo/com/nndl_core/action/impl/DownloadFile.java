@@ -1,6 +1,8 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +36,8 @@ public class DownloadFile extends Action {
 	private URL getUrl(Map<String, ?> mappedAction) {
 		String urlString = (String) mappedAction.get(URL_TAG);
 		try {
-			return new URL(urlString);
-		} catch (MalformedURLException e) {
+			return new URI(urlString).toURL();
+		} catch (MalformedURLException | URISyntaxException e) {
 			throw new RuntimeException(String.format("Cannot create URL from the string: %s ",
 					urlString));
 		}
@@ -57,15 +59,14 @@ public class DownloadFile extends Action {
 	}
 
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
-					throws ActionException {
+	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) throws ActionException {
 		return runElment(webDriver, webDriverWait);
 	}
 
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
+	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
+			throws ActionException {
 		return runElment(webDriver, webDriverWait);
 	}
 

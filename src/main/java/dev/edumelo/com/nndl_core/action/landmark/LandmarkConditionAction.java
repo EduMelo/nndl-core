@@ -31,29 +31,31 @@ public abstract class LandmarkConditionAction extends Action {
 
 	protected void setLandMarkConditionAgregation(Map<String, ?> mappedAction,
 			Map<String, StepElement> mappedElements) {
-		this.landmarkConditionAggregation = LandmarkConditionAggregation.createLandmarkConditionAggregation(mappedElements, mappedAction);
+		this.landmarkConditionAggregation = LandmarkConditionAggregation.createLandmarkConditionAggregation(
+				mappedElements, mappedAction);
 	}
 	
-	private Advice wait(LandMarkWaiter landmarkWaiter, LandmarkConditionAggregation landmarkConditionAggregation) throws LandmarkException {
+	private Advice wait(LandMarkWaiter landmarkWaiter, LandmarkConditionAggregation landmarkConditionAggregation) 
+			throws LandmarkException {
 		log.debug("wait: landmarkConditionAggregation: {}", landmarkWaiter, landmarkConditionAggregation);
 		return landmarkWaiter.wait(landmarkConditionAggregation);
 	}
 
-	public Advice runSequentialWait(String sessionId, SeleniumSndlWebDriver webDriver,
+	public Advice runSequentialWait(SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, 
 			LandMarkWaiter landmarkWaiter, IterationContent rootElement) throws ActionException {
 		log.debug("runSequentialWait: rootElement:{}", rootElement);	
-		this.run(sessionId, webDriver, webDriverWait, rootElement);
+		run(webDriver, webDriverWait, rootElement);
 		return wait(landmarkWaiter, landmarkConditionAggregation);
 	}
 
 	
-	public void runPrecedentWait(String sessionId, SeleniumSndlWebDriver webDriver,
+	public void runPrecedentWait(SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, 
 			LandMarkWaiter landmarkWaiter, IterationContent rootElement) throws ActionException {
 		log.debug("runPrecedentWait: rootElement:{}", rootElement);
 		wait(landmarkWaiter, landmarkConditionAggregation);
-		this.run(sessionId, webDriver, webDriverWait, rootElement);
+		this.run(webDriver, webDriverWait, rootElement);
 	}
 	
 }

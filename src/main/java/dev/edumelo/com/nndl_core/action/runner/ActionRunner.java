@@ -17,12 +17,9 @@ public class ActionRunner {
 	private final SeleniumSndlWebDriver webDriver;
 	private final SeleniumSndlWebDriverWaiter webDriverWait;
 	private LandMarkWaiter landmarkWaiter;
-	private String sessionId;
 
-	public ActionRunner(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait,
+	public ActionRunner(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait,
 			Collection<ExtractDataBind> extractDataBindList) {
-		this.sessionId = sessionId;
 		this.webDriver = remoteWebDriver;
 		this.webDriverWait = webDriverWait;
 		this.landmarkWaiter = new LandMarkWaiter(remoteWebDriver, webDriverWait);
@@ -32,10 +29,10 @@ public class ActionRunner {
 		Advice advice = null;
 		
 		if(action instanceof LandmarkConditionAction) {
-			advice = ((LandmarkConditionAction) action).runSequentialWait(sessionId, webDriver,
+			advice = ((LandmarkConditionAction) action).runSequentialWait(webDriver,
 					webDriverWait, landmarkWaiter, rootElement);
 		} else {
-			advice = action.run(sessionId, webDriver, webDriverWait, rootElement);			
+			advice = action.run(webDriver, webDriverWait, rootElement);			
 		}
 		
 		return advice;

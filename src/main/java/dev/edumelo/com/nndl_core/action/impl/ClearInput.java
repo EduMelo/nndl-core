@@ -44,9 +44,8 @@ public class ClearInput extends Action {
 	}
 
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
-					throws ActionException {
+	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) throws ActionException {
 		//TODO parametrized duration
 		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(ExpectedConditions.elementToBeClickable(
@@ -55,8 +54,8 @@ public class ClearInput extends Action {
 	}
 
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
+	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
+			throws ActionException {
 		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(ExpectedConditions.elementToBeClickable(
 				inputElement.getLocator(webDriver)));		

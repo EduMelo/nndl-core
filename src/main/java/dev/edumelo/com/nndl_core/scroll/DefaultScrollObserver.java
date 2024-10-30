@@ -37,7 +37,6 @@ public class DefaultScrollObserver implements ScrollObserver {
         this.webDriverWait = adapter.getWebDriverWait();
         this.iterationStep = adapter.getIterationStep();
         this.infiniteScrollCondition = adapter.getInfiniteScrollCondition();
-        this.sessionId = adapter.getSessionId();
         this.rootElement = adapter.getRootElement();
         this.element = adapter.getElement();
         this.runner = adapter.getRunner();

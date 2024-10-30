@@ -34,7 +34,7 @@ public class Loop extends Action {
 	private static final int DEFAULT_MAX_LOOP_COUNT = 50;
 	
 	private Class<ScrollObserver> infinitScrollObserverClass;
-	private Class<ExtractDataBindAdapter> resultFillerClass;
+	private Class<ExtractDataBindAdapter<?>> resultFillerClass;
 	private Class<InfiniteScrollCondition> conditionClass;
 	private ScrollObserver extractorObserver;
 	private Collection<ExtractDataBind> extractData;
@@ -74,28 +74,28 @@ public class Loop extends Action {
 	}
 	
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
+	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
 					throws ActionException {
 		log.debug("runNested");
-		return runElement(sessionId, remoteWebDriver, webDriverWait, rootElement);
+		return runElement(remoteWebDriver, webDriverWait, rootElement);
 	}
 	
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
+	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
 		log.debug("runAction");
-		return runElement(sessionId, remoteWebDriver, webDriverWait, null);
+		return runElement(remoteWebDriver, webDriverWait, null);
 	}
 	
-	public Advice runElement(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
+	public Advice runElement(SeleniumSndlWebDriver remoteWebDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) 
 			throws InfiniteScrollMaxLoopCountReached {
 		int maxLoopCount = DEFAULT_MAX_LOOP_COUNT;
 		
 		switch (iterationScope.getType()) {
 		case PAGE_ELEMENT:
-			runInfiniteScroll(sessionId, remoteWebDriver, webDriverWait, rootElement, maxLoopCount);			
+			runInfiniteScroll(remoteWebDriver, webDriverWait, rootElement, maxLoopCount);			
 			break;
 		default:
 			runListScroll(remoteWebDriver, webDriverWait, rootElement, maxLoopCount);
@@ -112,10 +112,10 @@ public class Loop extends Action {
 		listScroll.scroll(maxLoopCount, limit);
 	}
 
-	private void runInfiniteScroll(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
+	private void runInfiniteScroll(SeleniumSndlWebDriver remoteWebDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement,
 			int maxLoopCount) throws InfiniteScrollMaxLoopCountReached {
-		InfiniteScroll infiniteScroll = InfiniteScrollFactory.create(sessionId, conditionClass,
+		InfiniteScroll infiniteScroll = InfiniteScrollFactory.create(conditionClass,
 				remoteWebDriver, webDriverWait, rootElement, scrollCount, autoScrool,
 				iterationScope, infinitScrollObserverClass, iterationStep, throwTimeout,
 				elementTimeoutWait);

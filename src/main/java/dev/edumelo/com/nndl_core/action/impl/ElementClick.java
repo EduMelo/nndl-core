@@ -37,8 +37,8 @@ public class ElementClick extends LandmarkConditionAction {
 	}
 
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {	
+	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) {	
 		WebElement button = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(ExpectedConditions.elementToBeClickable(
 				rootElement.getRootElement().findElement(clickableElement.getLocator(webDriver))));
@@ -46,8 +46,7 @@ public class ElementClick extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) {	
+	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait) {	
 		WebElement button = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(ExpectedConditions.elementToBeClickable(
 					clickableElement.getLocator(webDriver)));			

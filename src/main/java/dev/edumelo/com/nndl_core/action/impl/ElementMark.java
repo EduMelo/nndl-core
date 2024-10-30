@@ -56,8 +56,8 @@ public class ElementMark extends Action {
 	}
 	
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
+	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement)
 					throws ActionException {
 		WebElement target = null;
 		if(isTargetSpecial(markableElement)) {
@@ -78,8 +78,8 @@ public class ElementMark extends Action {
 
 
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
+	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
+			throws ActionException {
 		WebElement element =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(ExpectedConditions.presenceOfElementLocated(markableElement
 						.getLocator(webDriver)));

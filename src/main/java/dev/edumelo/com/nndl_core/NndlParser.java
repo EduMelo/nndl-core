@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -42,7 +43,7 @@ public class NndlParser {
 	public Map<String, Object> getYamlStack(String yamlString) {
 		Yaml yaml = new Yaml();
 		Map<String, Object> loadedYaml = yaml.load(yamlString);
-		List<String> imports = getImports(yamlString);
+		List<String> imports = getImports(yamlString).orElse(new ArrayList<String>());
 		for (String sndlImport : imports) {
 			String file = getYamlString(sndlImport);
 			Map<String, Object> importMap = yaml.load(file);
@@ -54,18 +55,22 @@ public class NndlParser {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<String> getImports(String yamlString) {
+	public Optional<List<String>> getImports(String yamlString) {
 		Yaml yaml = new Yaml();
 		Map<String, Object> loadedYaml = yaml.load(yamlString);
 		List<String> imports = new ArrayList<>();
 		Object imp = loadedYaml.get("import");
+		
+		if(imp == null) {
+			return Optional.ofNullable(null);
+		}
 		
 		if(imp instanceof String) {
 			imports.add((String) imp);
 		} else if(imp instanceof List) {
 			imports = (List<String>) imp;
 		}
-		return imports;
+		return Optional.ofNullable(imports);
 	}
 	
 	public String getYamlString(String sndlFile) {

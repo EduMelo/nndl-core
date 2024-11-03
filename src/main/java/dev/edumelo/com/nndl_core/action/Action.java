@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatus;
 import dev.edumelo.com.nndl_core.action.utils.Position;
+import dev.edumelo.com.nndl_core.exceptions.ActionException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -52,15 +54,10 @@ public abstract class Action {
 	public abstract Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
 			throws ActionException;
 	
-	public Action(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
+	public Action(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction,
 			Map<String, StepElement> mappedElements) {
 		this.seleniumHubProperties = seleniumHubProperties;
-		Object objectTimeout = mappedAction.get(TIMEOUT_TAG);
-		if(objectTimeout == null) {
-			timeoutSeconds = getDefaultTimeout();
-		} else {
-			timeoutSeconds = (Integer) objectTimeout;
-		}
+		timeoutSeconds = mappedAction.getScalarValueFromChild(TIMEOUT_TAG, Integer.class).orElse(getDefaultTimeout());
 	}
 	
 	public int getOrder() {
@@ -189,27 +186,25 @@ public abstract class Action {
 		return Action.TAG;
 	}
 	
-	public static Action createAction(SeleniumHubProperties seleniumHubProperties,
-			Map<String, StepElement> mappedElements, Map<String, ?> mappedSubSteps,
-			Map<String, ?> mappedAction) {
+	public static Action createAction(SeleniumHubProperties seleniumHubProperties, Map<String, StepElement> mappedElements,
+			Map<String, ?> mappedSubSteps, NndlNode mappedAction) {
 		ActionType actionType = indentifyAction(mappedAction);
 		Action createdAction;
 		try {
 			if(actionType.isSubstepsRequired()) {
 				createdAction = actionType.getAction()
-						.getConstructor(SeleniumHubProperties.class, Map.class, Map.class, Map.class)
+						.getConstructor(SeleniumHubProperties.class, NndlNode.class, Map.class, Map.class)
 						.newInstance(seleniumHubProperties, mappedAction, mappedSubSteps, mappedElements);				
 			} else {
 				createdAction = actionType.getAction().getConstructor(SeleniumHubProperties.class,
-						Map.class, Map.class)
+						NndlNode.class, Map.class)
 						.newInstance(seleniumHubProperties, mappedAction, mappedElements);
 			}
 				
 			createdAction.setOrder(ActionExtractor.getOrder(mappedAction));
 			createdAction.setRequirementStatus(ActionExtractor.getRequirementStatus(mappedAction));
 			createdAction.setConditionClass(ActionExtractor.getConditionClass(mappedAction));
-			createdAction.setConditionElement(ActionExtractor.getConditionElement(mappedAction,
-					mappedElements));
+			createdAction.setConditionElement(ActionExtractor.getConditionElement(mappedAction, mappedElements));
 			createdAction.setLimitRequirement(ActionExtractor.getLimitRequirement(mappedAction));
 			createdAction.setPositionAfter(ActionExtractor.getPositionAfter(mappedAction));
 			createdAction.setPositionBefore(ActionExtractor.getPositionBefore(mappedAction));
@@ -253,11 +248,11 @@ public abstract class Action {
 		return iterationContent.getCount() % onEach == 0;
 	}
 
-	private static ActionType indentifyAction(Map<String, ?> mappedAction) {
+	private static ActionType indentifyAction(NndlNode mappedAction) {
 		log.debug("identifyAction. mappedAction: {}", mappedAction);
 		
 		return Arrays.stream(ActionType.values())
-			.filter(e -> mappedAction.containsKey(e.getActionTag()))
+			.filter(e -> mappedAction.hasValueFromChild(e.getActionTag()))
 			.findFirst()
 			.orElseThrow(() -> new RuntimeException("Non identify action: "+mappedAction));
 	}

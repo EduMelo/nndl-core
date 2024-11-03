@@ -3,6 +3,7 @@ package dev.edumelo.com.nndl_core.action.impl;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.openqa.selenium.Cookie;
@@ -10,6 +11,8 @@ import org.openqa.selenium.Cookie;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -18,23 +21,20 @@ import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
-@SuppressWarnings("unchecked")
 public class StoreCookies extends LandmarkConditionAction {
 	
 	private static final String TAG = "storeCookies";
 	private static final String STORER_PARAMS_TAG = "storerParams";
-	private static final String USER_HANDLE_TAG = "userHandle";
 	private String[] storerParams;
-	private String userHandle;
 	
-	public StoreCookies(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
+	public StoreCookies(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction,
 			Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
-		Map<String, ?> mappedStoreCookies = (Map<String, ?>) mappedAction.get(TAG);
+		NndlNode mappedStoreCookies = mappedAction.getValueFromChild(TAG)
+				.orElseThrow(() -> new NndlParserException("StoreCookies tag should have "+TAG+" tag.", mappedAction));
 		
 		this.storerParams = getStorerParams(mappedStoreCookies);
-		this.userHandle = getUserHandle(mappedStoreCookies);
-		setLandMarkConditionAgregation((Map<String, ?>) mappedAction.get(TAG), mappedElements);
+		setLandMarkConditionAgregation(mappedStoreCookies, mappedElements);
 	}
 	
 	@Override
@@ -65,13 +65,16 @@ public class StoreCookies extends LandmarkConditionAction {
 		setActionPerformed(true);
 		return new ContinueAdvice();
 	}
-	
-	private String getUserHandle(Map<String, ?> mappedStoreCookies) {
-		return (String) mappedStoreCookies.get(USER_HANDLE_TAG);
-	}
 
-	private String[] getStorerParams(Map<String, ?> mappedLoadCookies) {
-		return ((List<String>) mappedLoadCookies.get(STORER_PARAMS_TAG)).toArray(new String[0]);
+	private String[] getStorerParams(NndlNode mappedLoadCookies) {
+		List<NndlNode> storerParamsList = mappedLoadCookies
+			.getListedValuesFromChild(STORER_PARAMS_TAG)
+			.orElseThrow(NndlParserException.get("Action StoreCookies should have "+STORER_PARAMS_TAG+" tag.",
+					mappedLoadCookies));
+		return storerParamsList.stream()
+			.map(n -> n.getScalarValue())
+			.flatMap(Optional::stream)
+			.toArray(String[]::new);
 	}
 
 	@Override
@@ -82,7 +85,7 @@ public class StoreCookies extends LandmarkConditionAction {
 
 	@Override
 	public String toString() {
-		return "StoreCookies [storerParams=" + Arrays.toString(storerParams)
-				+ ", userHandle=" + userHandle + "]";
+		return "StoreCookies [storerParams=" + Arrays.toString(storerParams) + "]";
 	}
+
 }

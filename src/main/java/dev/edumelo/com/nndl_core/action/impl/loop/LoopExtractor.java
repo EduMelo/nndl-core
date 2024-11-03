@@ -2,19 +2,19 @@ package dev.edumelo.com.nndl_core.action.impl.loop;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang.StringUtils;
 
 import dev.edumelo.com.nndl_core.contextAdapter.ExtractDataBindAdapter;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.scroll.InfiniteScrollCondition;
 import dev.edumelo.com.nndl_core.scroll.ScrollObserver;
 import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.step.StepElement;
+import dev.edumelo.com.nndl_core.utils.ClassUtils;
 
 @SuppressWarnings("unchecked")
 public class LoopExtractor {
-	
-	private static final Logger log = LoggerFactory.getLogger(LoopExtractor.class);
 	
 	public static final String TAG = "loop";
 	private static final String AUTO_SCROLL_TAG = "autoScroll";
@@ -34,108 +34,68 @@ public class LoopExtractor {
 		return TAG;
 	}
 
-	public static boolean extractAutoScroll(Map<String, ?> mappedAction) {
-		Object autoScrollValue = mappedAction.get(AUTO_SCROLL_TAG);
-		if(autoScrollValue != null) {
-			return (Boolean) autoScrollValue;
-		}
-		return true;
+	public static boolean extractAutoScroll(NndlNode mappedAction) {
+		return mappedAction.getScalarValueFromChild(AUTO_SCROLL_TAG, Boolean.class).orElse(true);
 	}
 	
-	public static Long extractLimit(Map<String, ?> mappedAction) {
-		Object value = mappedAction.get(LIMIT_TAG);
-		if(value == null) {
-			return null;
-		}
-		return ((Integer) value).longValue();
+	public static Long extractLimit(NndlNode mappedAction) {
+		return mappedAction.getScalarValueFromChild(LIMIT_TAG, Long.class).orElse(null);
 	}
 
-	public static int extractScrollCount(Map<String, ?> mappedAction) {
-		Object value = mappedAction.get(SCROLL_COUNT_TAG);
-		if(value == null) {
-			return DEFAULT_SCROLL_DEGREE;
-		}
-		return (Integer) value;
+	public static int extractScrollCount(NndlNode mappedAction) {
+		return mappedAction.getScalarValueFromChild(SCROLL_COUNT_TAG, Integer.class).orElse(DEFAULT_SCROLL_DEGREE);
 	}
 	
-	public static Class<ScrollObserver> extractInfiniteScrollObserversClass(Map<String, ?> mappedAction) {
-		String className = (String) mappedAction.get(TAG);
-		if(className == null) {
-			return null;
-		}
-		try {
-			return (Class<ScrollObserver>) Class.forName(className);
-		} catch (ClassNotFoundException e) {
-			String message = String.format("Cannot found class by the name: %s", className);
-			log.error(message);
-			throw new RuntimeException(message);
-		}
+	public static Class<ScrollObserver> extractInfiniteScrollObserversClass(NndlNode mappedAction) {
+		return mappedAction
+				.getScalarValueFromChild(TAG)
+				.filter(StringUtils::isNotEmpty)
+				.flatMap(ClassUtils::loadClass)
+				.map(c -> (Class<ScrollObserver>) c)
+				.orElse(null);
 	}
 
-	public static LoopIterationScope extractIterationScope(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		Map<String, ?> iterationScope = (Map<String, ?>) mappedAction.get(ITERATION_SCOPE_TAG);
+	public static LoopIterationScope extractIterationScope(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		NndlNode iterationScope = mappedAction.getValueFromChild(ITERATION_SCOPE_TAG).orElseThrow(NndlParserException
+				.get("Action Loop should have "+ITERATION_SCOPE_TAG+" tag.", mappedAction));
 		return LoopIterationScopeFactory.create(iterationScope, mappedElements);
 	}
 
-	public static Step extractIterationStep(Map<String, ?> mappedAction, Map<String, ?> mappedSubSteps) {
+	public static Step extractIterationStep(NndlNode mappedAction, Map<String, ?> mappedSubSteps) {
 		if(mappedSubSteps == null) {
 			return null;
 		}
 		
-		String iterationStepName = (String) mappedAction.get(EXECUTE_TAG);
+		String iterationStepName = mappedAction.getScalarValueFromChild(EXECUTE_TAG)
+				.orElseThrow(NndlParserException.get("Action Loop should have "+EXECUTE_TAG+" tag.", mappedAction));
 		return (Step) mappedSubSteps.get(iterationStepName);
 	}
 
-	public static Class<InfiniteScrollCondition> extractConditionClass(Map<String, ?> mappedAction) {
-		String className = (String) mappedAction.get(EXECUTE_CONDITIONS);
-		if(className != null) {
-			try {
-				return (Class<InfiniteScrollCondition>) Class.forName(className);			
-			} catch (ClassNotFoundException e) {
-				String message = String.format("Cannot found class by name: %s", className);
-				log.error(message);
-				throw new RuntimeException(message, e);
-			}			
-		}
-		return null;
+	public static Class<InfiniteScrollCondition> extractConditionClass(NndlNode mappedAction) {
+		return mappedAction.getScalarValueFromChild(EXECUTE_CONDITIONS)
+				.filter(StringUtils::isNotEmpty)
+				.flatMap(ClassUtils::loadClass)
+				.map(c -> (Class<InfiniteScrollCondition>) c)
+				.orElse(null);
 	}
 	
-	public static Class<ExtractDataBindAdapter<?>> extractResultFillerClass(Map<String, ?> mappedAction) {
-		String className = (String) mappedAction.get(FILL_TAG);
-		if(className != null) {
-			try {
-				return (Class<ExtractDataBindAdapter<?>>) Class.forName(className);
-			} catch (ClassNotFoundException e) {
-				String message = String.format("Cannot found class by the name: %s", className);
-				log.error(message);
-				throw new RuntimeException(message, e);
-			}			
-		}
-		
-		return null;
+	public static Class<ExtractDataBindAdapter<?>> extractResultFillerClass(NndlNode mappedAction) {
+		return mappedAction.getScalarValueFromChild(FILL_TAG)
+				.filter(StringUtils::isNotEmpty)
+				.flatMap(ClassUtils::loadClass)
+				.map(c -> (Class<ExtractDataBindAdapter<?>>) c)
+				.orElse(null);
 	}
 
-	public static boolean extractIgnoreMaxLoopCountException(Map<String, ?> mappedAction) {
-		Object ignoreMaxLoopCountExceptionValue = mappedAction.get(IGNORE_MAX_LOOP_COUNT_EXCEPTION);
-		if(ignoreMaxLoopCountExceptionValue == null) {
-			return false;
-		}
-		return (boolean) ignoreMaxLoopCountExceptionValue;
+	public static boolean extractIgnoreMaxLoopCountException(NndlNode mappedAction) {
+		return mappedAction.getScalarValueFromChild(IGNORE_MAX_LOOP_COUNT_EXCEPTION, Boolean.class).orElse(false);
 	}
 
-	public static Boolean extratctThrowTimeout(Map<String, ?> mappedAction) {
-		Object throwTimeout = mappedAction.get(THROW_TIMEOUT);
-		if(throwTimeout == null) {
-			return null;
-		}
-		return (Boolean) throwTimeout;
+	public static Boolean extratctThrowTimeout(NndlNode mappedAction) {
+		return mappedAction.getScalarValueFromChild(THROW_TIMEOUT, Boolean.class).orElse(null);
 	}
 
-	public static Integer extractElementTimeoutWait(Map<String, ?> mappedAction) {
-		Object elementTimeoutWait = mappedAction.get(TIMEOUT_WAIT);
-		if(elementTimeoutWait == null) {
-			return DEFAULT_TIMEOUT_WAIT;
-		}
-		return (Integer) elementTimeoutWait;
+	public static Integer extractElementTimeoutWait(NndlNode mappedAction) {
+		return mappedAction.getScalarValueFromChild(TIMEOUT_WAIT, Integer.class).orElse(DEFAULT_TIMEOUT_WAIT);
 	}
 }

@@ -1,10 +1,10 @@
 package dev.edumelo.com.nndl_core.action.requirementStatus;
 
-import java.util.Map;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 
 public class NonRequiredRequimentStatus extends RequirementStatus {
 
-	public NonRequiredRequimentStatus(Map<String, ?> actions) {
+	public NonRequiredRequimentStatus(NndlNode actions) {
 		super(actions);
 	}
 

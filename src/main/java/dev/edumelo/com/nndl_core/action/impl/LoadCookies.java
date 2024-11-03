@@ -1,8 +1,8 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.openqa.selenium.Cookie;
@@ -10,6 +10,8 @@ import org.openqa.selenium.Cookie;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -18,17 +20,17 @@ import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
-@SuppressWarnings("unchecked")
 public class LoadCookies extends LandmarkConditionAction {
 	
 	private static final String TAG = "loadCookies";
-	private static final Object RETRIEVER_PARAMS_TAG = "retrieverParams";
+	private static final String RETRIEVER_PARAMS_TAG = "retrieverParams";
 	private String[] retrieverParams;
 
-	public LoadCookies(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
+	public LoadCookies(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction,
 			Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
-		Map<String, ?> mappedLoadCookies = (Map<String, ?>) mappedAction.get(TAG);	
+		NndlNode mappedLoadCookies = mappedAction.getValueFromChild(TAG).orElseThrow(() -> new NndlParserException(
+				"LoadCookies action should have "+TAG+" tag.", mappedAction));
 		this.retrieverParams = getRetrieverParams(mappedLoadCookies);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
 	}
@@ -63,8 +65,14 @@ public class LoadCookies extends LandmarkConditionAction {
 		return new ContinueAdvice();
 	}
 
-	private String[] getRetrieverParams(Map<String, ?> mappedLoadCookies) {
-		return ((List<String>) mappedLoadCookies.get(RETRIEVER_PARAMS_TAG)).toArray(new String[0]);
+	private String[] getRetrieverParams(NndlNode mappedLoadCookies) {
+		return mappedLoadCookies
+				.getListedValuesFromChild(RETRIEVER_PARAMS_TAG)
+				.get()
+				.stream()
+				.map(n -> n.getScalarValue())
+				.map(Optional::get)
+				.toArray(String[]::new);
 	}
 
 	@Override

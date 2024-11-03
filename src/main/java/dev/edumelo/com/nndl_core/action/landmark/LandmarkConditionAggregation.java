@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.ConjunctionLandmarkCondition;
 import dev.edumelo.com.nndl_core.step.advice.DisjunctionLandmarkCondition;
@@ -11,7 +12,8 @@ import dev.edumelo.com.nndl_core.step.advice.DisjunctionLandmarkCondition;
 public abstract class LandmarkConditionAggregation {
 	public abstract List<Landmark> getLandmarkConditions();
 	
-	public static LandmarkConditionAggregation createLandmarkConditionAggregation(Map<String, StepElement> mappedElements, Map<String, ?> mappedAction) {
+	public static LandmarkConditionAggregation createLandmarkConditionAggregation(Map<String, StepElement> mappedElements,
+			NndlNode mappedAction) {
 		LandmarkConditionAggregationType landmarkConditionAggregationType = indentifyLandmarkConditionAggregationType(mappedAction);
 		LandmarkConditionAggregation createdLandmarkConditionAggregation = null;
 		
@@ -32,11 +34,10 @@ public abstract class LandmarkConditionAggregation {
 		return createdLandmarkConditionAggregation;
 	}
 
-	private static LandmarkConditionAggregationType indentifyLandmarkConditionAggregationType(
-			Map<String, ?> mappedAction) {
+	private static LandmarkConditionAggregationType indentifyLandmarkConditionAggregationType(NndlNode mappedAction) {
 		
 		return Arrays.stream(LandmarkConditionAggregationType.values())
-				.filter(e -> mappedAction.containsKey(e.getLandMarkConditionAgregationTag()))
+				.filter(e -> mappedAction.hasValueFromChild(e.getLandMarkConditionAgregationTag()))
 				.findFirst()
 				.orElse(LandmarkConditionAggregationType.LANDMARK_NOT_SETTED);
 		

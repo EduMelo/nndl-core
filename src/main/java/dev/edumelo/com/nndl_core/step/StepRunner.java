@@ -119,7 +119,7 @@ public class StepRunner {
 					case REQUIRED:
 						msg = "Required action exception. action: "+action;
 						log.error(msgSufix+msg+msgPrefix);
-						caughtException = new RunBreakerActionNotPerformed(msg, e);
+							caughtException = new RunBreakerActionNotPerformed(msg, e);
 						break;
 					case RESTART_STEP:
 						msg = "Restart step action exception. ";

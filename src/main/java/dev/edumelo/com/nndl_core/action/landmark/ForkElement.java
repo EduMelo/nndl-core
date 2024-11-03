@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.openqa.selenium.By;
 
+import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.SwapStepAdvice;
@@ -18,7 +20,7 @@ public class ForkElement implements Landmark {
 	private String fork;
 	private Integer timeout;
 	
-	public ForkElement(Map<String, StepElement> mappedElements, Map<String, ?> mappedForkElement) {
+	public ForkElement(Map<String, StepElement> mappedElements, NndlNode mappedForkElement) {
 		this.element = extractElement(mappedElements, mappedForkElement);
 		this.fork = extractFork(mappedForkElement);
 		this.timeout = extractTimeout(mappedForkElement);
@@ -42,20 +44,17 @@ public class ForkElement implements Landmark {
 		return timeout;
 	}
 
-	private Integer extractTimeout(Map<String, ?> mappedForkElement) {
-		Object mappedTimeout = mappedForkElement.get(TIMEOUT_TAG);
-		if(mappedTimeout != null) {
-			return (Integer) mappedTimeout;
-		}
-		return DEFAULT_TIMEOUT;
+	private Integer extractTimeout(NndlNode mappedForkElement) {
+		return mappedForkElement.getScalarValueFromChild(TIMEOUT_TAG, Integer.class).orElse(DEFAULT_TIMEOUT);
 	}
 
-	private String extractFork(Map<String, ?> mappedForkElement) {
-		return (String) mappedForkElement.get(FORK_TAG);
+	private String extractFork(NndlNode mappedForkElement) {
+		return mappedForkElement.getScalarValueFromChild(FORK_TAG).orElse(null);
 	}
 
-	private StepElement extractElement(Map<String, StepElement> mappedElements, Map<String, ?> mappedForkElement) {
-		String elementKey = (String) mappedForkElement.get(TAG);
+	private StepElement extractElement(Map<String, StepElement> mappedElements, NndlNode mappedForkElement) {
+		String elementKey = mappedForkElement.getScalarValueFromChild(TAG)
+				.orElseThrow(() -> new NndlParserException("Fork tag should have "+TAG+" tag", mappedForkElement));
 		return (StepElement) mappedElements.get(elementKey);
 	}
 

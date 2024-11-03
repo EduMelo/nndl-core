@@ -12,11 +12,14 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.Action;
-import dev.edumelo.com.nndl_core.action.ActionException;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.exceptions.ActionException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
+import dev.edumelo.com.nndl_core.utils.UrlUtils;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
@@ -27,20 +30,17 @@ public class DownloadFile extends Action {
 	private static final String URL_TAG = "url";
 	private URL url;
 	
-	public DownloadFile(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
-			Map<String, StepElement> mappedElements) {
+	public DownloadFile(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.url = getUrl(mappedAction);
 	}
 
-	private URL getUrl(Map<String, ?> mappedAction) {
-		String urlString = (String) mappedAction.get(URL_TAG);
-		try {
-			return new URI(urlString).toURL();
-		} catch (MalformedURLException | URISyntaxException e) {
-			throw new RuntimeException(String.format("Cannot create URL from the string: %s ",
-					urlString));
-		}
+	private URL getUrl(NndlNode mappedAction) {
+		return mappedAction
+				.getScalarValueFromChild(URL_TAG)
+				.flatMap(UrlUtils::createUrl)
+				.orElseThrow(NndlParserException
+				.get("DownloadFile Action should have "+URL_TAG+" tag.", mappedAction));
 	}
 
 	@Override

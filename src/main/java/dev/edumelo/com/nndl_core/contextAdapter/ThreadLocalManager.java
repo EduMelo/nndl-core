@@ -73,7 +73,7 @@ public class ThreadLocalManager {
 		return extractedDataMap.get();
 	}
 	
-	public static Map<String, Object> getVariableSubstitutionMap() {
+	public static Map<String, String> getVariableSubstitutionMap() {
 		return contextAdapters.get().stream()
 				.filter(a -> a instanceof VariableSubstitutionContextAdapter)
 				.map(a -> (VariableSubstitutionContextAdapter) a)

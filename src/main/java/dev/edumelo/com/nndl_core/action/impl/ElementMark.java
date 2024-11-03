@@ -6,8 +6,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.Action;
-import dev.edumelo.com.nndl_core.action.ActionException;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.exceptions.ActionException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -24,8 +26,7 @@ public class ElementMark extends Action {
 	private String mark;
 	private boolean ignoreRoot;
 	
-	public ElementMark(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
-			Map<String, StepElement> mappedElements) {
+	public ElementMark(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		markableElement = getElement(mappedAction, mappedElements);
 		mark = getMark(mappedAction);
@@ -37,12 +38,8 @@ public class ElementMark extends Action {
 		return TAG;
 	}
 	
-	private void extractIgnoreRoot(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		Object value = mappedAction.get(IGNORE_ROOT_TAG);
-		if(value != null) {
-			ignoreRoot = (Boolean) value;
-		}
-		ignoreRoot = false;
+	private void extractIgnoreRoot(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		ignoreRoot = mappedAction.getScalarValueFromChild(IGNORE_ROOT_TAG, Boolean.class).orElse(false);
 	}
 	
 	@Override
@@ -87,16 +84,18 @@ public class ElementMark extends Action {
 		return runElement(webDriver, webDriverWait, null, element);
 	}
 
-	private String getMark(Map<String, ?> mappedAction) {
-		return (String) mappedAction.get(MARK_TAG);
+	private String getMark(NndlNode mappedAction) {
+		return mappedAction.getScalarValueFromChild(MARK_TAG).orElseThrow(NndlParserException
+				.get("Action ElmentMark should have "+MARK_TAG+" tag.", mappedAction));
 	}
 
 	
-	private StepElement getElement(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+	private StepElement getElement(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		if(mappedElements == null) {
 			return null;
 		}
-		String elementKey = (String) mappedAction.get(TAG);
+		String elementKey = mappedAction.getScalarValueFromChild(TAG).orElseThrow(NndlParserException
+				.get("Action ElementMark should have "+TAG+" tag.", mappedAction));
 		return mappedElements.get(elementKey);
 	}
 	

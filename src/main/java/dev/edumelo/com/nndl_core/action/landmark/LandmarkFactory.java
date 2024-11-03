@@ -6,19 +6,26 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 
 public class LandmarkFactory {
 	
 	public static final Logger log = LoggerFactory.getLogger(Landmark.class);
 	
-	public static Landmark createLandmark(Map<String, ?> landmarkMap, Map<String, StepElement> mappedElements, 
+	public static Landmark createLandmark(NndlNode landmarkMap, Map<String, StepElement> mappedElements, 
 			LandmarkConditionAggregationType landmarkConditionAggregationType) {
 		LandmarkEnum type = getType(landmarkMap);
 		
 		switch (type) {
 		case ELEMENT:
-			String elementName = (String) landmarkMap.get(LandmarkElement.getTag());
+			NndlNode elementNode = landmarkMap.getValueFromChild(LandmarkElement.getTag())
+			.orElseThrow(() -> new NndlParserException("Landkmark tag should have "+LandmarkElement.getTag()+" tag",
+					landmarkMap));
+			String elementName = elementNode.getScalarValue()
+					.orElseThrow(() -> new NndlParserException("Element tag should have name tag",
+							landmarkMap));;
 			StepElement element = mappedElements.get(elementName);
 			if(landmarkConditionAggregationType.equals(LandmarkConditionAggregationType.CONJUNCTION)) {
 				return new LandmarkElement(element, landmarkMap);				
@@ -26,7 +33,8 @@ public class LandmarkFactory {
 				return new ForkElement(mappedElements, landmarkMap);
 			}
 		case COOLDOWN:
-			Integer cooldown = (Integer) landmarkMap.get(LandmarkCoolDown.getTag());
+			Integer cooldown = landmarkMap.getScalarValueFromChild(LandmarkCoolDown.getTag(), Integer.class)
+				.orElse(null);
 			return new LandmarkCoolDown(cooldown);
 		default:
 			break;
@@ -34,11 +42,11 @@ public class LandmarkFactory {
 		return null;
 	}
 
-	private static LandmarkEnum getType(Map<String, ?> landmarkMap) {
+	private static LandmarkEnum getType(NndlNode landmarkMap) {
 		log.debug(String.format("getType. LandmarkMap: {}", landmarkMap));
 		
 		return Arrays.asList(LandmarkEnum.values()).stream()
-				.filter(l -> landmarkMap.containsKey(l.getTag()))
+				.filter(l -> landmarkMap.hasValueFromChild(l.getTag()))
 				.findFirst()
 				.orElseThrow();
 	}

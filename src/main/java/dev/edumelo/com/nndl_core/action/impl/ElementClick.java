@@ -7,6 +7,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -19,7 +21,7 @@ public class ElementClick extends LandmarkConditionAction {
 	private static final String TAG = "elementClick";
 	private StepElement clickableElement;
 	
-	public ElementClick(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
+	public ElementClick(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction,
 			Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.clickableElement = getElement(mappedAction, mappedElements);
@@ -65,8 +67,9 @@ public class ElementClick extends LandmarkConditionAction {
 		return new ContinueAdvice();
 	}
 
-	private StepElement getElement(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		String elementKey = (String) mappedAction.get(TAG);
+	private StepElement getElement(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		String elementKey = mappedAction.getScalarValueFromChild(TAG).orElseThrow(NndlParserException
+				.get("Action ElementClick should have "+TAG+" tag.", mappedAction));
 		return mappedElements.get(elementKey);
 	}
 

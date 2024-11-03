@@ -5,19 +5,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class VariableSubstitutionContextAdapter implements ContextAdapter {
-	private Map<String, Object> substitutionMap;
+	private Map<String, String> substitutionMap;
 	
 	public VariableSubstitutionContextAdapter() {};
 
-	public VariableSubstitutionContextAdapter(Map<String, Object> substitutionMap) {
+	public VariableSubstitutionContextAdapter(Map<String, String> substitutionMap) {
 		this.substitutionMap = substitutionMap;
 	}
 
-	public Map<String, Object> getSubstitutionMap() {
+	public Map<String, String> getSubstitutionMap() {
 		return substitutionMap;
 	}
 	
-	public VariableSubstitutionContextAdapter add(Entry<String, Object> entry) {
+	public VariableSubstitutionContextAdapter add(Entry<String, String> entry) {
 		if(this.substitutionMap == null) {
 			this.substitutionMap = new HashMap<>();
 		}

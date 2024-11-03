@@ -12,6 +12,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -28,8 +30,7 @@ public class SendKey extends LandmarkConditionAction {
 	private StepElement targetElement;
 	private boolean ignoreRoot;
 	
-	public SendKey(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
-			Map<String, StepElement> mappedElements) {
+	public SendKey(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.key = getKey(mappedAction, mappedElements);
 		targetElement = getTargetElement(mappedAction, mappedElements);
@@ -97,18 +98,16 @@ public class SendKey extends LandmarkConditionAction {
 		return remoteWebDriver.getWebDriver().findElement(By.tagName("html"));
 	}
 
-	private StepElement getTargetElement(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		Object elementNameObject = mappedAction.get(TARGET_TAG);
-		if(elementNameObject != null) {
-			String elementName = (String) elementNameObject;
-			return mappedElements.get(elementName);
-		}
-		return null;
+	private StepElement getTargetElement(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		return mappedAction.getScalarValueFromChild(TARGET_TAG)
+				.map(mappedElements::get)
+				.orElse(null);
 	}
 	 
 	
-	private CharSequence getKey(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		String value = (String) mappedAction.get(TAG);
+	private CharSequence getKey(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		String value = mappedAction.getScalarValueFromChild(TAG)
+				.orElseThrow(() -> new NndlParserException("SendKey tag should have an "+TAG+" tag.", mappedAction));
 	    List<String> keyList = Arrays.asList(Keys.values()).stream()
 	    		.map(Keys::name)
 	    		.collect(Collectors.toList());
@@ -119,12 +118,8 @@ public class SendKey extends LandmarkConditionAction {
 		return value;
 	}
 
-	private void extractIgnoreRoot(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		Object value = mappedAction.get(IGNORE_ROOT_TAG);
-		if(value != null) {
-			ignoreRoot = (Boolean) value;
-		}
-		ignoreRoot = false;
+	private void extractIgnoreRoot(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		ignoreRoot = mappedAction.getScalarValueFromChild(IGNORE_ROOT_TAG, Boolean.class).orElse(false);
 	}
 	
 	@Override

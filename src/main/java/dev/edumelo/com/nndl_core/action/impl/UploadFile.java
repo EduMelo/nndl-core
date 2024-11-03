@@ -1,8 +1,5 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +10,14 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.Action;
-import dev.edumelo.com.nndl_core.action.ActionException;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.exceptions.ActionException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
+import dev.edumelo.com.nndl_core.utils.UrlUtils;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
@@ -30,7 +30,7 @@ public class UploadFile extends Action {
 	private StepElement inputElement;
 	private URL url;
 
-	public UploadFile(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
+	public UploadFile(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction,
 			Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.inputElement = getElement(mappedAction, mappedElements);
@@ -107,20 +107,16 @@ public class UploadFile extends Action {
 		return new ContinueAdvice();
 	}
 
-	private StepElement getElement(Map<String, ?> mappedAction,
-			Map<String, StepElement> mappedElements) {
-		String elementKey = (String) mappedAction.get(INPUT_TAG);
+	private StepElement getElement(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		String elementKey = mappedAction.getScalarValueFromChild(INPUT_TAG)
+				.orElseThrow(() -> new NndlParserException("Upload action should have an input tag", mappedAction));
 		return mappedElements.get(elementKey);
 	}
 	
-	private URL getUrl(Map<String, ?> mappedAction) {
-		String urlString = (String) mappedAction.get(URL_TAG);
-		try {
-			return new URI(urlString).toURL();
-		} catch (MalformedURLException | URISyntaxException e) {
-			throw new RuntimeException(String.format("Cannot create URL from the string: %s ",
-					urlString));
-		}
+	private URL getUrl(NndlNode mappedAction) {
+		return mappedAction.getScalarValueFromChild(URL_TAG)
+				.flatMap(urlString -> UrlUtils.createUrl(urlString))
+				.orElseThrow(() -> new NndlParserException("Upload action should have an url tag", mappedAction));
 	}
 
 }

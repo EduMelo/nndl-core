@@ -5,6 +5,8 @@ import java.util.Objects;
 
 import org.openqa.selenium.By;
 
+import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
 
 public class StepElement {
@@ -62,9 +64,15 @@ public class StepElement {
 		return (boolean) ignorRootValue;
 	}
 	
+	public StepElement(NndlNode stepElement) {
+		setName(stepElement.getScalarValueFromChild(NAME_TAG)
+				.orElseThrow(NndlParserException.get("StepElement should have "+NAME_TAG+" tag.", stepElement)));
+		setMatchExp(stepElement.getScalarValueFromChild(MATCH_EXP_TAG).get());
+	}
+	
 	public StepElement(StepElement stepElement) {
-		setName(stepElement.getName());
-		setMatchExp(stepElement.getMatchExp());
+		setName(stepElement.name);
+		setMatchExp(stepElement.matchExp);
 	}
 	
 	public By getLocator(NndlWebDriver remoteWebDriver) {

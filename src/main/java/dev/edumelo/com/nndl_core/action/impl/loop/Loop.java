@@ -8,9 +8,10 @@ import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.ExtractDataBind;
 import dev.edumelo.com.nndl_core.action.Action;
-import dev.edumelo.com.nndl_core.action.ActionException;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.contextAdapter.ExtractDataBindAdapter;
+import dev.edumelo.com.nndl_core.exceptions.ActionException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.scroll.InfiniteScroll;
 import dev.edumelo.com.nndl_core.scroll.InfiniteScrollCondition;
 import dev.edumelo.com.nndl_core.scroll.InfiniteScrollFactory;
@@ -47,7 +48,7 @@ public class Loop extends Action {
 	private Boolean throwTimeout;
     private Integer elementTimeoutWait;
 	
-	public Loop(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
+	public Loop(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction,
 			Map<String, ?> mappedSubSteps, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.infinitScrollObserverClass = LoopExtractor.extractInfiniteScrollObserversClass(mappedAction);

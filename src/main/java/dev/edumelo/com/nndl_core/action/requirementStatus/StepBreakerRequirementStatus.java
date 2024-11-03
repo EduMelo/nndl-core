@@ -1,10 +1,10 @@
 package dev.edumelo.com.nndl_core.action.requirementStatus;
 
-import java.util.Map;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 
 public class StepBreakerRequirementStatus extends RequirementStatus {
 
-	public StepBreakerRequirementStatus(Map<String, ?> mappedAction) {
+	public StepBreakerRequirementStatus(NndlNode mappedAction) {
 		super(mappedAction);
 	}
 

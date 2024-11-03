@@ -6,10 +6,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import dev.edumelo.com.nndl_core.action.ActionException;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
+import dev.edumelo.com.nndl_core.exceptions.ActionException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -23,14 +25,14 @@ import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 public class ActionTriggerer extends LandmarkConditionAction {
 	private static final String TAG = "actionTriggerer";
 	private static final String ID_TAG = "id";
-	private static final Object TRIGGER_PARAMS_TAG = "triggerParam";
+	private static final String TRIGGER_PARAMS_TAG = "triggerParam";
 	private String triggerId;
 	private String[] triggerParams;
 	
-	public ActionTriggerer(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
-			Map<String, StepElement> mappedElements) {
+	public ActionTriggerer(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
-		Map<String, ?> mappedActionTrigger = (Map<String, ?>) mappedAction.get(TAG);
+		NndlNode mappedActionTrigger = mappedAction.getValueFromChild(TAG).orElseThrow(NndlParserException
+				.get("Tag LandmarkConditionAction should have "+TAG+" tag", mappedAction));
 		triggerId = getTriggerId(mappedActionTrigger);
 		triggerParams = getTriggerParams(mappedActionTrigger);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
@@ -72,18 +74,17 @@ public class ActionTriggerer extends LandmarkConditionAction {
 		return new ContinueAdvice();
 	}
 	
-	private String getTriggerId(Map<String, ?> mappedActionTrigger) {
-		return (String) mappedActionTrigger.get(ID_TAG);
+	private String getTriggerId(NndlNode mappedActionTrigger) {
+		return mappedActionTrigger.getScalarValueFromChild(ID_TAG).orElseThrow(NndlParserException
+				.get("Action ActionTriggerer should have "+ID_TAG+" tag.", mappedActionTrigger));
 	}
 	
-	private String[] getTriggerParams(Map<String, ?> mappedActionTrigger) {
-		Object params = mappedActionTrigger.get(TRIGGER_PARAMS_TAG);
-		if(params == null) {
-			return null;
-		}
-		List<String> listParams = ((List<String>) params);
-		
-		return listParams.toArray(new String[0]);
+	private String[] getTriggerParams(NndlNode mappedActionTrigger) {
+		return mappedActionTrigger.getListedValuesFromChild(TRIGGER_PARAMS_TAG)
+				.get()
+				.stream()
+				.map(NndlNode::getScalarValue)
+				.toArray(String[]::new);
 	}
 
 	@Override

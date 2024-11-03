@@ -6,10 +6,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.Action;
-import dev.edumelo.com.nndl_core.action.ActionException;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.contextAdapter.ClipboardTextFactory;
 import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
+import dev.edumelo.com.nndl_core.exceptions.ActionException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
@@ -25,8 +27,7 @@ public class Extract extends Action {
 	private StepElement targetElement;
 	private boolean fromClipboard;
 	
-	public Extract(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
-			Map<String, StepElement> mappedElements) {
+	public Extract(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		extractDataBindAdapterName = getExtractoClass(mappedAction);
 		targetElement = getTargetElement(mappedAction, mappedElements);
@@ -49,23 +50,14 @@ public class Extract extends Action {
 		
 	}
 	
-	private boolean getFromClipboard(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		Object fromClipboardObject = mappedAction.get(FROM_CLIPBOARD_TAG);
-		if(fromClipboardObject != null) {
-			Boolean fromClipboard = (Boolean) fromClipboardObject;
-			return fromClipboard;
-		}
-		return false;
+	private boolean getFromClipboard(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		return mappedAction.getScalarValueFromChild(FROM_CLIPBOARD_TAG, Boolean.class).orElse(false);
 	}
 	
-	private StepElement getTargetElement(Map<String, ?> mappedAction,
-			Map<String, StepElement> mappedElements) {
-		Object elementNameObject = mappedAction.get(TARGET_TAG);
-		if(elementNameObject != null) {
-			String elementName = (String) elementNameObject;
-			return mappedElements.get(elementName);
-		}
-		return null;
+	private StepElement getTargetElement(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		return mappedAction.getScalarValueFromChild(TARGET_TAG)
+				.map(mappedElements::get)
+				.orElse(null);
 	}
 
 	@Override
@@ -99,8 +91,9 @@ public class Extract extends Action {
 		return ThreadLocalManager.addExtractedData(webDriver, extractDataBindAdapterName, element);
 	}
 	
-	private String getExtractoClass(Map<String, ?> mappedAction) {
-		return (String) mappedAction.get(TAG);
+	private String getExtractoClass(NndlNode mappedAction) {
+		return mappedAction.getScalarValueFromChild(TAG).orElseThrow(NndlParserException
+				.get("Action Extract should have "+TAG+" tag.", mappedAction));
 	}
 	
 

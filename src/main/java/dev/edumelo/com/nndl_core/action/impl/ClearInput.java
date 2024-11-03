@@ -7,8 +7,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.Action;
-import dev.edumelo.com.nndl_core.action.ActionException;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.exceptions.ActionException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -21,7 +23,7 @@ public class ClearInput extends Action {
 	private static final String TAG = "input";
 	private StepElement inputElement;
 
-	public ClearInput(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
+	public ClearInput(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction,
 			Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.inputElement = getElement(mappedAction, mappedElements);
@@ -64,9 +66,10 @@ public class ClearInput extends Action {
 		return runElement(input);
 	}
 	
-	private StepElement getElement(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		String elementKey = (String) mappedAction.get(TAG);
-		return mappedElements.get(elementKey);
+	private StepElement getElement(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		return mappedAction.getScalarValueFromChild(TAG)
+				.map(mappedElements::get)
+				.orElseThrow(NndlParserException.get("Action ClearInput should have "+TAG+" tag.", mappedAction));
 	}
 	
 	private Advice runElement(WebElement input) {

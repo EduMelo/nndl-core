@@ -1,7 +1,6 @@
 package dev.edumelo.com.nndl_core.action.requirementStatus;
 
-import java.util.Map;
-import java.util.Objects;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 
 public class RequirementStatus {
 	public static final String TAG = "requirementStatus";
@@ -52,37 +51,15 @@ public class RequirementStatus {
 		this.type = type;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public RequirementStatus(Map<String, ?> mappedAction) {
-		Map<String, ?> mappedRequirements = (Map<String, ?>) mappedAction.get(TAG);
-		type = extractType(mappedRequirements);
-		retries = extractRetries(mappedRequirements);
-		stepTreatment = extractStepTreatment(mappedRequirements);
+	public RequirementStatus(NndlNode mappedAction) {
+		type = mappedAction.getValueFromChild(TAG)
+				.flatMap(n -> n.getScalarValueFromChild(TYPE_TAG))
+				.map(RequirementStatusType::getType)
+				.orElse(RequirementStatusType.REQUIRED);
+		stepTreatment = mappedAction.getValueFromChild(TAG)
+				.flatMap(n -> n.getScalarValueFromChild(STEP_TREATMENT_TAG))
+				.orElse(null);
+		retries = mappedAction.getScalarValueFromChild(RETRIES_TAG, Integer.class).orElse(0);
 	}
 
-	private String extractStepTreatment(Map<String, ?> mappedRequirements) {
-		Object stepTreatmentValue = mappedRequirements.get(STEP_TREATMENT_TAG);
-		if(stepTreatmentValue != null) {
-			return (String) stepTreatmentValue;
-		}
-		return null;
-	}
-
-	private int extractRetries(Map<String, ?> mappedAction) {
-		Object retries = mappedAction.get(RETRIES_TAG);
-		if(retries != null) {
-			return (Integer) retries;
-		}
-		return 0;
-	}
-
-	private RequirementStatusType extractType(Map<String, ?> mappedAction) {
-		Object requiredValue = mappedAction.get(TYPE_TAG);
-		if(Objects.nonNull(requiredValue)) {
-			String requiredStatus = (String) requiredValue;
-			return RequirementStatusType.getType(requiredStatus);
-			
-		}
-		return RequirementStatusType.REQUIRED;
-	}
 }

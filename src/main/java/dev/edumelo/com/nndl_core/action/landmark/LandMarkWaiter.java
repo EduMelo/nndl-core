@@ -61,6 +61,7 @@ public class LandMarkWaiter {
 								log.debug("Landmark wait interrupt. Landmark: {}", landmark);
 								exceptionCapture.setExceptionCaptured(true);
 								exceptionCapture.setThrowable(e);
+								exceptionCapture.setLocator(locator);
 								completableFuture.complete(landmark.getLandMarkAdvice());
 								return;
 							}							

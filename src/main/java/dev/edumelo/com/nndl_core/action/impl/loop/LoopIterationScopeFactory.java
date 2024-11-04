@@ -2,6 +2,7 @@ package dev.edumelo.com.nndl_core.action.impl.loop;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
@@ -37,7 +38,7 @@ public class LoopIterationScopeFactory {
 				.stream()
 				.map(NndlNode::getScalarValue)
 				.map(Optional::get)
-				.toList();
+				.collect(Collectors.toList());
 		return new ListIterationScope(list);
 	}
 

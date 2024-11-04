@@ -2,6 +2,7 @@ package dev.edumelo.com.nndl_core.step.advice;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import dev.edumelo.com.nndl_core.action.landmark.Landmark;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAggregation;
@@ -35,7 +36,7 @@ public class DisjunctionLandmarkCondition extends LandmarkConditionAggregation {
 			.get()
 			.stream()
 			.map(n -> LandmarkFactory.createLandmark(n, mappedElements, getType()))
-			.toList();
+			.collect(Collectors.toList());
 	}
 
 	@Override

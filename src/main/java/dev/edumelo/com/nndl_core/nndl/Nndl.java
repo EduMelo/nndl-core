@@ -79,18 +79,9 @@ public class Nndl {
 				.map(NndlNode::getScalarValue)
 				.filter(n -> !n.isEmpty())
 				.map(Optional::get)
-				.toList();
+				.collect(Collectors.toList());
 		return Optional.ofNullable(nodes);
 	}
-	
-//	private Object replaceTagsInYaml(Object yamlNode, Map<String, Object> variableSubstitutionMap) {
-//		for (Map.Entry<String, Object> entry : nndlMap.entrySet()) {
-//            NndlNode node = (NndlNode) entry.getValue();
-//            node.replaceContent(variableSubstitutionMap);
-//        }
-//		
-//		return null;
-//	}
 	
 	public boolean hasAsyncSteps() {
 		return nndlMap.containsKey(ASYNCHRONOUS_STEPS_TAG);
@@ -104,7 +95,7 @@ public class Nndl {
 		CollectionNodeValue collectionNodeValue = (CollectionNodeValue) assyncSteps.getValue();
 		return collectionNodeValue.getValue().stream()
 				.map(o -> o.toString())
-				.toList();
+				.collect(Collectors.toList());
 	}
 	
 	public NndlNode loadSteps(Map<String, String> variableSubstitutionMap) {

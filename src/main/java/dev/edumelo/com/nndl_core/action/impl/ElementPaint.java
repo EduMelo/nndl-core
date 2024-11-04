@@ -7,8 +7,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
-import dev.edumelo.com.nndl_core.exceptions.ActionException;
-import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.exceptions.NndlActionException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
@@ -25,6 +25,7 @@ public class ElementPaint extends Action {
 	private StepElement paintableElement;
 	private String color;
 	private boolean ignoreRoot;
+	private NndlNode relevantNode;
 
 	@Override
 	public String getTag() {
@@ -35,11 +36,12 @@ public class ElementPaint extends Action {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		paintableElement = getElement(mappedAction, mappedElements);
 		color = getColor(mappedAction);
+		this.relevantNode = mappedAction;
 		extractIgnoreRoot(mappedAction, mappedElements);
 	}
 	
 	private String getColor(NndlNode mappedAction) {
-		return mappedAction.getScalarValueFromChild(COLOR_TAG).orElseThrow(NndlParserException
+		return mappedAction.getScalarValueFromChild(COLOR_TAG).orElseThrow(NndlParserRuntimeException
 				.get("Action ElementPaint shoud have "+COLOR_TAG+" tag", mappedAction));
 	}
 	
@@ -47,7 +49,7 @@ public class ElementPaint extends Action {
 		if(mappedElements == null) {
 			return null;
 		}
-		String elementKey = mappedAction.getScalarValueFromChild(TAG).orElseThrow(NndlParserException
+		String elementKey = mappedAction.getScalarValueFromChild(TAG).orElseThrow(NndlParserRuntimeException
 				.get("Action ElementPaint should have "+TAG+" tag", mappedAction));
 		return mappedElements.get(elementKey);
 	}
@@ -59,6 +61,11 @@ public class ElementPaint extends Action {
 	@Override
 	public boolean isIgnoreRoot() {
 		return ignoreRoot;
+	}
+	
+	@Override
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
 	}
 
 	@Override
@@ -76,7 +83,7 @@ public class ElementPaint extends Action {
 
 	@Override
 	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
-			IterationContent rootElement) throws ActionException {
+			IterationContent rootElement) throws NndlActionException {
 		WebElement target = null;
 		if(isTargetSpecial(paintableElement)) {
 			target = webDriver.getWebDriver().switchTo().activeElement();
@@ -96,7 +103,7 @@ public class ElementPaint extends Action {
 
 	@Override
 	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
-			throws ActionException {
+			throws NndlActionException {
 		WebElement element =  webDriverWait.withTimeout(getTimeoutSeconds())
 				.until(ExpectedConditions.elementToBeClickable(paintableElement.getLocator(webDriver)));
 		setActionPerformed(true);

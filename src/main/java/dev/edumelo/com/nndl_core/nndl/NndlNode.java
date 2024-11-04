@@ -8,31 +8,32 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
+import org.yaml.snakeyaml.error.Mark;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 
-import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
 
 public class NndlNode {
 	private String name;
 	private NodeValue value;
-	private int startLine;
-    private int endLine;
-    private String previousLine;
-    private String nextLine;
+	private Mark start;
+    private Mark end;
+    private List<String> lines;
+    private String parentNodeName;
     private NndlChild children;
     private Map<String, String> variableSubstitutionMap;
 	
-    public NndlNode(String name, Node node, int startLine, int endLine, String previousLine,
-    		String nextLine) {
+    public NndlNode(String name, Node node, Mark start, Mark end, String parentNodeName, List<String> lines) {
     	this.name = name;
-    	this.startLine = startLine;
-		this.endLine = endLine;
-		this.previousLine = previousLine;
-		this.nextLine = nextLine;
+    	this.start = start;
+		this.end = end;
+		this.parentNodeName = parentNodeName;
+		this.lines = lines;
 		
 		if (node instanceof ScalarNode) {
             value = new ScalarNodeValue(((ScalarNode) node).getValue());
@@ -49,7 +50,7 @@ public class NndlNode {
             }
             constructChildren((SequenceNode) node);
         } else {
-            throw new NndlParserException("node type not recognized. Node: " + node, this);
+            throw new NndlParserRuntimeException("node type not recognized. Node: " + node, this);
         }
 	}
     
@@ -59,17 +60,21 @@ public class NndlNode {
 	public NodeValue getValue() {
 		return value;
 	}	
-	public int getStartLine() {
-		return startLine;
+	public Mark getStart() {
+		return start;
 	}
-	public int getEndLine() {
-		return endLine;
+	public Mark getEnd() {
+		return end;
 	}
-	public String getPreviousLine() {
-		return previousLine;
+	public String getParentNodeName() {
+		return parentNodeName;
 	}
-	public String getNextLine() {
-		return nextLine;
+	public void setParentNodeName(String parentNodeName) {
+		this.parentNodeName = parentNodeName;
+	}
+
+	public List<String> getLines() {
+		return lines;
 	}
 	public NndlChild getChildren() {
 		return children;
@@ -77,28 +82,33 @@ public class NndlNode {
 
 	private void constructChildren(MappingNode mappingNode) {
         for (NodeTuple tuple : mappingNode.getValue()) {
+        	String parentNodeName = this.parentNodeName.replace(":", "");
             String key = ((ScalarNode) tuple.getKeyNode()).getValue();
             Node childNode = tuple.getValueNode();
-            int childStartLine = childNode.getStartMark().getLine() + 1;
-            int childEndLine = childNode.getEndMark().getLine() + 1;
-            String childPreviousLine = previousLine;
-            String childNextLine = nextLine;
+            Mark childStart = childNode.getStartMark();
+            Mark childEnd = childNode.getEndMark();
+            int startIndex = start.getLine();
+            int childStartIndex = childStart.getLine()-startIndex;
+            int childEndIndex = childEnd.getLine()-startIndex;
+            List<String> childlines = lines.subList(childStartIndex, childEndIndex);
 
-            NndlNode child = new NndlNode(key, childNode, childStartLine, childEndLine, childPreviousLine, childNextLine);
+            NndlNode child = new NndlNode(key, childNode, childStart, childEnd, parentNodeName, childlines);
             ((NndlMapChild) children).put(key, child);
         }
     }
 	
 	private void constructChildren(SequenceNode sequenceNode) {
 		for (int i = 0; i < sequenceNode.getValue().size(); i++) {
+			String parentNodeName = this.parentNodeName.replace(":", "");
 			Node childNode = sequenceNode.getValue().get(i);
-			int childStartLine = childNode.getStartMark().getLine() + 1;
-			int childEndLine = childNode.getEndMark().getLine() + 1;
-			String childPreviousLine = previousLine;
-			String childNextLine = nextLine;
-			String parentNodeName = previousLine.replace(":", "");
+			Mark childStart = childNode.getStartMark();
+            Mark childEnd = childNode.getEndMark();
+            int startIndex = start.getLine();
+            int childStartIndex = childStart.getLine()-startIndex;
+            int childEndIndex = childEnd.getLine()-startIndex;
+            List<String> childlines = lines.subList(childStartIndex, childEndIndex);
 			
-			NndlNode child = new NndlNode(parentNodeName+"List"+i, childNode, childStartLine, childEndLine, childPreviousLine, childNextLine);
+			NndlNode child = new NndlNode(parentNodeName+"List"+i, childNode, childStart, childEnd, parentNodeName, childlines);
 			((NndlListChild) children).add(child);			
 		}
     }
@@ -135,7 +145,7 @@ public class NndlNode {
 		} else if(children instanceof NndlMapChild) {
 			return getValueFromMapChild(key);
 		}
-		throw new NndlParserException("It wasn't possible to verify node children type. Children: "+children, this);
+		throw new NndlParserRuntimeException("It wasn't possible to verify node children type. Children: "+children, this);
 	}
 	
 	public Optional<NndlNode> getValueFromListChild(String key) {
@@ -217,11 +227,12 @@ public class NndlNode {
 			.forEach(n -> n.setVariableSubstitutionMap(variableSubstitutionMap));			
 		}
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(endLine, nextLine, previousLine, startLine);
+		return Objects.hash(children, end, lines, name, parentNodeName, start, value, variableSubstitutionMap);
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -231,15 +242,29 @@ public class NndlNode {
 		if (getClass() != obj.getClass())
 			return false;
 		NndlNode other = (NndlNode) obj;
-		return Objects.equals(value, other.value) && endLine == other.endLine
-				&& Objects.equals(nextLine, other.nextLine) && Objects.equals(previousLine, other.previousLine) 
-				&& startLine == other.startLine;
+		return Objects.equals(children, other.children) && Objects.equals(end, other.end)
+				&& Objects.equals(lines, other.lines) && Objects.equals(name, other.name)
+				&& Objects.equals(parentNodeName, other.parentNodeName) && Objects.equals(start, other.start)
+				&& Objects.equals(value, other.value)
+				&& Objects.equals(variableSubstitutionMap, other.variableSubstitutionMap);
 	}
-	
+
+	public String exceptionMessage() {
+		String message = "\nlines "+(getStart().getLine()+1)+" ~ "+(getEnd().getLine()+1)+" :\n ";
+		for (String line : lines) {
+			if(StringUtils.isEmpty(line.trim())) {
+				continue;
+			}
+			message = message.concat(line).concat("\n");
+		}
+		return message;
+	}
+
 	@Override
 	public String toString() {
-		return "NndlNode [value="+ value +", startLine=" + startLine + ", endLine=" + endLine + ", previousLine="
-				+ previousLine + ", nextLine=" + nextLine + "]";
+		return "NndlNode [name=" + name + ", value=" + value + ", start=" + start + ", end=" + end + ", lines=" + lines
+				+ ", parentNodeName=" + parentNodeName + ", children=" + children + ", variableSubstitutionMap="
+				+ variableSubstitutionMap + "]";
 	}
-	
+
 }

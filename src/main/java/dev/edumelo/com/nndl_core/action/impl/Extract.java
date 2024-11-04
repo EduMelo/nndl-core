@@ -9,8 +9,8 @@ import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.contextAdapter.ClipboardTextFactory;
 import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
-import dev.edumelo.com.nndl_core.exceptions.ActionException;
-import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.exceptions.NndlActionException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
@@ -26,12 +26,14 @@ public class Extract extends Action {
 	private String extractDataBindAdapterName;
 	private StepElement targetElement;
 	private boolean fromClipboard;
+	private NndlNode relevantNode;
 	
 	public Extract(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		extractDataBindAdapterName = getExtractoClass(mappedAction);
 		targetElement = getTargetElement(mappedAction, mappedElements);
 		fromClipboard = getFromClipboard(mappedAction, mappedElements);
+		this.relevantNode = mappedAction;
 	}
 
 	@Override
@@ -42,6 +44,11 @@ public class Extract extends Action {
 	@Override
 	public boolean isIgnoreRoot() {
 		return false;
+	}
+	
+	@Override
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
 	}
 
 	@Override
@@ -62,7 +69,7 @@ public class Extract extends Action {
 
 	@Override
 	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
-			IterationContent rootElement) throws ActionException {
+			IterationContent rootElement) throws NndlActionException {
 		if(fromClipboard) {
 			return runElementFromClipboard(webDriver);
 		}
@@ -71,7 +78,7 @@ public class Extract extends Action {
 	
 	@Override
 	public Advice runAction(SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
+			SeleniumSndlWebDriverWaiter webDriverWait) throws NndlActionException {
 		if(fromClipboard) {
 			return runElementFromClipboard(webDriver);
 		}
@@ -92,7 +99,7 @@ public class Extract extends Action {
 	}
 	
 	private String getExtractoClass(NndlNode mappedAction) {
-		return mappedAction.getScalarValueFromChild(TAG).orElseThrow(NndlParserException
+		return mappedAction.getScalarValueFromChild(TAG).orElseThrow(NndlParserRuntimeException
 				.get("Action Extract should have "+TAG+" tag.", mappedAction));
 	}
 	

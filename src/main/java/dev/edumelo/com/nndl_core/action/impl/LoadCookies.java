@@ -10,7 +10,7 @@ import org.openqa.selenium.Cookie;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
-import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
@@ -25,13 +25,15 @@ public class LoadCookies extends LandmarkConditionAction {
 	private static final String TAG = "loadCookies";
 	private static final String RETRIEVER_PARAMS_TAG = "retrieverParams";
 	private String[] retrieverParams;
+	private NndlNode relevantNode;
 
 	public LoadCookies(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction,
 			Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
-		NndlNode mappedLoadCookies = mappedAction.getValueFromChild(TAG).orElseThrow(() -> new NndlParserException(
+		NndlNode mappedLoadCookies = mappedAction.getValueFromChild(TAG).orElseThrow(() -> new NndlParserRuntimeException(
 				"LoadCookies action should have "+TAG+" tag.", mappedAction));
 		this.retrieverParams = getRetrieverParams(mappedLoadCookies);
+		this.relevantNode = mappedAction;
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
 	}
 	
@@ -43,6 +45,11 @@ public class LoadCookies extends LandmarkConditionAction {
 	@Override
 	public boolean isIgnoreRoot() {
 		return true;
+	}
+	
+	@Override
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
 	}
 	
 	@Override

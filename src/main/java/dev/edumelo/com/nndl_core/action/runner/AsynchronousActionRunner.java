@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.landmark.LandMarkWaiter;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
-import dev.edumelo.com.nndl_core.exceptions.ActionException;
+import dev.edumelo.com.nndl_core.exceptions.NndlActionException;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
@@ -32,7 +32,7 @@ public class AsynchronousActionRunner {
 			try {
 				((LandmarkConditionAction) action).runPrecedentWait(remoteWebDriver, webDriverWait,
 						landmarkWaiter, rootElement);
-			} catch (ActionException e) {
+			} catch (NndlActionException e) {
 				String msg = String.format("AsynchronousActionRunner exception. Exception: %s", e.toString());
 				log.error(msg);
 			}

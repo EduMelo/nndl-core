@@ -5,7 +5,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 import dev.edumelo.com.nndl_core.contextAdapter.ExtractDataBindAdapter;
-import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.scroll.InfiniteScrollCondition;
 import dev.edumelo.com.nndl_core.scroll.ScrollObserver;
@@ -56,7 +56,7 @@ public class LoopExtractor {
 	}
 
 	public static LoopIterationScope extractIterationScope(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
-		NndlNode iterationScope = mappedAction.getValueFromChild(ITERATION_SCOPE_TAG).orElseThrow(NndlParserException
+		NndlNode iterationScope = mappedAction.getValueFromChild(ITERATION_SCOPE_TAG).orElseThrow(NndlParserRuntimeException
 				.get("Action Loop should have "+ITERATION_SCOPE_TAG+" tag.", mappedAction));
 		return LoopIterationScopeFactory.create(iterationScope, mappedElements);
 	}
@@ -67,7 +67,7 @@ public class LoopExtractor {
 		}
 		
 		String iterationStepName = mappedAction.getScalarValueFromChild(EXECUTE_TAG)
-				.orElseThrow(NndlParserException.get("Action Loop should have "+EXECUTE_TAG+" tag.", mappedAction));
+				.orElseThrow(NndlParserRuntimeException.get("Action Loop should have "+EXECUTE_TAG+" tag.", mappedAction));
 		return (Step) mappedSubSteps.get(iterationStepName);
 	}
 

@@ -1,10 +1,13 @@
 package dev.edumelo.com.nndl_core.nndl;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.error.Mark;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -33,14 +36,17 @@ public class NndlConstructor extends Constructor {
             }
 
             // Extrai informações de linhas
+            Mark start = valueNode.getStartMark();
+            Mark end = valueNode.getEndMark();
             int startLine = valueNode.getStartMark().getLine() + 1;
-            int endLine = valueNode.getEndMark().getLine() + 1;
-            String previousLine = startLine > 1 && startLine - 2 < lines.length ? lines[startLine - 2] : null;
-            String nextLine = endLine < lines.length ? lines[endLine] : null;
+            String parentNodeName = startLine > 1 && startLine - 2 < lines.length ? lines[startLine - 2] : null;
+            
+            List<String> subLines = Arrays.asList(lines).subList(valueNode.getStartMark().getLine(),
+            		valueNode.getEndMark().getLine());
 
             // Constrói e adiciona o NndlNode ao map
             String key = ((ScalarNode) keyNode).getValue();
-            NndlNode value = new NndlNode(key, valueNode, startLine, endLine, previousLine, nextLine);
+            NndlNode value = new NndlNode(key, valueNode, start, end, parentNodeName, subLines);
             result.put(key, value);
         }
 

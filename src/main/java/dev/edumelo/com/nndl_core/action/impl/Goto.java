@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriverException;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
-import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
@@ -21,11 +21,13 @@ import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 public class Goto extends LandmarkConditionAction {
 	private static final String TAG = "gotoUrl";
 	private URL url;
+	private NndlNode relevantNode;
 	
 	public Goto(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.url = getUrl(mappedAction);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
+		this.relevantNode = mappedAction;
 	}
 	
 	@Override
@@ -36,6 +38,11 @@ public class Goto extends LandmarkConditionAction {
 	@Override
 	public boolean isIgnoreRoot() {
 		return true;
+	}
+
+	@Override
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
 	}
 	
 	@Override
@@ -64,7 +71,7 @@ public class Goto extends LandmarkConditionAction {
 	private URL getUrl(NndlNode mappedAction) {
 		return mappedAction.getScalarValueFromChild(TAG)
 				.flatMap(UrlUtils::createUrl)
-				.orElseThrow(NndlParserException.get("Goto action should have "+TAG+" tag.", mappedAction));
+				.orElseThrow(NndlParserRuntimeException.get("Goto action should have "+TAG+" tag.", mappedAction));
 	}
 
 	@Override

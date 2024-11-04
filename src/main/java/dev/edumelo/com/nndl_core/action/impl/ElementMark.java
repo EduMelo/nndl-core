@@ -7,8 +7,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
-import dev.edumelo.com.nndl_core.exceptions.ActionException;
-import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.exceptions.NndlActionException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
@@ -25,11 +25,13 @@ public class ElementMark extends Action {
 	private StepElement markableElement;
 	private String mark;
 	private boolean ignoreRoot;
+	private NndlNode relevantNode;
 	
 	public ElementMark(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		markableElement = getElement(mappedAction, mappedElements);
 		mark = getMark(mappedAction);
+		this.relevantNode = mappedAction;
 		extractIgnoreRoot(mappedAction, mappedElements);
 	}
 	
@@ -46,6 +48,11 @@ public class ElementMark extends Action {
 	public boolean isIgnoreRoot() {
 		return ignoreRoot;
 	}
+	
+	@Override
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
+	}
 
 	@Override
 	public void runPreviousModification(ActionModificator modificiator) {
@@ -55,7 +62,7 @@ public class ElementMark extends Action {
 	@Override
 	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement)
-					throws ActionException {
+					throws NndlActionException {
 		WebElement target = null;
 		if(isTargetSpecial(markableElement)) {
 			target = webDriver.getWebDriver().switchTo().activeElement();
@@ -76,7 +83,7 @@ public class ElementMark extends Action {
 
 	@Override
 	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
-			throws ActionException {
+			throws NndlActionException {
 		WebElement element =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(ExpectedConditions.presenceOfElementLocated(markableElement
 						.getLocator(webDriver)));
@@ -85,7 +92,7 @@ public class ElementMark extends Action {
 	}
 
 	private String getMark(NndlNode mappedAction) {
-		return mappedAction.getScalarValueFromChild(MARK_TAG).orElseThrow(NndlParserException
+		return mappedAction.getScalarValueFromChild(MARK_TAG).orElseThrow(NndlParserRuntimeException
 				.get("Action ElmentMark should have "+MARK_TAG+" tag.", mappedAction));
 	}
 
@@ -94,7 +101,7 @@ public class ElementMark extends Action {
 		if(mappedElements == null) {
 			return null;
 		}
-		String elementKey = mappedAction.getScalarValueFromChild(TAG).orElseThrow(NndlParserException
+		String elementKey = mappedAction.getScalarValueFromChild(TAG).orElseThrow(NndlParserRuntimeException
 				.get("Action ElementMark should have "+TAG+" tag.", mappedAction));
 		return mappedElements.get(elementKey);
 	}

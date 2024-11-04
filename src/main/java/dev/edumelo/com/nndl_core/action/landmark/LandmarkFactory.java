@@ -6,7 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 
@@ -21,10 +21,10 @@ public class LandmarkFactory {
 		switch (type) {
 		case ELEMENT:
 			NndlNode elementNode = landmarkMap.getValueFromChild(LandmarkElement.getTag())
-			.orElseThrow(() -> new NndlParserException("Landkmark tag should have "+LandmarkElement.getTag()+" tag",
+			.orElseThrow(() -> new NndlParserRuntimeException("Landkmark tag should have "+LandmarkElement.getTag()+" tag",
 					landmarkMap));
 			String elementName = elementNode.getScalarValue()
-					.orElseThrow(() -> new NndlParserException("Element tag should have name tag",
+					.orElseThrow(() -> new NndlParserRuntimeException("Element tag should have name tag",
 							landmarkMap));;
 			StepElement element = mappedElements.get(elementName);
 			if(landmarkConditionAggregationType.equals(LandmarkConditionAggregationType.CONJUNCTION)) {

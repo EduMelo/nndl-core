@@ -1,11 +1,11 @@
 package dev.edumelo.com.nndl_core.action.landmark;
 
-import org.openqa.selenium.By;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 
 public class LandmarkExceptionCapture {
 	private boolean exceptionCaptured;
 	private Throwable throwable;
-	private By locator;
+	private NndlNode node;
 	
 	public boolean isExceptionCaptured() {
 		return exceptionCaptured;
@@ -19,11 +19,11 @@ public class LandmarkExceptionCapture {
 	public void setThrowable(Throwable throwable) {
 		this.throwable = throwable;
 	}
-	public void setLocator(By locator) {
-		this.locator = locator;
+	public NndlNode getNode() {
+		return node;
 	}
-	public By getLocator() {
-		return locator;
+	public void setNode(NndlNode node) {
+		this.node = node;
 	}
 	
 }

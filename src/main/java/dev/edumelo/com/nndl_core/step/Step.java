@@ -10,7 +10,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import dev.edumelo.com.nndl_core.action.Action;
-import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 
@@ -66,7 +66,7 @@ public class Step {
 		List<NndlNode> listedElements = node.getListedValuesFromChild(StepElement.getTag()).orElse(new ArrayList<>());
 		List<NndlNode> listedSubSteps = node.getListedValuesFromChild(SUBSTEP_TAG).orElse(null);
 		List<NndlNode> listedActions = node.getListedValuesFromChild(Action.getActionTag())
-				.orElseThrow(() -> new NndlParserException("A steps tag should have a actions mark", node));
+				.orElseThrow(() -> new NndlParserRuntimeException("A steps tag should have a actions mark", node));
 
 		this.name = node.getScalarValueFromChild(NAME_TAG).get();
 		this.elements = extractElements(listedElements);

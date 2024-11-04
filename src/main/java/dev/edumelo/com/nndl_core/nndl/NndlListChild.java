@@ -2,7 +2,7 @@ package dev.edumelo.com.nndl_core.nndl;
 
 import java.util.ArrayList;
 
-import dev.edumelo.com.nndl_core.exceptions.NndlException;
+import dev.edumelo.com.nndl_core.exceptions.NndlRuntimeException;
 
 public class NndlListChild extends ArrayList<NndlNode> implements NndlChild {
 	
@@ -21,7 +21,7 @@ public class NndlListChild extends ArrayList<NndlNode> implements NndlChild {
 	@Override
 	public void merge(NndlChild otherChild) {
 		if(!(otherChild instanceof NndlListChild)) {
-			throw new NndlException("NndlListChild can only be merged to a NndlListChild");
+			throw new NndlRuntimeException("NndlListChild can only be merged to a NndlListChild");
 		}
 		addAll((NndlListChild) otherChild);
 	}

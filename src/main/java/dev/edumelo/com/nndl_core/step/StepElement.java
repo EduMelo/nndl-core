@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import org.openqa.selenium.By;
 
-import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
 
@@ -66,7 +66,7 @@ public class StepElement {
 	
 	public StepElement(NndlNode stepElement) {
 		setName(stepElement.getScalarValueFromChild(NAME_TAG)
-				.orElseThrow(NndlParserException.get("StepElement should have "+NAME_TAG+" tag.", stepElement)));
+				.orElseThrow(NndlParserRuntimeException.get("StepElement should have "+NAME_TAG+" tag.", stepElement)));
 		setMatchExp(stepElement.getScalarValueFromChild(MATCH_EXP_TAG).get());
 	}
 	

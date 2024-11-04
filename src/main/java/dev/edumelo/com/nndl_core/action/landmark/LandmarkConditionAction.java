@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.action.Action;
-import dev.edumelo.com.nndl_core.exceptions.ActionException;
+import dev.edumelo.com.nndl_core.exceptions.NndlActionException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
@@ -20,10 +20,12 @@ public abstract class LandmarkConditionAction extends Action {
 	private Logger log = LoggerFactory.getLogger(LandmarkConditionAction.class);
 
 	private LandmarkConditionAggregation landmarkConditionAggregation;
+	private NndlNode action;
 	
 	public LandmarkConditionAction(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction,
 			Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
+		mappedAction = action;
 	}
 
 	public LandmarkConditionAggregation getLandmarkConditionAggregation() {
@@ -37,14 +39,14 @@ public abstract class LandmarkConditionAction extends Action {
 	}
 	
 	private Advice wait(LandMarkWaiter landmarkWaiter, LandmarkConditionAggregation landmarkConditionAggregation) 
-			throws LandmarkException {
+			throws NndlLandmarkException {
 		log.debug("wait: landmarkConditionAggregation: {}", landmarkWaiter, landmarkConditionAggregation);
-		return landmarkWaiter.wait(landmarkConditionAggregation);
+		return landmarkWaiter.wait(landmarkConditionAggregation, getRelevantNode());
 	}
 
 	public Advice runSequentialWait(SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, 
-			LandMarkWaiter landmarkWaiter, IterationContent rootElement) throws ActionException {
+			LandMarkWaiter landmarkWaiter, IterationContent rootElement) throws NndlActionException {
 		log.debug("runSequentialWait: rootElement:{}", rootElement);	
 		run(webDriver, webDriverWait, rootElement);
 		return wait(landmarkWaiter, landmarkConditionAggregation);
@@ -53,7 +55,7 @@ public abstract class LandmarkConditionAction extends Action {
 	
 	public void runPrecedentWait(SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, 
-			LandMarkWaiter landmarkWaiter, IterationContent rootElement) throws ActionException {
+			LandMarkWaiter landmarkWaiter, IterationContent rootElement) throws NndlActionException {
 		log.debug("runPrecedentWait: rootElement:{}", rootElement);
 		wait(landmarkWaiter, landmarkConditionAggregation);
 		this.run(webDriver, webDriverWait, rootElement);

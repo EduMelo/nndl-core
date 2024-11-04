@@ -1,6 +1,6 @@
 package dev.edumelo.com.nndl_core.action.utils;
 
-import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 
 public class Position {
@@ -31,8 +31,8 @@ public class Position {
 
 	public Position(NndlNode mappedPosition) {
 		setX(mappedPosition.getScalarValueFromChild(X_TAG, Integer.class)
-				.orElseThrow(() -> new NndlParserException("Position without x value", mappedPosition)));
+				.orElseThrow(() -> new NndlParserRuntimeException("Position without x value", mappedPosition)));
 		setY(mappedPosition.getScalarValueFromChild(Y_TAG, Integer.class)
-				.orElseThrow(() -> new NndlParserException("Position without y value", mappedPosition)));
+				.orElseThrow(() -> new NndlParserRuntimeException("Position without y value", mappedPosition)));
 	}
 }

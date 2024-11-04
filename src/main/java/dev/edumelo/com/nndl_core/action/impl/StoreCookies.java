@@ -11,7 +11,7 @@ import org.openqa.selenium.Cookie;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
-import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
@@ -26,14 +26,16 @@ public class StoreCookies extends LandmarkConditionAction {
 	private static final String TAG = "storeCookies";
 	private static final String STORER_PARAMS_TAG = "storerParams";
 	private String[] storerParams;
+	private NndlNode relevantNode;
 	
 	public StoreCookies(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction,
 			Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		NndlNode mappedStoreCookies = mappedAction.getValueFromChild(TAG)
-				.orElseThrow(() -> new NndlParserException("StoreCookies tag should have "+TAG+" tag.", mappedAction));
+				.orElseThrow(() -> new NndlParserRuntimeException("StoreCookies tag should have "+TAG+" tag.", mappedAction));
 		
 		this.storerParams = getStorerParams(mappedStoreCookies);
+		this.relevantNode = mappedAction;
 		setLandMarkConditionAgregation(mappedStoreCookies, mappedElements);
 	}
 	
@@ -45,6 +47,11 @@ public class StoreCookies extends LandmarkConditionAction {
 	@Override
 	public boolean isIgnoreRoot() {
 		return true;
+	}
+
+	@Override
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
 	}
 	
 	@Override
@@ -69,7 +76,7 @@ public class StoreCookies extends LandmarkConditionAction {
 	private String[] getStorerParams(NndlNode mappedLoadCookies) {
 		List<NndlNode> storerParamsList = mappedLoadCookies
 			.getListedValuesFromChild(STORER_PARAMS_TAG)
-			.orElseThrow(NndlParserException.get("Action StoreCookies should have "+STORER_PARAMS_TAG+" tag.",
+			.orElseThrow(NndlParserRuntimeException.get("Action StoreCookies should have "+STORER_PARAMS_TAG+" tag.",
 					mappedLoadCookies));
 		return storerParamsList.stream()
 			.map(n -> n.getScalarValue())

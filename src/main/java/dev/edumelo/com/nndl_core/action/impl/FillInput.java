@@ -7,7 +7,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
-import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
@@ -22,11 +22,13 @@ public class FillInput extends Action {
 	private static final String VALUE_TAG = "value";
 	private StepElement inputElement;
 	private String value;
+	private NndlNode relevantNode;
 	
 	public FillInput(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.inputElement = getElement(mappedAction, mappedElements);
 		this.value = getValue(mappedAction);
+		this.relevantNode = mappedAction;
 	}
 	
 	@Override
@@ -37,6 +39,11 @@ public class FillInput extends Action {
 	@Override
 	public boolean isIgnoreRoot() {
 		return inputElement.isIgnoreRoot();
+	}
+	
+	@Override
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
 	}
 
 	@Override
@@ -64,12 +71,12 @@ public class FillInput extends Action {
 	}
 	
 	private String getValue(NndlNode mappedAction) {
-		return mappedAction.getScalarValueFromChild(VALUE_TAG).orElseThrow(NndlParserException
+		return mappedAction.getScalarValueFromChild(VALUE_TAG).orElseThrow(NndlParserRuntimeException
 				.get("Action FillInput should have "+VALUE_TAG+" tag", mappedAction));
 	}
 
 	private StepElement getElement(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
-		String elementKey = mappedAction.getScalarValueFromChild(TAG).orElseThrow(NndlParserException
+		String elementKey = mappedAction.getScalarValueFromChild(TAG).orElseThrow(NndlParserRuntimeException
 				.get("Action FillInput should have "+TAG+" tag.", mappedAction));
 		return mappedElements.get(elementKey);
 	}

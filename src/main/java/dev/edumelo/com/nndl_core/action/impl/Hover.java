@@ -12,7 +12,7 @@ import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
-import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
@@ -23,10 +23,12 @@ public class Hover extends LandmarkConditionAction {
 
 private static final String TAG = "hover";
 	private StepElement hoverableElement;
+	private NndlNode relevantNode;
 	
 	public Hover(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.hoverableElement = getElement(mappedAction, mappedElements);
+		this.relevantNode = mappedAction;
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
 	}
 	
@@ -38,6 +40,11 @@ private static final String TAG = "hover";
 	@Override
 	public boolean isIgnoreRoot() {
 		return hoverableElement.isIgnoreRoot();
+	}
+	
+	@Override
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
 	}
 	
 	@Override
@@ -74,7 +81,7 @@ private static final String TAG = "hover";
 	}
 	
 	private StepElement getElement(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
-		String elementKey = mappedAction.getScalarValueFromChild(TAG).orElseThrow(() -> new NndlParserException(
+		String elementKey = mappedAction.getScalarValueFromChild(TAG).orElseThrow(() -> new NndlParserRuntimeException(
 				"Hover Action should have "+TAG+" tag.", mappedAction));
 		return mappedElements.get(elementKey);
 	}

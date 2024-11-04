@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatus;
 import dev.edumelo.com.nndl_core.action.utils.Position;
-import dev.edumelo.com.nndl_core.exceptions.ActionException;
+import dev.edumelo.com.nndl_core.exceptions.NndlActionException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
@@ -48,11 +48,12 @@ public abstract class Action {
 	
 	public abstract String getTag();
 	public abstract boolean isIgnoreRoot();
+	public abstract NndlNode getRelevantNode();
 	public abstract void runPreviousModification(ActionModificator modificiator);
 	public abstract Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
-			IterationContent rootElement) throws ActionException;
+			IterationContent rootElement) throws NndlActionException;
 	public abstract Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
-			throws ActionException;
+			throws NndlActionException;
 	
 	public Action(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction,
 			Map<String, StepElement> mappedElements) {
@@ -220,7 +221,7 @@ public abstract class Action {
 	
 	public Advice run(SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
-					throws ActionException {		
+					throws NndlActionException {		
 		if(!isLoopCountAccepted(rootElement)) {
 			return new ContinueAdvice();
 		}

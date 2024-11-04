@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 
@@ -46,7 +46,7 @@ public class LoopIterationScopeFactory {
 		return value.getScalarValueFromChild(ITERATION_SCOPE_PAGE_ELEMENT_TAG)
 				.map(mappedElements::get)
 				.map(StepElementIterationScope::new)
-				.orElseThrow(NndlParserException.get("Action Loop should have "+ITERATION_SCOPE_PAGE_ELEMENT_TAG+" tag",
+				.orElseThrow(NndlParserRuntimeException.get("Action Loop should have "+ITERATION_SCOPE_PAGE_ELEMENT_TAG+" tag",
 						value));	
 	}
 

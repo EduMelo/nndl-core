@@ -5,7 +5,7 @@ import java.util.Map;
 import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatus;
 import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatusFactory;
 import dev.edumelo.com.nndl_core.action.utils.Position;
-import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.utils.ClassUtils;
@@ -22,7 +22,7 @@ public class ActionExtractor {
 	
 	public static int getOrder(NndlNode mappedAction) {
 		return mappedAction.getScalarValueFromChild("order", Integer.class)
-				.orElseThrow(() -> new NndlParserException("It should be defined the order",
+				.orElseThrow(() -> new NndlParserRuntimeException("It should be defined the order",
 						mappedAction));
 	}
 	

@@ -7,6 +7,7 @@ import org.openqa.selenium.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 
 public class InfiniteScroll {
@@ -19,14 +20,16 @@ public class InfiniteScroll {
 	private final List<ScrollObserver> scrollObservers;
 	private int maxScrollReached;
 	private int maxBreakCount = 50;
+	private NndlNode node;
 
-	public InfiniteScroll(SeleniumSndlWebDriver remoteWebDriver, int scrollCount, boolean autoScrool,
+	public InfiniteScroll(SeleniumSndlWebDriver remoteWebDriver, int scrollCount, boolean autoScrool, NndlNode node,
 			List<ScrollObserver> scrollObservers) {
 		super();
 		this.remoteWebDriver = remoteWebDriver;
 		this.scrollCount = scrollCount;
 		this.autoScrool = autoScrool;
 		this.scrollObservers = scrollObservers;
+		this.node = node;
 	}
 
 	private int getMaxScrollReached() {
@@ -117,7 +120,7 @@ public class InfiniteScroll {
 			if(actualLoopCount > maxLoopCount) {
 				String msg = String.format("The infite scroll reached the maxLoopCount: %d", maxLoopCount);
 			    log.info(msg);
-				throw new InfiniteScrollMaxLoopCountReached(msg);
+				throw new InfiniteScrollMaxLoopCountReached(msg, node);
 			}
 			
 			if(limit != null && currentLimit >= limit) {

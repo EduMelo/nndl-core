@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.openqa.selenium.By;
 
-import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
@@ -54,7 +54,7 @@ public class ForkElement implements Landmark {
 
 	private StepElement extractElement(Map<String, StepElement> mappedElements, NndlNode mappedForkElement) {
 		String elementKey = mappedForkElement.getScalarValueFromChild(TAG)
-				.orElseThrow(() -> new NndlParserException("Fork tag should have "+TAG+" tag", mappedForkElement));
+				.orElseThrow(() -> new NndlParserRuntimeException("Fork tag should have "+TAG+" tag", mappedForkElement));
 		return (StepElement) mappedElements.get(elementKey);
 	}
 

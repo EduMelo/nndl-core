@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.action.impl.loop.LoopIterationScope;
 import dev.edumelo.com.nndl_core.action.impl.loop.StepElementIterationScope;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.step.StepRunner;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
@@ -20,12 +21,12 @@ public class InfiniteScrollFactory {
 	public static InfiniteScroll create(Class<InfiniteScrollCondition> conditionClass, SeleniumSndlWebDriver remoteWebDriver, 
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement, int scrollCount,
 			boolean autoScrool, LoopIterationScope iterationScope, Class<ScrollObserver> infinitScrollObserverClass,
-			Step iterationStep, Boolean throwTimeout, Integer elementTimeoutWait) {
+			Step iterationStep, Boolean throwTimeout, Integer elementTimeoutWait, NndlNode node) {
 		InfiniteScrollCondition scrollCondition = createInfiniteScrollCondition(conditionClass);
 		ScrollObserver extractorObserver = createExtractorObserver(remoteWebDriver, webDriverWait, rootElement,
 				scrollCondition, iterationScope, infinitScrollObserverClass, iterationStep, throwTimeout,
 				elementTimeoutWait);
-		InfiniteScroll infiniteScroll = new InfiniteScroll(remoteWebDriver, scrollCount, autoScrool,
+		InfiniteScroll infiniteScroll = new InfiniteScroll(remoteWebDriver, scrollCount, autoScrool, node,
 				List.of(extractorObserver));
 		return infiniteScroll;
 	}

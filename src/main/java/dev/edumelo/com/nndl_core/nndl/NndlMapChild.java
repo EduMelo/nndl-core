@@ -2,7 +2,7 @@ package dev.edumelo.com.nndl_core.nndl;
 
 import java.util.HashMap;
 
-import dev.edumelo.com.nndl_core.exceptions.NndlException;
+import dev.edumelo.com.nndl_core.exceptions.NndlRuntimeException;
 
 public class NndlMapChild extends HashMap<String, NndlNode> implements NndlChild {
 
@@ -21,7 +21,7 @@ public class NndlMapChild extends HashMap<String, NndlNode> implements NndlChild
 	@Override
 	public void merge(NndlChild otherChild) {
 		if(!(otherChild instanceof NndlMapChild)) {
-			throw new NndlException("NndlMapChild can only be merged to a NndlMapChild");
+			throw new NndlRuntimeException("NndlMapChild can only be merged to a NndlMapChild");
 		}
 		putAll((NndlMapChild) otherChild);
 	}

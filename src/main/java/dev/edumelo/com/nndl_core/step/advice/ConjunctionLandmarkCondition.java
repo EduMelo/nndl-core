@@ -8,7 +8,7 @@ import dev.edumelo.com.nndl_core.action.landmark.Landmark;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAggregation;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAggregationType;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkFactory;
-import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 
@@ -31,7 +31,7 @@ public class ConjunctionLandmarkCondition extends LandmarkConditionAggregation {
 	
 	private List<Landmark> getLandmarkConditions(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		List<NndlNode> landmarkList = mappedAction.getListedValuesFromChild(TAG)
-				.orElseThrow(() -> new NndlParserException("Conjuction landmark should have "+TAG+" tag", mappedAction));
+				.orElseThrow(() -> new NndlParserRuntimeException("Conjuction landmark should have "+TAG+" tag", mappedAction));
 		
 		List<Landmark> landmarkConditions = new ArrayList<Landmark>();
 		for (NndlNode landmark : landmarkList) {

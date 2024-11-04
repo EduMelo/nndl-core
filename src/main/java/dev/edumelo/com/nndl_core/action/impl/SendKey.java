@@ -12,7 +12,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
-import dev.edumelo.com.nndl_core.exceptions.NndlParserException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
@@ -29,10 +29,12 @@ public class SendKey extends LandmarkConditionAction {
 	private CharSequence key;
 	private StepElement targetElement;
 	private boolean ignoreRoot;
+	private NndlNode relevantNode;
 	
 	public SendKey(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.key = getKey(mappedAction, mappedElements);
+		this.relevantNode = mappedAction;
 		targetElement = getTargetElement(mappedAction, mappedElements);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
 		extractIgnoreRoot(mappedAction, mappedElements);
@@ -47,6 +49,11 @@ public class SendKey extends LandmarkConditionAction {
 	@Override
 	public boolean isIgnoreRoot() {
 		return ignoreRoot;
+	}
+	
+	@Override
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
 	}
 	
 	@Override
@@ -107,7 +114,7 @@ public class SendKey extends LandmarkConditionAction {
 	
 	private CharSequence getKey(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		String value = mappedAction.getScalarValueFromChild(TAG)
-				.orElseThrow(() -> new NndlParserException("SendKey tag should have an "+TAG+" tag.", mappedAction));
+				.orElseThrow(() -> new NndlParserRuntimeException("SendKey tag should have an "+TAG+" tag.", mappedAction));
 	    List<String> keyList = Arrays.asList(Keys.values()).stream()
 	    		.map(Keys::name)
 	    		.collect(Collectors.toList());

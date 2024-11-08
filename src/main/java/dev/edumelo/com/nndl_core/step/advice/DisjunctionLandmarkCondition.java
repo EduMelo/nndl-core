@@ -1,13 +1,14 @@
 package dev.edumelo.com.nndl_core.step.advice;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import dev.edumelo.com.nndl_core.action.landmark.Landmark;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAggregation;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAggregationType;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkFactory;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 
 public class DisjunctionLandmarkCondition extends LandmarkConditionAggregation {
@@ -26,20 +27,16 @@ public class DisjunctionLandmarkCondition extends LandmarkConditionAggregation {
 		return landmarkConditions;
 	}
 
-	public DisjunctionLandmarkCondition(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+	public DisjunctionLandmarkCondition(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		this.landmarkConditions = getForkElements(mappedAction, mappedElements);
 	}
 
-	@SuppressWarnings("unchecked")
-	private List<Landmark> getForkElements(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		List<?> landmarkList = (List<?>) mappedAction.get(TAG);
-		List<Landmark> landmarkConditions = new ArrayList<Landmark>();
-		for (Object landmark : landmarkList) {
-			Map<String, ?> landmarkMap = (Map<String, ?>) landmark;
-			landmarkConditions.add(LandmarkFactory.createLandmark(landmarkMap, mappedElements, getType()));
-		}
-		
-		return landmarkConditions;
+	private List<Landmark> getForkElements(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		return mappedAction.getListedValuesFromChild(TAG)
+			.get()
+			.stream()
+			.map(n -> LandmarkFactory.createLandmark(n, mappedElements, getType()))
+			.collect(Collectors.toList());
 	}
 
 	@Override

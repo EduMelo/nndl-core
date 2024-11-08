@@ -8,9 +8,10 @@ import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.ExtractDataBind;
 import dev.edumelo.com.nndl_core.action.Action;
-import dev.edumelo.com.nndl_core.action.ActionException;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.contextAdapter.ExtractDataBindAdapter;
+import dev.edumelo.com.nndl_core.exceptions.NndlActionException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.scroll.InfiniteScroll;
 import dev.edumelo.com.nndl_core.scroll.InfiniteScrollCondition;
 import dev.edumelo.com.nndl_core.scroll.InfiniteScrollFactory;
@@ -34,7 +35,7 @@ public class Loop extends Action {
 	private static final int DEFAULT_MAX_LOOP_COUNT = 50;
 	
 	private Class<ScrollObserver> infinitScrollObserverClass;
-	private Class<ExtractDataBindAdapter> resultFillerClass;
+	private Class<ExtractDataBindAdapter<?>> resultFillerClass;
 	private Class<InfiniteScrollCondition> conditionClass;
 	private ScrollObserver extractorObserver;
 	private Collection<ExtractDataBind> extractData;
@@ -46,8 +47,10 @@ public class Loop extends Action {
 	private boolean ignoreMaxLoopCountException;
 	private Boolean throwTimeout;
     private Integer elementTimeoutWait;
+    private NndlNode mappedAction;
+	private NndlNode relevantNode;
 	
-	public Loop(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
+	public Loop(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction,
 			Map<String, ?> mappedSubSteps, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.infinitScrollObserverClass = LoopExtractor.extractInfiniteScrollObserversClass(mappedAction);
@@ -61,6 +64,8 @@ public class Loop extends Action {
 		this.ignoreMaxLoopCountException = LoopExtractor.extractIgnoreMaxLoopCountException(mappedAction);
 		this.throwTimeout = LoopExtractor.extratctThrowTimeout(mappedAction);
 		this.elementTimeoutWait = LoopExtractor.extractElementTimeoutWait(mappedAction);
+		this.mappedAction = mappedAction;
+		this.relevantNode = mappedAction;
 	}
 	
 	@Override
@@ -74,28 +79,33 @@ public class Loop extends Action {
 	}
 	
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
-					throws ActionException {
-		log.debug("runNested");
-		return runElement(sessionId, remoteWebDriver, webDriverWait, rootElement);
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
 	}
 	
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
-		log.debug("runAction");
-		return runElement(sessionId, remoteWebDriver, webDriverWait, null);
+	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
+					throws NndlActionException {
+		log.debug("runNested");
+		return runElement(remoteWebDriver, webDriverWait, rootElement);
 	}
 	
-	public Advice runElement(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
+	@Override
+	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait) throws NndlActionException {
+		log.debug("runAction");
+		return runElement(remoteWebDriver, webDriverWait, null);
+	}
+	
+	public Advice runElement(SeleniumSndlWebDriver remoteWebDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) 
 			throws InfiniteScrollMaxLoopCountReached {
 		int maxLoopCount = DEFAULT_MAX_LOOP_COUNT;
 		
 		switch (iterationScope.getType()) {
 		case PAGE_ELEMENT:
-			runInfiniteScroll(sessionId, remoteWebDriver, webDriverWait, rootElement, maxLoopCount);			
+			runInfiniteScroll(remoteWebDriver, webDriverWait, rootElement, maxLoopCount);			
 			break;
 		default:
 			runListScroll(remoteWebDriver, webDriverWait, rootElement, maxLoopCount);
@@ -112,13 +122,13 @@ public class Loop extends Action {
 		listScroll.scroll(maxLoopCount, limit);
 	}
 
-	private void runInfiniteScroll(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
+	private void runInfiniteScroll(SeleniumSndlWebDriver remoteWebDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement,
 			int maxLoopCount) throws InfiniteScrollMaxLoopCountReached {
-		InfiniteScroll infiniteScroll = InfiniteScrollFactory.create(sessionId, conditionClass,
+		InfiniteScroll infiniteScroll = InfiniteScrollFactory.create(conditionClass,
 				remoteWebDriver, webDriverWait, rootElement, scrollCount, autoScrool,
 				iterationScope, infinitScrollObserverClass, iterationStep, throwTimeout,
-				elementTimeoutWait);
+				elementTimeoutWait, mappedAction);
 		try {
 			infiniteScroll.scroll(maxLoopCount, limit);			
 		} catch(InfiniteScrollMaxLoopCountReached e) {		

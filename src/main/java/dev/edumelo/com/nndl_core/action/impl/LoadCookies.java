@@ -1,15 +1,17 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.openqa.selenium.Cookie;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
-import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
+import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -18,18 +20,20 @@ import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
-@SuppressWarnings("unchecked")
 public class LoadCookies extends LandmarkConditionAction {
 	
 	private static final String TAG = "loadCookies";
-	private static final Object RETRIEVER_PARAMS_TAG = "retrieverParams";
+	private static final String RETRIEVER_PARAMS_TAG = "retrieverParams";
 	private String[] retrieverParams;
+	private NndlNode relevantNode;
 
-	public LoadCookies(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
+	public LoadCookies(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction,
 			Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
-		Map<String, ?> mappedLoadCookies = (Map<String, ?>) mappedAction.get(TAG);	
+		NndlNode mappedLoadCookies = mappedAction.getValueFromChild(TAG).orElseThrow(() -> new NndlParserRuntimeException(
+				"LoadCookies action should have "+TAG+" tag.", mappedAction));
 		this.retrieverParams = getRetrieverParams(mappedLoadCookies);
+		this.relevantNode = mappedAction;
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
 	}
 	
@@ -44,21 +48,23 @@ public class LoadCookies extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
-		return runElement(sessionId, remoteWebDriver, webDriverWait);
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
 	}
 	
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) {	
-		return runElement(sessionId, remoteWebDriver, webDriverWait);
+	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) {
+		return runElement(remoteWebDriver, webDriverWait);
 	}
 	
-	public Advice runElement(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) {
-		Set<Cookie> cookies = ContextAdapterHandler.retrieveCookies(sessionId,
-				(Object[]) retrieverParams);
+	@Override
+	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {	
+		return runElement(remoteWebDriver, webDriverWait);
+	}
+	
+	public Advice runElement(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {
+		Set<Cookie> cookies = ThreadLocalManager.retrieveCookies((Object[]) retrieverParams);
 		cookies.stream().forEach(remoteWebDriver.getWebDriver().manage()::addCookie);
 		remoteWebDriver.getWebDriver().navigate().refresh();
 		
@@ -66,8 +72,14 @@ public class LoadCookies extends LandmarkConditionAction {
 		return new ContinueAdvice();
 	}
 
-	private String[] getRetrieverParams(Map<String, ?> mappedLoadCookies) {
-		return ((List<String>) mappedLoadCookies.get(RETRIEVER_PARAMS_TAG)).toArray(new String[0]);
+	private String[] getRetrieverParams(NndlNode mappedLoadCookies) {
+		return mappedLoadCookies
+				.getListedValuesFromChild(RETRIEVER_PARAMS_TAG)
+				.get()
+				.stream()
+				.map(n -> n.getScalarValue())
+				.map(Optional::get)
+				.toArray(String[]::new);
 	}
 
 	@Override

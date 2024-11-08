@@ -6,9 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.action.Action;
-import dev.edumelo.com.nndl_core.action.ActionException;
 import dev.edumelo.com.nndl_core.action.landmark.LandMarkWaiter;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
+import dev.edumelo.com.nndl_core.exceptions.NndlActionException;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
@@ -26,21 +26,13 @@ public class AsynchronousActionRunner {
 		this.webDriverWait = webDriverWait;
 		this.landmarkWaiter = new LandMarkWaiter(remoteWebDriver, webDriverWait);
 	}
-	
-//	@Async
-//	private CompletableFuture<Void> asyncRun(Action action) {
-//		((LandmarkConditionAction) action).runPrecedentWait(remoteWebDriver, webDriverWait, landmarkWaiter);
-//		return CompletableFuture.completedFuture(null);
-//	}
 
-	public void run(String sessionId, IterationContent rootElement, Action action) {
-//		CompletableFuture.supplyAsync(() -> asyncRun(action));
-//		((LandmarkConditionAction) action).runPrecedentWait(remoteWebDriver, webDriverWait, landmarkWaiter);
+	public void run(IterationContent rootElement, Action action) {
 		CompletableFuture.runAsync(() -> {
 			try {
-				((LandmarkConditionAction) action).runPrecedentWait(sessionId, remoteWebDriver,
-						webDriverWait, landmarkWaiter, rootElement);
-			} catch (ActionException e) {
+				((LandmarkConditionAction) action).runPrecedentWait(remoteWebDriver, webDriverWait,
+						landmarkWaiter, rootElement);
+			} catch (NndlActionException e) {
 				String msg = String.format("AsynchronousActionRunner exception. Exception: %s", e.toString());
 				log.error(msg);
 			}

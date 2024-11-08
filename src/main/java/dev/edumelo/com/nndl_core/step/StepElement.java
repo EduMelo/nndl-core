@@ -14,6 +14,8 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 
@@ -73,9 +75,15 @@ public class StepElement {
 		return (boolean) ignorRootValue;
 	}
 	
+	public StepElement(NndlNode stepElement) {
+		setName(stepElement.getScalarValueFromChild(NAME_TAG)
+				.orElseThrow(NndlParserRuntimeException.get("StepElement should have "+NAME_TAG+" tag.", stepElement)));
+		setMatchExp(stepElement.getScalarValueFromChild(MATCH_EXP_TAG).get());
+	}
+	
 	public StepElement(StepElement stepElement) {
-		setName(stepElement.getName());
-		setMatchExp(stepElement.getMatchExp());
+		setName(stepElement.name);
+		setMatchExp(stepElement.matchExp);
 	}
 	
 	private boolean containsShadowRoot() {

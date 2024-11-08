@@ -15,15 +15,12 @@ public class InfiniteScrollAdapter {
     private InfiniteScrollCondition infiniteScrollCondition;
     private IterationContent rootElement;
     private StepElement element;
-    private String sessionId;
     private Boolean throwTimeout = true;
     private Integer elementTimeoutWait = 50;
 	
-    public InfiniteScrollAdapter(String sessionId, SeleniumSndlWebDriver webDriver,
-    		SeleniumSndlWebDriverWaiter webDriverWait, Step iterationStep, StepRunner runner,
-    		InfiniteScrollCondition infiniteScrollCondition, IterationContent rootElement,
-    		StepElement element, Boolean throwTimeout, Integer elementTimeoutWait) {
-    	this.sessionId = sessionId;
+    public InfiniteScrollAdapter(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+    		Step iterationStep, StepRunner runner, InfiniteScrollCondition infiniteScrollCondition,
+    		IterationContent rootElement, StepElement element, Boolean throwTimeout, Integer elementTimeoutWait) {
 		this.webDriver = webDriver;
 		this.webDriverWait = webDriverWait;
 		this.iterationStep = iterationStep;
@@ -39,12 +36,6 @@ public class InfiniteScrollAdapter {
 		}
 	}
     
-	public String getSessionId() {
-		return sessionId;
-	}
-	public void setSessionId(String sessionId) {
-		this.sessionId = sessionId;
-	}
 	public SeleniumSndlWebDriver getWebDriver() {
 		return webDriver;
 	}

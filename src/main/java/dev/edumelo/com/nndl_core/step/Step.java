@@ -3,6 +3,7 @@ package dev.edumelo.com.nndl_core.step;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -11,11 +12,14 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 
 import dev.edumelo.com.nndl_core.action.Action;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 
 public class Step {
 	private static final String TAG = "steps";
-	private static final Object SUBSTEP_TAG = "subSteps";
+	private static final String SUBSTEP_TAG = "subSteps";
+	private static final String NAME_TAG = "name";
 	
 	private String name;
 	private Map<String, StepElement> elements;
@@ -60,28 +64,29 @@ public class Step {
 		return SUBSTEP_TAG;
 	}
 
-	@SuppressWarnings("unchecked")
-	public Step(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedStep) {
-		this.name = (String) mappedStep.get("name");
-		this.elements = extractElements((ArrayList<Map<String, ?>>) mappedStep.get(StepElement.getTag()));
-		this.subSteps = extractedSubSteps(seleniumHubProperties,
-				(ArrayList<Map<String, ?>>) mappedStep.get(SUBSTEP_TAG));
-		this.actions = extractedActions(seleniumHubProperties, elements, subSteps,
-				(ArrayList<Map<String, ?>>) mappedStep.get(Action.getActionTag()));
+	public Step(SeleniumHubProperties seleniumHubProperties, NndlNode node) {
+		List<NndlNode> listedElements = node.getListedValuesFromChild(StepElement.getTag()).orElse(new ArrayList<>());
+		List<NndlNode> listedSubSteps = node.getListedValuesFromChild(SUBSTEP_TAG).orElse(null);
+		List<NndlNode> listedActions = node.getListedValuesFromChild(Action.getActionTag())
+				.orElseThrow(() -> new NndlParserRuntimeException("A steps tag should have a actions mark", node));
+
+		this.name = node.getScalarValueFromChild(NAME_TAG).get();
+		this.elements = extractElements(listedElements);
+		this.subSteps = extractedSubSteps(seleniumHubProperties, listedSubSteps);
+		this.actions = extractedActions(seleniumHubProperties, this.elements, subSteps, listedActions);
 	}
 	
-	private Map<String, Step> extractedSubSteps(SeleniumHubProperties seleniumHubProperties,
-			ArrayList<Map<String, ?>> listedSubSteps) {
+	private Map<String, Step> extractedSubSteps(SeleniumHubProperties seleniumHubProperties, List<NndlNode> listedSubSteps) {
 		if(listedSubSteps == null || listedSubSteps.size() == 0) {
 			return null;
-		}
+		}	
 		
 		return listedSubSteps.stream()
 				.map(s -> new Step(seleniumHubProperties, s))
 				.collect(Collectors.toMap(Step::getName, Function.identity()));
 	}
 
-	private Map<String, StepElement> extractElements(ArrayList<Map<String, ?>> listedElements) {
+	private Map<String, StepElement> extractElements(List<NndlNode> listedElements) {
 		if(Objects.isNull(listedElements)) {
 			return null;
 		}
@@ -92,10 +97,7 @@ public class Step {
 
 	private LinkedList<Action> extractedActions(SeleniumHubProperties seleniumHubProperties,
 			Map<String, StepElement> mappedElements, Map<String, Step> mappedSubSteps,
-			ArrayList<Map<String, ?>> listedActions) {
-		if(CollectionUtils.isEmpty(listedActions)) {
-			return new LinkedList<>();
-		}
+			List<NndlNode> listedActions) {
 		return listedActions.stream()
 				.map(m -> Action.createAction(seleniumHubProperties, mappedElements, mappedSubSteps,
 						m))

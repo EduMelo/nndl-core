@@ -1,12 +1,16 @@
 package dev.edumelo.com.nndl_core.action.impl.triggerer;
 
-import java.util.List;
+import static java.util.stream.Collectors.toList;
+
+import java.util.Arrays;
 import java.util.Map;
 
-import dev.edumelo.com.nndl_core.action.ActionException;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
-import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
+import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
+import dev.edumelo.com.nndl_core.exceptions.NndlActionException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -15,24 +19,22 @@ import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
-import static java.util.stream.Collectors.*;
 
-import java.util.Arrays;
-
-@SuppressWarnings("unchecked")
 public class ActionTriggerer extends LandmarkConditionAction {
 	private static final String TAG = "actionTriggerer";
 	private static final String ID_TAG = "id";
-	private static final Object TRIGGER_PARAMS_TAG = "triggerParam";
+	private static final String TRIGGER_PARAMS_TAG = "triggerParam";
 	private String triggerId;
 	private String[] triggerParams;
+	private NndlNode relevantNode;
 	
-	public ActionTriggerer(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
-			Map<String, StepElement> mappedElements) {
+	public ActionTriggerer(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
-		Map<String, ?> mappedActionTrigger = (Map<String, ?>) mappedAction.get(TAG);
+		NndlNode mappedActionTrigger = mappedAction.getValueFromChild(TAG).orElseThrow(NndlParserRuntimeException
+				.get("Tag LandmarkConditionAction should have "+TAG+" tag", mappedAction));
 		triggerId = getTriggerId(mappedActionTrigger);
 		triggerParams = getTriggerParams(mappedActionTrigger);
+		this.relevantNode = mappedAction;
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
 	}
 
@@ -47,44 +49,47 @@ public class ActionTriggerer extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
-					throws ActionException {
-		return runElement(sessionId, webDriver, webDriverWait, rootElement);
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
 	}
 	
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
-		return runElement(sessionId, webDriver, webDriverWait, null);
+	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) throws NndlActionException {
+		return runElement(webDriver, webDriverWait, rootElement);
 	}
 	
-	public Advice runElement(String sessionId, SeleniumSndlWebDriver webDriver,
+	@Override
+	public Advice runAction(SeleniumSndlWebDriver webDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait) throws NndlActionException {
+		return runElement(webDriver, webDriverWait, null);
+	}
+	
+	public Advice runElement(SeleniumSndlWebDriver webDriver,
 			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
 
 		Object[] translatedParams = Arrays.stream(triggerParams)
-				.map(p -> SpecialParamsTranslater.translateIfSpecial(sessionId, p))
+				.map(p -> SpecialParamsTranslater.translateIfSpecial(p))
 				.collect(toList())
 				.toArray(new String[0]);
 				
-		ContextAdapterHandler.triggerAction(sessionId, triggerId, translatedParams);
+		ThreadLocalManager.triggerAction(triggerId, translatedParams);
 		
 		setActionPerformed(true);			
 		return new ContinueAdvice();
 	}
 	
-	private String getTriggerId(Map<String, ?> mappedActionTrigger) {
-		return (String) mappedActionTrigger.get(ID_TAG);
+	private String getTriggerId(NndlNode mappedActionTrigger) {
+		return mappedActionTrigger.getScalarValueFromChild(ID_TAG).orElseThrow(NndlParserRuntimeException
+				.get("Action ActionTriggerer should have "+ID_TAG+" tag.", mappedActionTrigger));
 	}
 	
-	private String[] getTriggerParams(Map<String, ?> mappedActionTrigger) {
-		Object params = mappedActionTrigger.get(TRIGGER_PARAMS_TAG);
-		if(params == null) {
-			return null;
-		}
-		List<String> listParams = ((List<String>) params);
-		
-		return listParams.toArray(new String[0]);
+	private String[] getTriggerParams(NndlNode mappedActionTrigger) {
+		return mappedActionTrigger.getListedValuesFromChild(TRIGGER_PARAMS_TAG)
+				.get()
+				.stream()
+				.map(NndlNode::getScalarValue)
+				.toArray(String[]::new);
 	}
 
 	@Override

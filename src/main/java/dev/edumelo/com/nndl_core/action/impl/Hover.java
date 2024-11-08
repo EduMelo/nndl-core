@@ -5,12 +5,17 @@ import java.util.Map;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
+import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
@@ -20,11 +25,12 @@ public class Hover extends LandmarkConditionAction {
 
 private static final String TAG = "hover";
 	private StepElement hoverableElement;
+	private NndlNode relevantNode;
 	
-	public Hover(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
-			Map<String, StepElement> mappedElements) {
+	public Hover(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.hoverableElement = getElement(mappedAction, mappedElements);
+		this.relevantNode = mappedAction;
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
 	}
 	
@@ -39,18 +45,22 @@ private static final String TAG = "hover";
 	}
 	
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
+	}
+
+	@Override
+	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) {
 		ExpectedCondition<WebElement> expectedCondition = hoverableElement
-				.elementToBeClickable(remoteWebDriver);
+			.elementToBeClickable(remoteWebDriver);
 		WebElement element  = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(expectedCondition);
 		return runElement(remoteWebDriver, webDriverWait, element, rootElement, expectedCondition);
 	}
 	
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) {	
+	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {	
 		ExpectedCondition<WebElement> expectedCondition = hoverableElement
 				.visibilityOfElementLocated(remoteWebDriver);
 		WebElement element  = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
@@ -61,19 +71,18 @@ private static final String TAG = "hover";
 	public Advice runElement(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait, 
 			WebElement element, IterationContent rootElement, ExpectedCondition<WebElement> expectedCondition) {
 		
-//		positionBefore(remoteWebDriver, webDriverWait, element, expectedCondition);
 		Actions actions = new Actions(remoteWebDriver.getWebDriver());
 		if(checkCondition(remoteWebDriver, webDriverWait, rootElement)) {
 			actions.moveToElement(element).perform();
 		}
-//		positionAfter(remoteWebDriver, webDriverWait, element, expectedCondition);
 		
 		setActionPerformed(true);
 		return new ContinueAdvice();
 	}
 	
-	private StepElement getElement(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		String elementKey = (String) mappedAction.get(TAG);
+	private StepElement getElement(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		String elementKey = mappedAction.getScalarValueFromChild(TAG).orElseThrow(() -> new NndlParserRuntimeException(
+				"Hover Action should have "+TAG+" tag.", mappedAction));
 		return mappedElements.get(elementKey);
 	}
 

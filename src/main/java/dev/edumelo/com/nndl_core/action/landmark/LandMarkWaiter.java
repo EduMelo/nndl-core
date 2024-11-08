@@ -11,6 +11,7 @@ import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
@@ -28,8 +29,9 @@ public class LandMarkWaiter {
 		this.webDriverWait = webDriverWait;
 	}
 
-	public Advice wait(LandmarkConditionAggregation landmarkConditionAggregation) throws LandmarkException {
+	public Advice wait(LandmarkConditionAggregation landmarkConditionAggregation, NndlNode action) throws NndlLandmarkException {
 		log.debug("wait. landmarkConditionAggregation: {}", landmarkConditionAggregation);
+		
 		if(landmarkConditionAggregation.getType() == LandmarkConditionAggregationType.LANDMARK_NOT_SETTED) {
 			return new ContinueAdvice();
 		}
@@ -59,6 +61,7 @@ public class LandMarkWaiter {
 								log.debug("Landmark wait interrupt. Landmark: {}", landmark);
 								exceptionCapture.setExceptionCaptured(true);
 								exceptionCapture.setThrowable(e);
+								exceptionCapture.setNode(action);
 								completableFuture.complete(landmark.getLandMarkAdvice());
 								return;
 							}							
@@ -81,7 +84,7 @@ public class LandMarkWaiter {
 		threads.forEach(Thread::interrupt);
 		
 		if(exceptionCapture.isExceptionCaptured()) {
-			throw new LandmarkException("Exception captured", exceptionCapture.getThrowable());
+			throw new NndlLandmarkException("Exception captured", exceptionCapture.getNode(), exceptionCapture.getThrowable());
 		}
 		
 		return landmarkList.stream()

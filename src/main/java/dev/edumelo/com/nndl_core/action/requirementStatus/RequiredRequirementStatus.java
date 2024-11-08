@@ -1,10 +1,10 @@
 package dev.edumelo.com.nndl_core.action.requirementStatus;
 
-import java.util.Map;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 
 public class RequiredRequirementStatus extends RequirementStatus {
 
-	public RequiredRequirementStatus(Map<String, ?> mappedAction) {
+	public RequiredRequirementStatus(NndlNode mappedAction) {
 		super(mappedAction);
 	}
 

@@ -1,6 +1,7 @@
 package dev.edumelo.com.nndl_core.action.utils;
 
-import java.util.Map;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 
 public class Position {
 	
@@ -28,24 +29,10 @@ public class Position {
 		return Y_TAG;
 	}
 
-	public Position(Map<String, ?> mappedPosition) {
-		setX(createX(mappedPosition));
-		setY(createY(mappedPosition));
-	}
-
-	private Integer createY(Map<String, ?> mappedPosition) {
-		Object yValue = mappedPosition.get(Y_TAG);
-		if(yValue != null) {
-			return (Integer) yValue;
-		}
-		return null;
-	}
-
-	private Integer createX(Map<String, ?> mappedPosition) {
-		Object xValue = mappedPosition.get(X_TAG);
-		if(xValue != null) {
-			return (Integer) xValue;
-		}
-		return null;
+	public Position(NndlNode mappedPosition) {
+		setX(mappedPosition.getScalarValueFromChild(X_TAG, Integer.class)
+				.orElseThrow(() -> new NndlParserRuntimeException("Position without x value", mappedPosition)));
+		setY(mappedPosition.getScalarValueFromChild(Y_TAG, Integer.class)
+				.orElseThrow(() -> new NndlParserRuntimeException("Position without y value", mappedPosition)));
 	}
 }

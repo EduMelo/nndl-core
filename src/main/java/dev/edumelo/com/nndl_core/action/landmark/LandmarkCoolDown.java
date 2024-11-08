@@ -35,7 +35,7 @@ public class LandmarkCoolDown implements Landmark {
 		return new ContinueAdvice();
 	}
 	
-	public static Object getTag() {
+	public static String getTag() {
 		return TAG;
 	}
 

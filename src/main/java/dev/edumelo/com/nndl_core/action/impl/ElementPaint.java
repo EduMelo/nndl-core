@@ -5,8 +5,10 @@ import java.util.Map;
 import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.Action;
-import dev.edumelo.com.nndl_core.action.ActionException;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.exceptions.NndlActionException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -22,43 +24,47 @@ public class ElementPaint extends Action {
 	private StepElement paintableElement;
 	private String color;
 	private boolean ignoreRoot;
+	private NndlNode relevantNode;
 
 	@Override
 	public String getTag() {
 		return TAG;
 	}
 	
-	public ElementPaint(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
-			Map<String, StepElement> mappedElements) {
+	public ElementPaint(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		paintableElement = getElement(mappedAction, mappedElements);
 		color = getColor(mappedAction);
+		this.relevantNode = mappedAction;
 		extractIgnoreRoot(mappedAction, mappedElements);
 	}
 	
-	private String getColor(Map<String, ?> mappedAction) {
-		return (String) mappedAction.get(COLOR_TAG);
+	private String getColor(NndlNode mappedAction) {
+		return mappedAction.getScalarValueFromChild(COLOR_TAG).orElseThrow(NndlParserRuntimeException
+				.get("Action ElementPaint shoud have "+COLOR_TAG+" tag", mappedAction));
 	}
 	
-	private StepElement getElement(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+	private StepElement getElement(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		if(mappedElements == null) {
 			return null;
 		}
-		String elementKey = (String) mappedAction.get(TAG);
+		String elementKey = mappedAction.getScalarValueFromChild(TAG).orElseThrow(NndlParserRuntimeException
+				.get("Action ElementPaint should have "+TAG+" tag", mappedAction));
 		return mappedElements.get(elementKey);
 	}
 	
-	private void extractIgnoreRoot(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		Object value = mappedAction.get(IGNORE_ROOT_TAG);
-		if(value != null) {
-			ignoreRoot = (Boolean) value;
-		}
-		ignoreRoot = false;
+	private void extractIgnoreRoot(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		ignoreRoot =  mappedAction.getScalarValueFromChild(IGNORE_ROOT_TAG, Boolean.class).orElse(false);
 	}
 
 	@Override
 	public boolean isIgnoreRoot() {
 		return ignoreRoot;
+	}
+	
+	@Override
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
 	}
 
 	@Override
@@ -75,9 +81,8 @@ public class ElementPaint extends Action {
 	}
 
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
-					throws ActionException {
+	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) throws NndlActionException {
 		WebElement target = null;
 		if(isTargetSpecial(paintableElement)) {
 			target = webDriver.getWebDriver().switchTo().activeElement();
@@ -95,8 +100,8 @@ public class ElementPaint extends Action {
 	}
 
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
+	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
+			throws NndlActionException {
 		WebElement element =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(paintableElement.elementToBeClickable(webDriver));
 		setActionPerformed(true);

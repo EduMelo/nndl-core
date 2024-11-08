@@ -1,16 +1,18 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
 import org.openqa.selenium.WebDriverException;
 
+import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
-import dev.edumelo.com.nndl_core.action.ActionModificator;
-import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
+import dev.edumelo.com.nndl_core.utils.UrlUtils;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
@@ -19,12 +21,13 @@ import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 public class Goto extends LandmarkConditionAction {
 	private static final String TAG = "gotoUrl";
 	private URL url;
+	private NndlNode relevantNode;
 	
-	public Goto(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
-			Map<String, StepElement> mappedElements) {
+	public Goto(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.url = getUrl(mappedAction);
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
+		this.relevantNode = mappedAction;
 	}
 	
 	@Override
@@ -36,17 +39,21 @@ public class Goto extends LandmarkConditionAction {
 	public boolean isIgnoreRoot() {
 		return true;
 	}
+
+	@Override
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
+	}
 	
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {	
+	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) {	
 		remoteWebDriver.getWebDriver().get(this.url.toExternalForm());
 		return new ContinueAdvice();
 	}
 	
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) {
+	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {
 		//try-catch added to avoid the error described in https://github.com/SeleniumHQ/selenium/issues/12277
 		try {
 			remoteWebDriver.getWebDriver().get(this.url.toExternalForm());			
@@ -61,13 +68,10 @@ public class Goto extends LandmarkConditionAction {
 		return new ContinueAdvice();
 	}
 
-	private URL getUrl(Map<String, ?> mappedAction) {
-		String urlString = (String) mappedAction.get(TAG);
-		try {
-			return new URL(urlString);
-		} catch (MalformedURLException e) {
-			throw new RuntimeException(String.format("Cannot create URL from the string: %s ", urlString));
-		}
+	private URL getUrl(NndlNode mappedAction) {
+		return mappedAction.getScalarValueFromChild(TAG)
+				.flatMap(UrlUtils::createUrl)
+				.orElseThrow(NndlParserRuntimeException.get("Goto action should have "+TAG+" tag.", mappedAction));
 	}
 
 	@Override

@@ -6,6 +6,8 @@ import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -17,11 +19,13 @@ import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 public class ElementClick extends LandmarkConditionAction {
 	private static final String TAG = "elementClick";
 	private StepElement clickableElement;
+	private NndlNode relevantNode;
 	
-	public ElementClick(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
+	public ElementClick(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction,
 			Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.clickableElement = getElement(mappedAction, mappedElements);
+		this.relevantNode = mappedAction;
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
 	}
 	
@@ -34,18 +38,22 @@ public class ElementClick extends LandmarkConditionAction {
 	public boolean isIgnoreRoot() {
 		return clickableElement.isIgnoreRoot();
 	}
+	
+	@Override
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
+	}
 
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {	
+	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) {	
 		WebElement button = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(clickableElement.elementToBeClickable(webDriver));
 		return runElement(webDriver, webDriverWait, rootElement, button);
 	}
 	
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) {	
+	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait) {	
 		WebElement button = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(clickableElement.elementToBeClickable(webDriver));			
 		return runElement(webDriver, webDriverWait, null, button);
@@ -63,8 +71,9 @@ public class ElementClick extends LandmarkConditionAction {
 		return new ContinueAdvice();
 	}
 
-	private StepElement getElement(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		String elementKey = (String) mappedAction.get(TAG);
+	private StepElement getElement(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		String elementKey = mappedAction.getScalarValueFromChild(TAG).orElseThrow(NndlParserRuntimeException
+				.get("Action ElementClick should have "+TAG+" tag.", mappedAction));
 		return mappedElements.get(elementKey);
 	}
 

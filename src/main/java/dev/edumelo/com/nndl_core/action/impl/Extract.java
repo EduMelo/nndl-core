@@ -5,10 +5,12 @@ import java.util.Map;
 import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.Action;
-import dev.edumelo.com.nndl_core.action.ActionException;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.contextAdapter.ClipboardTextFactory;
-import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
+import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
+import dev.edumelo.com.nndl_core.exceptions.NndlActionException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
@@ -23,13 +25,14 @@ public class Extract extends Action {
 	private String extractDataBindAdapterName;
 	private StepElement targetElement;
 	private boolean fromClipboard;
+	private NndlNode relevantNode;
 	
-	public Extract(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
-			Map<String, StepElement> mappedElements) {
+	public Extract(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		extractDataBindAdapterName = getExtractoClass(mappedAction);
 		targetElement = getTargetElement(mappedAction, mappedElements);
 		fromClipboard = getFromClipboard(mappedAction, mappedElements);
+		this.relevantNode = mappedAction;
 	}
 
 	@Override
@@ -41,6 +44,11 @@ public class Extract extends Action {
 	public boolean isIgnoreRoot() {
 		return false;
 	}
+	
+	@Override
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
+	}
 
 	@Override
 	public void runPreviousModification(ActionModificator modificiator) {
@@ -48,60 +56,49 @@ public class Extract extends Action {
 		
 	}
 	
-	private boolean getFromClipboard(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		Object fromClipboardObject = mappedAction.get(FROM_CLIPBOARD_TAG);
-		if(fromClipboardObject != null) {
-			Boolean fromClipboard = (Boolean) fromClipboardObject;
-			return fromClipboard;
-		}
-		return false;
+	private boolean getFromClipboard(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		return mappedAction.getScalarValueFromChild(FROM_CLIPBOARD_TAG, Boolean.class).orElse(false);
 	}
 	
-	private StepElement getTargetElement(Map<String, ?> mappedAction,
-			Map<String, StepElement> mappedElements) {
-		Object elementNameObject = mappedAction.get(TARGET_TAG);
-		if(elementNameObject != null) {
-			String elementName = (String) elementNameObject;
-			return mappedElements.get(elementName);
-		}
-		return null;
+	private StepElement getTargetElement(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		return mappedAction.getScalarValueFromChild(TARGET_TAG)
+				.map(mappedElements::get)
+				.orElse(null);
 	}
 
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
-					throws ActionException {
+	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) throws NndlActionException {
 		if(fromClipboard) {
-			return runElementFromClipboard(webDriver, sessionId);
+			return runElementFromClipboard(webDriver);
 		}
-		return runElement(webDriver, sessionId, rootElement.getRootElement());
+		return runElement(webDriver, rootElement.getRootElement());
 	}
 	
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
+	public Advice runAction(SeleniumSndlWebDriver webDriver,
+			SeleniumSndlWebDriverWaiter webDriverWait) throws NndlActionException {
 		if(fromClipboard) {
-			return runElementFromClipboard(webDriver, sessionId);
+			return runElementFromClipboard(webDriver);
 		}
 		WebElement target =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(targetElement.elementToBeClickable(webDriver));
 		
-		return runElement(webDriver, sessionId, target);
+		return runElement(webDriver, target);
 	}
 	
-	private Advice runElementFromClipboard(SeleniumSndlWebDriver webDriver, String sessionId) {
-		return ContextAdapterHandler.addExtractedData(webDriver, sessionId,
-				ClipboardTextFactory.class.getName(), null);
+	private Advice runElementFromClipboard(SeleniumSndlWebDriver webDriver) {
+		return ThreadLocalManager.addExtractedData(webDriver, ClipboardTextFactory.class.getName(),
+				null);
 	}
 
-	public Advice runElement(SeleniumSndlWebDriver webDriver, String sessionId,
-			WebElement element) {
-		return ContextAdapterHandler.addExtractedData(webDriver, sessionId,
-				extractDataBindAdapterName, element);
+	public Advice runElement(SeleniumSndlWebDriver webDriver, WebElement element) {
+		return ThreadLocalManager.addExtractedData(webDriver, extractDataBindAdapterName, element);
 	}
 	
-	private String getExtractoClass(Map<String, ?> mappedAction) {
-		return (String) mappedAction.get(TAG);
+	private String getExtractoClass(NndlNode mappedAction) {
+		return mappedAction.getScalarValueFromChild(TAG).orElseThrow(NndlParserRuntimeException
+				.get("Action Extract should have "+TAG+" tag.", mappedAction));
 	}
 	
 

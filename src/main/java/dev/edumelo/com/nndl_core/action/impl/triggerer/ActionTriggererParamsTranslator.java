@@ -1,6 +1,6 @@
 package dev.edumelo.com.nndl_core.action.impl.triggerer;
 
-import dev.edumelo.com.nndl_core.contextAdapter.ContextAdapterHandler;
+import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
 
 public class ActionTriggererParamsTranslator {
 
@@ -24,7 +24,7 @@ public class ActionTriggererParamsTranslator {
 	private static String specialTranslation(String nndlRunnerSessionId, String param) {
 		switch (param) {
 		case "$webDriverSessionId":
-			return ContextAdapterHandler.getWebDriverSessionId(nndlRunnerSessionId);
+			return ThreadLocalManager.getWebDriverSessionId();
 		default:
 			return null;
 		}

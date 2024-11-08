@@ -5,8 +5,10 @@ import java.util.Map;
 import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.Action;
-import dev.edumelo.com.nndl_core.action.ActionException;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.exceptions.NndlActionException;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -22,12 +24,13 @@ public class ElementMark extends Action {
 	private StepElement markableElement;
 	private String mark;
 	private boolean ignoreRoot;
+	private NndlNode relevantNode;
 	
-	public ElementMark(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
-			Map<String, StepElement> mappedElements) {
+	public ElementMark(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		markableElement = getElement(mappedAction, mappedElements);
 		mark = getMark(mappedAction);
+		this.relevantNode = mappedAction;
 		extractIgnoreRoot(mappedAction, mappedElements);
 	}
 	
@@ -36,17 +39,18 @@ public class ElementMark extends Action {
 		return TAG;
 	}
 	
-	private void extractIgnoreRoot(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		Object value = mappedAction.get(IGNORE_ROOT_TAG);
-		if(value != null) {
-			ignoreRoot = (Boolean) value;
-		}
-		ignoreRoot = false;
+	private void extractIgnoreRoot(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		ignoreRoot = mappedAction.getScalarValueFromChild(IGNORE_ROOT_TAG, Boolean.class).orElse(false);
 	}
 	
 	@Override
 	public boolean isIgnoreRoot() {
 		return ignoreRoot;
+	}
+	
+	@Override
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
 	}
 
 	@Override
@@ -55,9 +59,9 @@ public class ElementMark extends Action {
 	}
 	
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
-					throws ActionException {
+	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement)
+					throws NndlActionException {
 		WebElement target = null;
 		if(isTargetSpecial(markableElement)) {
 			target = webDriver.getWebDriver().switchTo().activeElement();
@@ -76,24 +80,26 @@ public class ElementMark extends Action {
 
 
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) throws ActionException {
+	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
+			throws NndlActionException {
 		WebElement element =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(markableElement.presenceOfElementLocated(webDriver));
 		setActionPerformed(true);
 		return runElement(webDriver, webDriverWait, null, element);
 	}
 
-	private String getMark(Map<String, ?> mappedAction) {
-		return (String) mappedAction.get(MARK_TAG);
+	private String getMark(NndlNode mappedAction) {
+		return mappedAction.getScalarValueFromChild(MARK_TAG).orElseThrow(NndlParserRuntimeException
+				.get("Action ElmentMark should have "+MARK_TAG+" tag.", mappedAction));
 	}
 
 	
-	private StepElement getElement(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
+	private StepElement getElement(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		if(mappedElements == null) {
 			return null;
 		}
-		String elementKey = (String) mappedAction.get(TAG);
+		String elementKey = mappedAction.getScalarValueFromChild(TAG).orElseThrow(NndlParserRuntimeException
+				.get("Action ElementMark should have "+TAG+" tag.", mappedAction));
 		return mappedElements.get(elementKey);
 	}
 	

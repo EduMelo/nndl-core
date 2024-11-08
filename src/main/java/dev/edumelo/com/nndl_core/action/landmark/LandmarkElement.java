@@ -1,7 +1,6 @@
 package dev.edumelo.com.nndl_core.action.landmark;
 
-import java.util.Map;
-
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -12,11 +11,11 @@ public class LandmarkElement extends StepElement implements Landmark {
 	private static final Integer DEFAULT_TIMEOUT = 50;
 	private Integer timeout;
 	
-	public LandmarkElement(StepElement element, Map<String, ?> mappedElement) {
-		super(mappedElement);
+	public LandmarkElement(StepElement element, NndlNode landMarkNode) {
+		super(element);
 		setName(element.getName());
 		setMatchExp(element.getMatchExp());
-		this.timeout = extractTimeout(mappedElement);
+		this.timeout = extractTimeout(landMarkNode);
 	}
 
 	@Override
@@ -29,12 +28,8 @@ public class LandmarkElement extends StepElement implements Landmark {
 		return timeout;
 	}
 	
-	private Integer extractTimeout(Map<String, ?> mappedForkElement) {
-		Object mappedTimeout = mappedForkElement.get(TIMEOUT_TAG);
-		if(mappedTimeout != null) {
-			return (Integer) mappedTimeout;
-		}
-		return DEFAULT_TIMEOUT;
+	private Integer extractTimeout(NndlNode mappedForkElement) {
+		return mappedForkElement.getScalarValueFromChild(TIMEOUT_TAG, Integer.class).orElse(DEFAULT_TIMEOUT);
 	}
 	
 	public static String getTag() {

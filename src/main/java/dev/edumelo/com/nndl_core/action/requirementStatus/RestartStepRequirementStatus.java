@@ -1,8 +1,8 @@
 package dev.edumelo.com.nndl_core.action.requirementStatus;
 
-import java.util.Map;
 import java.util.Objects;
 
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.RunBreakerActionNotPerformed;
 import dev.edumelo.com.nndl_core.step.StepBreakerActionNotPerformed;
 
@@ -12,9 +12,9 @@ public class RestartStepRequirementStatus extends RequirementStatus {
 	private int restartCount;
 	private Exception fallBack;
 
-	public RestartStepRequirementStatus(Map<String, ?> actions) {
+	public RestartStepRequirementStatus(NndlNode actions) {
 		super(actions);
-		restartCount = getRestatCount(actions);
+		restartCount = actions.getScalarValueFromChild(RESTART_COUNT_TAG, Integer.class).orElse(0);
 		fallBack = getFallBackException(actions);
 	}
 
@@ -37,32 +37,23 @@ public class RestartStepRequirementStatus extends RequirementStatus {
 		return FALLBACK_TAG;
 	}
 
-	private Exception getFallBackException(Map<String, ?> actions) {
-		Object typeObject = actions.get(FALLBACK_TAG);
-		
+	private Exception getFallBackException(NndlNode actions) {
 		String msg = String.format("Action not performed.");
-		if(typeObject != null) {
-			RequirementStatusType type = RequirementStatusType.getType((String) typeObject);
-			switch(type) {
-			case NON_REQUIRED:
-				return null;
-			case REQUIRED:
-				return new RunBreakerActionNotPerformed(msg);
-			case STEP_BREAKER:
-				return new StepBreakerActionNotPerformed(msg);
-			default:
-				throw new RequirementStatusNonExistent();
-		}
-		}
-		return null;
-	}
-
-	private int getRestatCount(Map<String, ?> actions) {
-		Object restartCount = actions.get(RESTART_COUNT_TAG);
-		if(restartCount != null) {
-			return (Integer) restartCount;
-		}
-		return 0;
+		return actions.getScalarValueFromChild(FALLBACK_TAG)
+				.map(RequirementStatusType::getType)
+				.map(type -> {
+					switch (type) {
+						case NON_REQUIRED:
+							return null;
+						case REQUIRED:
+							return new RunBreakerActionNotPerformed(msg);
+						case STEP_BREAKER:
+							return new StepBreakerActionNotPerformed(msg);
+						default:
+							throw new RequirementStatusNonExistent();
+					}
+				})
+				.orElse(null);
 	}
 
 	@Override

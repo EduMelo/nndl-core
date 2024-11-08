@@ -6,6 +6,8 @@ import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
+import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -19,12 +21,13 @@ public class FillInput extends Action {
 	private static final String VALUE_TAG = "value";
 	private StepElement inputElement;
 	private String value;
+	private NndlNode relevantNode;
 	
-	public FillInput(SeleniumHubProperties seleniumHubProperties, Map<String, ?> mappedAction,
-			Map<String, StepElement> mappedElements) {
+	public FillInput(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.inputElement = getElement(mappedAction, mappedElements);
 		this.value = getValue(mappedAction);
+		this.relevantNode = mappedAction;
 	}
 	
 	@Override
@@ -36,18 +39,22 @@ public class FillInput extends Action {
 	public boolean isIgnoreRoot() {
 		return inputElement.isIgnoreRoot();
 	}
+	
+	@Override
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
+	}
 
 	@Override
-	public Advice runNested(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
+	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) {
 		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(inputElement.elementToBeClickable(remoteWebDriver));
 		return runElement(input);
 	}
 	
 	@Override
-	public Advice runAction(String sessionId, SeleniumSndlWebDriver remoteWebDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) {	
+	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {	
 		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(inputElement.elementToBeClickable(remoteWebDriver));		
 		
@@ -60,12 +67,14 @@ public class FillInput extends Action {
 		return new ContinueAdvice();
 	}
 	
-	private String getValue(Map<String, ?> mappedAction) {
-		return (String) mappedAction.get(VALUE_TAG);
+	private String getValue(NndlNode mappedAction) {
+		return mappedAction.getScalarValueFromChild(VALUE_TAG).orElseThrow(NndlParserRuntimeException
+				.get("Action FillInput should have "+VALUE_TAG+" tag", mappedAction));
 	}
 
-	private StepElement getElement(Map<String, ?> mappedAction, Map<String, StepElement> mappedElements) {
-		String elementKey = (String) mappedAction.get(TAG);
+	private StepElement getElement(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		String elementKey = mappedAction.getScalarValueFromChild(TAG).orElseThrow(NndlParserRuntimeException
+				.get("Action FillInput should have "+TAG+" tag.", mappedAction));
 		return mappedElements.get(elementKey);
 	}
 

@@ -59,4 +59,8 @@ public class SeleniumSndlWebDriver implements NndlWebDriver {
 		}
 	}
 
+	public String getPageSource() {
+		return this.webDriver.getPageSource();
+	}
+
 }

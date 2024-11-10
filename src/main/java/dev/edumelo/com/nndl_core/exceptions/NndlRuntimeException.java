@@ -9,5 +9,9 @@ public class NndlRuntimeException extends RuntimeException {
 	public NndlRuntimeException(String msg) {
 		super(msg);
 	}
+
+	public NndlRuntimeException(String msg, Exception e) {
+		super(msg, e);
+	}
 	
 }

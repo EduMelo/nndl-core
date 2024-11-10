@@ -1,6 +1,6 @@
-package dev.edumelo.com.nndl_core.step;
+package dev.edumelo.com.nndl_core.exceptions;
 
-public class RunBreakerActionNotPerformed extends RuntimeException {
+public class RunBreakerActionNotPerformed extends NndlFlowBreakerRuntimeException {
 	/**
 	 * 
 	 */

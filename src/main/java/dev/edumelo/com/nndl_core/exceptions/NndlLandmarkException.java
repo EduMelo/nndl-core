@@ -1,6 +1,5 @@
-package dev.edumelo.com.nndl_core.action.landmark;
+package dev.edumelo.com.nndl_core.exceptions;
 
-import dev.edumelo.com.nndl_core.exceptions.NndlActionException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 
 public class NndlLandmarkException extends NndlActionException {

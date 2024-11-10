@@ -7,7 +7,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.yaml.snakeyaml.error.Mark;
 import org.yaml.snakeyaml.nodes.MappingNode;
@@ -75,6 +77,12 @@ public class NndlNode {
 
 	public List<String> getLines() {
 		return lines;
+	}
+	public String getConcatenadedLines() {
+		if(CollectionUtils.isEmpty(lines)) {
+			return null;
+		}
+		return lines.stream().collect(Collectors.joining("\n"));
 	}
 	public NndlChild getChildren() {
 		return children;
@@ -262,8 +270,7 @@ public class NndlNode {
 
 	@Override
 	public String toString() {
-		return "NndlNode [name=" + name + ", value=" + value + ", start=" + start + ", end=" + end + ", lines=" + lines
-				+ ", parentNodeName=" + parentNodeName + ", children=" + children + ", variableSubstitutionMap="
+		return "NndlNode [name=" + name + ", parentNodeName=" + parentNodeName + ", variableSubstitutionMap="
 				+ variableSubstitutionMap + "]";
 	}
 

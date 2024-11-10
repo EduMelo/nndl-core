@@ -11,6 +11,8 @@ import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
+import dev.edumelo.com.nndl_core.exceptions.NndlLandmarkException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -84,6 +86,7 @@ public class LandMarkWaiter {
 		threads.forEach(Thread::interrupt);
 		
 		if(exceptionCapture.isExceptionCaptured()) {
+			ThreadLocalManager.storeSourceCode(action.getConcatenadedLines(), webDriver.getPageSource());
 			throw new NndlLandmarkException("Exception captured", exceptionCapture.getNode(), exceptionCapture.getThrowable());
 		}
 		

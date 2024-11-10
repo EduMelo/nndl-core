@@ -2,9 +2,10 @@ package dev.edumelo.com.nndl_core.action.requirementStatus;
 
 import java.util.Objects;
 
+import dev.edumelo.com.nndl_core.exceptions.NndlFlowBreakerException;
+import dev.edumelo.com.nndl_core.exceptions.RunBreakerActionNotPerformed;
+import dev.edumelo.com.nndl_core.exceptions.StepBreakerActionNotPerformed;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
-import dev.edumelo.com.nndl_core.step.RunBreakerActionNotPerformed;
-import dev.edumelo.com.nndl_core.step.StepBreakerActionNotPerformed;
 
 public class RestartStepRequirementStatus extends RequirementStatus {
 	private static final String RESTART_COUNT_TAG = "restartCount";
@@ -27,7 +28,7 @@ public class RestartStepRequirementStatus extends RequirementStatus {
 	public Exception getFallBack() {
 		return fallBack;
 	}
-	public void setFallBack(Exception fallBack) {
+	public void setFallBack(NndlFlowBreakerException fallBack) {
 		this.fallBack = fallBack;
 	}
 	public static String getRestartCountTag() {

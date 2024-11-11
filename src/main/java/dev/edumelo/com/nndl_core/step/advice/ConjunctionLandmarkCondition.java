@@ -8,7 +8,7 @@ import dev.edumelo.com.nndl_core.action.landmark.Landmark;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAggregation;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAggregationType;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkFactory;
-import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
+import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 

@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatus;
 import dev.edumelo.com.nndl_core.action.utils.Position;
-import dev.edumelo.com.nndl_core.exceptions.NndlActionException;
+import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;

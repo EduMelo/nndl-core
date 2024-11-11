@@ -1,4 +1,4 @@
-package dev.edumelo.com.nndl_core.exceptions;
+package dev.edumelo.com.nndl_core.exceptions.checked;
 
 public class NndlException extends Exception {
 	/**

@@ -5,7 +5,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 import dev.edumelo.com.nndl_core.contextAdapter.ExtractDataBindAdapter;
-import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
+import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.scroll.InfiniteScrollCondition;
 import dev.edumelo.com.nndl_core.scroll.ScrollObserver;

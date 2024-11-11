@@ -1,6 +1,6 @@
 package dev.edumelo.com.nndl_core.action.utils;
 
-import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
+import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 
 public class Position {

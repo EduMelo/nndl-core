@@ -2,6 +2,7 @@ package dev.edumelo.com.nndl_core.scroll;
 
 import java.util.List;
 
+import dev.edumelo.com.nndl_core.exceptions.checked.InfiniteScrollMaxLoopCountReached;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 
 public class ListScroll {

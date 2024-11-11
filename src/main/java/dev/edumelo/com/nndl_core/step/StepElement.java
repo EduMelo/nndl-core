@@ -14,7 +14,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
+import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
@@ -98,9 +98,6 @@ public class StepElement {
 	
 	public ExpectedCondition<WebElement> elementToBeClickable(NndlWebDriver remoteWebDriver) {
 		if(containsShadowRoot()) {
-			if((remoteWebDriver instanceof SeleniumSndlWebDriver)) {
-				throw new RuntimeException();
-			}
 			String[] matchExpressions = getMatchExpressions();
 			SeleniumSndlWebDriver seleniumSndlWebDriver = (SeleniumSndlWebDriver) remoteWebDriver;
 			RemoteWebDriver webDriver = seleniumSndlWebDriver.getWebDriver();

@@ -2,9 +2,9 @@ package dev.edumelo.com.nndl_core.action.requirementStatus;
 
 import java.util.Objects;
 
-import dev.edumelo.com.nndl_core.exceptions.NndlFlowBreakerException;
-import dev.edumelo.com.nndl_core.exceptions.RunBreakerActionNotPerformed;
-import dev.edumelo.com.nndl_core.exceptions.StepBreakerActionNotPerformed;
+import dev.edumelo.com.nndl_core.exceptions.checked.NndlFlowBreakerException;
+import dev.edumelo.com.nndl_core.exceptions.checked.StepBreakerActionNotPerformed;
+import dev.edumelo.com.nndl_core.exceptions.unchecked.RunBreakerActionNotPerformed;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 
 public class RestartStepRequirementStatus extends RequirementStatus {
@@ -38,18 +38,18 @@ public class RestartStepRequirementStatus extends RequirementStatus {
 		return FALLBACK_TAG;
 	}
 
-	private Exception getFallBackException(NndlNode actions) {
+	private Exception getFallBackException(NndlNode action) {
 		String msg = String.format("Action not performed.");
-		return actions.getScalarValueFromChild(FALLBACK_TAG)
+		return action.getScalarValueFromChild(FALLBACK_TAG)
 				.map(RequirementStatusType::getType)
 				.map(type -> {
 					switch (type) {
 						case NON_REQUIRED:
 							return null;
 						case REQUIRED:
-							return new RunBreakerActionNotPerformed(msg);
+							return new RunBreakerActionNotPerformed(msg, action);
 						case STEP_BREAKER:
-							return new StepBreakerActionNotPerformed(msg);
+							return new StepBreakerActionNotPerformed(msg, action);
 						default:
 							throw new RequirementStatusNonExistent();
 					}

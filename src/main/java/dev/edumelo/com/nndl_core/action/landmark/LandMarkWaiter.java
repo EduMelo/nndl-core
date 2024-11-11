@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
-import dev.edumelo.com.nndl_core.exceptions.NndlLandmarkException;
+import dev.edumelo.com.nndl_core.exceptions.checked.NndlLandmarkException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
@@ -58,7 +58,7 @@ public class LandMarkWaiter {
 							try {
 								webDriverWait.getWebDriverWaiter()
 									.withTimeout(Duration.ofSeconds(landmark.getTimeout()))
-									.until(landmark.visibilityOfElementLocated(webDriver));							
+									.until(landmark.visibilityOfElementLocated(webDriver));						
 							} catch(WebDriverException e) {
 								log.debug("Landmark wait interrupt. Landmark: {}", landmark);
 								exceptionCapture.setExceptionCaptured(true);

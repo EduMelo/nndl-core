@@ -2,7 +2,7 @@ package dev.edumelo.com.nndl_core.nndl;
 
 import java.util.ArrayList;
 
-import dev.edumelo.com.nndl_core.exceptions.NndlRuntimeException;
+import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlRuntimeException;
 
 public class NndlListChild extends ArrayList<NndlNode> implements NndlChild {
 	

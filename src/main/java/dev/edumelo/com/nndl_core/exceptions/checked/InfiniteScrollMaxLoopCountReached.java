@@ -1,6 +1,5 @@
-package dev.edumelo.com.nndl_core.scroll;
+package dev.edumelo.com.nndl_core.exceptions.checked;
 
-import dev.edumelo.com.nndl_core.exceptions.NndlActionException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 
 public class InfiniteScrollMaxLoopCountReached extends NndlActionException {

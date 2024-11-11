@@ -6,8 +6,8 @@ import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
-import dev.edumelo.com.nndl_core.exceptions.NndlActionException;
-import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
+import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
+import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
@@ -104,7 +104,6 @@ public class ElementPaint extends Action {
 			throws NndlActionException {
 		WebElement element =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(paintableElement.elementToBeClickable(webDriver));
-		setActionPerformed(true);
 		return runElement(webDriver, webDriverWait, null, element);
 	}
 	

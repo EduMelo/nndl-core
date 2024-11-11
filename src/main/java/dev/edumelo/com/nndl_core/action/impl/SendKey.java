@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
@@ -65,8 +64,7 @@ public class SendKey extends LandmarkConditionAction {
 		} else {
 			if(targetElement != null) {
 				target =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-						.until(ExpectedConditions.elementToBeClickable(
-						rootElement.getRootElement().findElement(targetElement.getLocator(remoteWebDriver))));
+						.until(targetElement.elementToBeClickable(remoteWebDriver));
 			} else {
 				target = rootElement.getRootElement();
 			}			
@@ -90,8 +88,7 @@ public class SendKey extends LandmarkConditionAction {
 		WebElement target = null;
 		if(targetElement != null) {
 			target =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-					.until(ExpectedConditions.elementToBeClickable(
-					targetElement.getLocator(remoteWebDriver)));
+					.until(targetElement.elementToBeClickable(remoteWebDriver));
 		} else {
 			target = runElement(remoteWebDriver);
 		}

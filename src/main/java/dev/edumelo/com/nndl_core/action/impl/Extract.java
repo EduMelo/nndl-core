@@ -3,7 +3,6 @@ package dev.edumelo.com.nndl_core.action.impl;
 import java.util.Map;
 
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
@@ -83,8 +82,7 @@ public class Extract extends Action {
 			return runElementFromClipboard(webDriver);
 		}
 		WebElement target =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(ExpectedConditions.elementToBeClickable(
-				targetElement.getLocator(webDriver)));
+				.until(targetElement.elementToBeClickable(webDriver));
 		
 		return runElement(webDriver, target);
 	}

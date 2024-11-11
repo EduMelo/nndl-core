@@ -3,7 +3,6 @@ package dev.edumelo.com.nndl_core.action.impl;
 import java.util.Map;
 
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
@@ -49,16 +48,14 @@ public class ElementClick extends LandmarkConditionAction {
 	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) {	
 		WebElement button = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(ExpectedConditions.elementToBeClickable(
-				rootElement.getRootElement().findElement(clickableElement.getLocator(webDriver))));
+				.until(clickableElement.elementToBeClickable(webDriver));
 		return runElement(webDriver, webDriverWait, rootElement, button);
 	}
 	
 	@Override
 	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait) {	
 		WebElement button = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(ExpectedConditions.elementToBeClickable(
-					clickableElement.getLocator(webDriver)));			
+				.until(clickableElement.elementToBeClickable(webDriver));			
 		return runElement(webDriver, webDriverWait, null, button);
 	}
 	

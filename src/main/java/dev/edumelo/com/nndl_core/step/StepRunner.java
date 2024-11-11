@@ -18,6 +18,7 @@ import dev.edumelo.com.nndl_core.action.runner.AsynchronousActionRunner;
 import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlFlowBreakerException;
 import dev.edumelo.com.nndl_core.exceptions.checked.StepBreakerActionNotPerformed;
+import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlFlowBreakerRuntimeException;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.RunBreakerActionNotPerformed;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.AdviceType;
@@ -144,7 +145,7 @@ public class StepRunner {
 			
 			if(caughtException != null) {
 				action.setActionPerformed(false);
-				if(caughtException instanceof NndlFlowBreakerException) {
+				if(caughtException instanceof NndlFlowBreakerException || caughtException instanceof NndlFlowBreakerRuntimeException) {
 					ThreadLocalManager.storeSourceCode(action.getRelevantNode().getConcatenadedLines(),
 							webDriver.getPageSource());
 				}

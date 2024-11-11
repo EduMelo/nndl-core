@@ -2,7 +2,8 @@ package dev.edumelo.com.nndl_core.action.landmark;
 
 import java.util.Map;
 
-import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
@@ -25,11 +26,6 @@ public class ForkElement implements Landmark {
 		this.fork = extractFork(mappedForkElement);
 		this.timeout = extractTimeout(mappedForkElement);
 	}
-	
-	@Override
-	public By getLocator(NndlWebDriver remoteWebDriver) {
-		return this.element.getLocator(remoteWebDriver);
-	}
 
 	@Override
 	public Advice getLandMarkAdvice() {
@@ -42,6 +38,11 @@ public class ForkElement implements Landmark {
 	@Override
 	public Integer getTimeout() {
 		return timeout;
+	}
+	
+	@Override
+	public ExpectedCondition<WebElement> visibilityOfElementLocated(NndlWebDriver remoteWebDriver){
+		return this.element.visibilityOfElementLocated(remoteWebDriver);
 	}
 
 	private Integer extractTimeout(NndlNode mappedForkElement) {

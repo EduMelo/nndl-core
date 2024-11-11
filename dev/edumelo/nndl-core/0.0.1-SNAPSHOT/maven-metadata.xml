@@ -3,21 +3,21 @@
   <groupId>dev.edumelo</groupId>
   <artifactId>nndl-core</artifactId>
   <versioning>
-    <lastUpdated>20241111001414</lastUpdated>
+    <lastUpdated>20241111031956</lastUpdated>
     <snapshot>
-      <timestamp>20241111.001414</timestamp>
+      <timestamp>20241111.031956</timestamp>
       <buildNumber>1</buildNumber>
     </snapshot>
     <snapshotVersions>
       <snapshotVersion>
         <extension>jar</extension>
-        <value>0.0.1-20241111.001414-1</value>
-        <updated>20241111001414</updated>
+        <value>0.0.1-20241111.031956-1</value>
+        <updated>20241111031956</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>pom</extension>
-        <value>0.0.1-20241111.001414-1</value>
-        <updated>20241111001414</updated>
+        <value>0.0.1-20241111.031956-1</value>
+        <updated>20241111031956</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>

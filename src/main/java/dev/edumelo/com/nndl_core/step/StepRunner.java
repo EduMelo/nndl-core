@@ -16,9 +16,9 @@ import dev.edumelo.com.nndl_core.action.requirementStatus.RestartStepRequirement
 import dev.edumelo.com.nndl_core.action.runner.ActionRunner;
 import dev.edumelo.com.nndl_core.action.runner.AsynchronousActionRunner;
 import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
-import dev.edumelo.com.nndl_core.exceptions.NndlFlowBreakerException;
-import dev.edumelo.com.nndl_core.exceptions.RunBreakerActionNotPerformed;
-import dev.edumelo.com.nndl_core.exceptions.StepBreakerActionNotPerformed;
+import dev.edumelo.com.nndl_core.exceptions.checked.NndlFlowBreakerException;
+import dev.edumelo.com.nndl_core.exceptions.checked.StepBreakerActionNotPerformed;
+import dev.edumelo.com.nndl_core.exceptions.unchecked.RunBreakerActionNotPerformed;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.AdviceType;
 import dev.edumelo.com.nndl_core.step.advice.SwapStepAdvice;
@@ -118,12 +118,13 @@ public class StepRunner {
 					case STEP_BREAKER:
 						msg = "Step breaker action exception. ";
 						log.error(msgSufix+msg+msgPrefix);
-						caughtException = new StepBreakerActionNotPerformed(msg, e, requirementStatus.getStepTreatment());
+						caughtException = new StepBreakerActionNotPerformed(msg, action.getRelevantNode(), e,
+								requirementStatus.getStepTreatment());
 						break;
 					case REQUIRED:
 						msg = "Required action exception. action: "+action;
 						log.error(msgSufix+msg+msgPrefix);
-							caughtException = new RunBreakerActionNotPerformed(msg, e);
+							caughtException = new RunBreakerActionNotPerformed(msg, action.getRelevantNode(), e);
 						break;
 					case RESTART_STEP:
 						msg = "Restart step action exception. ";

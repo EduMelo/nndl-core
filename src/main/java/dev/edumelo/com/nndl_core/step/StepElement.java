@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import org.openqa.selenium.By;
 
-import dev.edumelo.com.nndl_core.exceptions.NndlParserRuntimeException;
+import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
 

@@ -7,6 +7,7 @@ import org.openqa.selenium.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.edumelo.com.nndl_core.exceptions.checked.InfiniteScrollMaxLoopCountReached;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 

@@ -2,7 +2,7 @@ package dev.edumelo.com.nndl_core.nndl;
 
 import java.util.HashMap;
 
-import dev.edumelo.com.nndl_core.exceptions.NndlRuntimeException;
+import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlRuntimeException;
 
 public class NndlMapChild extends HashMap<String, NndlNode> implements NndlChild {
 

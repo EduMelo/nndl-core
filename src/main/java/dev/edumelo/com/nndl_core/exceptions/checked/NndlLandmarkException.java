@@ -1,4 +1,4 @@
-package dev.edumelo.com.nndl_core.exceptions;
+package dev.edumelo.com.nndl_core.exceptions.checked;
 
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 

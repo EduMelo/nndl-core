@@ -1,4 +1,4 @@
-package dev.edumelo.com.nndl_core.exceptions;
+package dev.edumelo.com.nndl_core.exceptions.unchecked;
 
 public class NndlRuntimeException extends RuntimeException {
 	/**
@@ -10,7 +10,7 @@ public class NndlRuntimeException extends RuntimeException {
 		super(msg);
 	}
 
-	public NndlRuntimeException(String msg, Exception e) {
+	public NndlRuntimeException(String msg, Throwable e) {
 		super(msg, e);
 	}
 	

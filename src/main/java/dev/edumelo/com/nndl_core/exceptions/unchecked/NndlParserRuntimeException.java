@@ -1,10 +1,10 @@
-package dev.edumelo.com.nndl_core.exceptions;
+package dev.edumelo.com.nndl_core.exceptions.unchecked;
 
 import java.util.function.Supplier;
 
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 
-public class NndlParserRuntimeException extends NndlNodeRuntimeException {
+public class NndlParserRuntimeException extends NndlRuntimeActionException {
 	/**
 	 * 
 	 */

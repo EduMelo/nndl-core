@@ -38,6 +38,7 @@ public class Nndl {
 		try {		
 			String yamlString = IOUtils.toString(input, "UTF-8");
 			setValue(yamlString);
+			loadNndlMap();
 		} catch (IOException e) {
 			throw new RuntimeException("It wasn't possible to load the file: "+nndlFile, e);
 		}
@@ -56,8 +57,6 @@ public class Nndl {
 		if(value == null) {
 			return;
 		}
-		Yaml yaml = new Yaml(new NndlConstructor(value));
-		nndlMap = yaml.load(value);
 		this.value = value;
 	}
 	public List<Nndl> getImports() {
@@ -69,6 +68,14 @@ public class Nndl {
 	public void addImport(Nndl importNndl) {
 		imports = imports == null ? new ArrayList<>() : imports;
 		imports.add(importNndl);		
+	}
+	
+	public void loadNndlMap() {
+		if(value == null) {
+			throw new RuntimeException("NndlMap cannot be loaded because value is empty.");
+		}
+		Yaml yaml = new Yaml(new NndlConstructor(value));
+		nndlMap = yaml.load(value);
 	}
 	
 	public Optional<List<String>> extractImportsNames() {

@@ -76,6 +76,10 @@ public class Nndl {
 		}
 		Yaml yaml = new Yaml(new NndlConstructor(value));
 		nndlMap = yaml.load(value);
+		
+		for (Nndl nndl : imports) {
+			nndl.loadNndlMap();
+		}
 	}
 	
 	public Optional<List<String>> extractImportsNames() {

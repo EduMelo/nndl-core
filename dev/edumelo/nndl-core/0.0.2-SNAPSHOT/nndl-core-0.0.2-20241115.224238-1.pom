@@ -7,7 +7,7 @@
 
 	<groupId>dev.edumelo</groupId>
 	<artifactId>nndl-core</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 
 	<name>nndl-core</name>
 	<url>https://github.com/EduMelo/nndl-core</url>

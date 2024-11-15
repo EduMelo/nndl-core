@@ -4,8 +4,8 @@
   <artifactId>nndl-core</artifactId>
   <versioning>
     <versions>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>0.0.2-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20241114230423</lastUpdated>
+    <lastUpdated>20241115224238</lastUpdated>
   </versioning>
 </metadata>

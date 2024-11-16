@@ -11,12 +11,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 
 public class Nndl {
+	private Logger log = LoggerFactory.getLogger(Nndl.class);
 	private static final String STEPS_TAG = "steps";
 	private static final String ASYNCHRONOUS_STEPS_TAG = "asynchronousSteps";
 	private static final String ENTRY_STEP_TAG = "entryStep";
@@ -71,6 +74,7 @@ public class Nndl {
 	}
 	
 	public void loadNndlMap() {
+		log.debug("loadNndlMap. Nndl: "+toString());
 		if(value == null) {
 			throw new RuntimeException("NndlMap cannot be loaded because value is empty.");
 		}

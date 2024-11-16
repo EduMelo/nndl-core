@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,8 +147,12 @@ public class StepRunner {
 			if(caughtException != null) {
 				action.setActionPerformed(false);
 				if(caughtException instanceof NndlFlowBreakerException || caughtException instanceof NndlFlowBreakerRuntimeException) {
-					ThreadLocalManager.storeSourceCode(action.getRelevantNode().getConcatenadedLines(),
-							webDriver.getPageSource());
+					try {
+						ThreadLocalManager.storeSourceCode(action.getRelevantNode().getConcatenadedLines(),
+								webDriver.getPageSource());
+					} catch (WebDriverException e) {
+						log.error("It wasn't possible to capture exception's page source.");
+					}
 				}
 				if(caughtException instanceof StepBreakerActionNotPerformed) {
 					throw (StepBreakerActionNotPerformed) caughtException;

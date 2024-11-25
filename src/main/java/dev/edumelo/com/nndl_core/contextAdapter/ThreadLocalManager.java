@@ -31,6 +31,15 @@ public class ThreadLocalManager {
 	private static ThreadLocal<Map<String, List<ExtractDataBind>>> extractedDataMap =
 			ThreadLocal.withInitial(() -> new HashMap<>());
 	
+	private static ThreadLocal<String> nndlName = ThreadLocal.withInitial(() -> "");
+	
+	public static void expireSession() {
+		contextAdapters.remove();
+		webDriversSessionIds.remove();
+		extractedDataMap.remove();
+		nndlName.remove();
+	}
+	
 	public static void setAdapters(List<ContextAdapter> adapters) {
 		contextAdapters.set(adapters);
 	}
@@ -45,6 +54,14 @@ public class ThreadLocalManager {
 	
 	public static String getWebDriverSessionId() {
 		return webDriversSessionIds.get();
+	}
+	
+	public static void storeNndlName(String nndlName) {
+		ThreadLocalManager.nndlName.set(nndlName);
+	}
+	
+	public static String retrieveNndlName() {
+		return nndlName.get();
 	}
 	
 	public static Advice addExtractedData(SeleniumSndlWebDriver webDriver, String extractDataBindAdapterName, WebElement element) {
@@ -129,12 +146,6 @@ public class ThreadLocalManager {
 				.filter(a -> a instanceof BrowserArgumentsContextAdapter)
 				.map(a -> (BrowserArgumentsContextAdapter) a)
 				.collect(Collectors.toList());
-	}
-	
-	public static void expireSession() {
-		contextAdapters.remove();
-		webDriversSessionIds.remove();
-		extractedDataMap.remove();
 	}
 	
 }

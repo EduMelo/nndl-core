@@ -45,6 +45,7 @@ public class NndlRunner {
 	}
 
 	private NndlResult runStack(Nndl nndl) {
+		ThreadLocalManager.storeNndlName(nndl.getName());
 		SeleniumHubProperties seleniumHubProperties = browserControllerDriverConfiguration
 				.getProperties();
 		Map<String, Step> steps = nndl.getStepMap(seleniumHubProperties);

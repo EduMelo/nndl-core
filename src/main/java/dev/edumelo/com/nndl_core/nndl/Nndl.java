@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,8 +82,10 @@ public class Nndl {
 		Yaml yaml = new Yaml(new NndlConstructor(value));
 		nndlMap = yaml.load(value);
 		
-		for (Nndl nndl : imports) {
-			nndl.loadNndlMap();
+		if(CollectionUtils.isNotEmpty(imports)) {
+			for (Nndl nndl : imports) {
+				nndl.loadNndlMap();
+			}			
 		}
 	}
 	

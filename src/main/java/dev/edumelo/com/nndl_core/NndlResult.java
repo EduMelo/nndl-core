@@ -3,6 +3,8 @@ package dev.edumelo.com.nndl_core;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import dev.edumelo.com.nndl_core.contextAdapter.ExtractDataBindAdapter;
 
 public class NndlResult {
@@ -13,9 +15,16 @@ public class NndlResult {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <U extends ExtractDataBind, T extends ExtractDataBindAdapter<U>> List<U> getResult(
-			Class<T> clazz) {
+	public <U extends ExtractDataBind, T extends ExtractDataBindAdapter<U>> List<U> getResult(Class<T> clazz) {
 		return (List<U>) mapResult.get(clazz.getName());
 	}
 
+	@SuppressWarnings("unchecked")
+	public <U extends ExtractDataBind, T extends ExtractDataBindAdapter<U>> U getSingleResult(Class<T> clazz) {
+		List<U> list = (List<U>) mapResult.get(clazz.getName());
+		if(CollectionUtils.isNotEmpty(list)) {
+			return list.get(0);
+		}
+		return null;
+	}
 }

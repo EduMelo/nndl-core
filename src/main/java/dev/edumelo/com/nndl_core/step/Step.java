@@ -9,8 +9,6 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections4.CollectionUtils;
-
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
@@ -22,47 +20,10 @@ public class Step {
 	private static final String NAME_TAG = "name";
 	
 	private String name;
-	private Map<String, StepElement> elements;
-	private LinkedList<Action> actions;
-	private Map<String, Step> subSteps;
 	private boolean limitCountInvalidate = false;
-
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public Map<String, StepElement> getElements() {
-		return elements;
-	}
-	public void setElements(Map<String, StepElement> elements) {
-		this.elements = elements;
-	}
-	public LinkedList<Action> getActions() {
-		return actions;
-	}
-	public void setActions(LinkedList<Action> actions) {
-		this.actions = actions;
-	}
-	public Map<String, Step> getSubSteps() {
-		return subSteps;
-	}
-	public void setSubSteps(Map<String, Step> subSteps) {
-		this.subSteps = subSteps;
-	}
-	public boolean isLimitCountInvalidate() {
-		return limitCountInvalidate;
-	}
-	public void setLimitCountInvalidate(boolean limitCountInvalidate) {
-		this.limitCountInvalidate = limitCountInvalidate;
-	}
-	public static String getTag() {
-		return TAG;
-	}
-	public static Object getSubstepTag() {
-		return SUBSTEP_TAG;
-	}
+	private LinkedList<Action> actions;
+	private Map<String, StepElement> elements;
+	private Map<String, Step> subSteps;
 
 	public Step(SeleniumHubProperties seleniumHubProperties, NndlNode node) {
 		List<NndlNode> listedElements = node.getListedValuesFromChild(StepElement.getTag()).orElse(new ArrayList<>());
@@ -74,6 +35,49 @@ public class Step {
 		this.elements = extractElements(listedElements);
 		this.subSteps = extractedSubSteps(seleniumHubProperties, listedSubSteps);
 		this.actions = extractedActions(seleniumHubProperties, this.elements, subSteps, listedActions);
+	}
+	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public Map<String, StepElement> getElements() {
+		return elements;
+	}
+	public void setElements(Map<String, StepElement> elements) {
+		this.elements = elements;
+	}
+	
+	public LinkedList<Action> getActions() {
+		return actions;
+	}
+	public void setActions(LinkedList<Action> actions) {
+		this.actions = actions;
+	}
+	
+	public Map<String, Step> getSubSteps() {
+		return subSteps;
+	}
+	public void setSubSteps(Map<String, Step> subSteps) {
+		this.subSteps = subSteps;
+	}
+	
+	public boolean isLimitCountInvalidate() {
+		return limitCountInvalidate;
+	}
+	public void setLimitCountInvalidate(boolean limitCountInvalidate) {
+		this.limitCountInvalidate = limitCountInvalidate;
+	}
+	
+	public static String getTag() {
+		return TAG;
+	}
+	
+	public static Object getSubstepTag() {
+		return SUBSTEP_TAG;
 	}
 	
 	private Map<String, Step> extractedSubSteps(SeleniumHubProperties seleniumHubProperties, List<NndlNode> listedSubSteps) {

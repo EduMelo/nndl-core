@@ -1,11 +1,15 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
+import static dev.edumelo.com.nndl_core.action.ElementWaitCondition.PRESENT;
+
 import java.util.Map;
 
 import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.action.ElementWaitCondition;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
+import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
@@ -28,7 +32,7 @@ public class ElementClick extends LandmarkConditionAction {
 		this.relevantNode = mappedAction;
 		setLandMarkConditionAgregation(mappedAction, mappedElements);
 	}
-	
+
 	@Override
 	public String getTag() {
 		return TAG;
@@ -43,19 +47,28 @@ public class ElementClick extends LandmarkConditionAction {
 	public NndlNode getRelevantNode() {
 		return this.relevantNode;
 	}
+	
+	@Override
+	public ElementWaitCondition getDefaultWaitCondition() {
+		return PRESENT;
+	}
+	
+	@Override
+	public StepElement getRelevantElment() {
+		return this.clickableElement;
+	}
 
 	@Override
 	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
-			IterationContent rootElement) {	
-		WebElement button = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(clickableElement.elementToBeClickable(webDriver));
+			IterationContent rootElement) throws NndlActionException {
+		WebElement button = wait(webDriver, webDriverWait);
 		return runElement(webDriver, webDriverWait, rootElement, button);
 	}
 	
 	@Override
-	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait) {	
-		WebElement button = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(clickableElement.elementToBeClickable(webDriver));			
+	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
+			throws NndlActionException {	
+		WebElement button = wait(webDriver, webDriverWait);
 		return runElement(webDriver, webDriverWait, null, button);
 	}
 	
@@ -85,6 +98,7 @@ public class ElementClick extends LandmarkConditionAction {
 
 	@Override
 	public String toString() {
-		return "Click [clickableElement=" + clickableElement + "]";
+		return org.apache.commons.lang.builder.ToStringBuilder.reflectionToString(this,
+				org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 }

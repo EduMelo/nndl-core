@@ -1,11 +1,14 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
+import static dev.edumelo.com.nndl_core.action.ElementWaitCondition.CLICKABLE;
+
 import java.util.Map;
 
 import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.action.ElementWaitCondition;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
@@ -29,6 +32,67 @@ public class ElementPaint extends Action {
 	@Override
 	public String getTag() {
 		return TAG;
+	}
+	
+	@Override
+	public ElementWaitCondition getDefaultWaitCondition() {
+		return CLICKABLE;
+	}
+	
+	@Override
+	public StepElement getRelevantElment() {
+		return this.paintableElement;
+	}
+	
+	@Override
+	public boolean isIgnoreRoot() {
+		return ignoreRoot;
+	}
+	
+	@Override
+	public NndlNode getRelevantNode() {
+		return this.relevantNode;
+	}
+
+	@Override
+	public void runPreviousModification(ActionModificator modificiator) {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) throws NndlActionException {
+		WebElement target = null;
+		if(isTargetSpecial(paintableElement)) {
+			target = webDriver.getWebDriver().switchTo().activeElement();
+		} else {
+			if(paintableElement != null) {
+				target = wait(webDriver, webDriverWait);
+			} else {
+				target = rootElement.getRootElement();
+			}
+		}
+		Advice advice = runElement(webDriver, webDriverWait, rootElement, target);
+		setActionPerformed(true);
+		return advice;
+	}
+
+	@Override
+	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
+			throws NndlActionException {
+		WebElement element =  wait(webDriver, webDriverWait);
+		return runElement(webDriver, webDriverWait, null, element);
+	}
+	
+	public Advice runElement(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement, WebElement element) {
+		if(checkCondition(webDriver, webDriverWait, rootElement)) {
+			webDriver.getWebDriver().executeScript("arguments[0].style.backgroundColor = arguments[1]", element, color);		
+			setActionPerformed(true);
+		} else {
+			setActionPerformed(false);
+		}
+		return new ContinueAdvice();
 	}
 	
 	public ElementPaint(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
@@ -56,22 +120,6 @@ public class ElementPaint extends Action {
 	private void extractIgnoreRoot(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		ignoreRoot =  mappedAction.getScalarValueFromChild(IGNORE_ROOT_TAG, Boolean.class).orElse(false);
 	}
-
-	@Override
-	public boolean isIgnoreRoot() {
-		return ignoreRoot;
-	}
-	
-	@Override
-	public NndlNode getRelevantNode() {
-		return this.relevantNode;
-	}
-
-	@Override
-	public void runPreviousModification(ActionModificator modificiator) {
-		// TODO Auto-generated method stub
-
-	}
 	
 	private boolean isTargetSpecial(StepElement targetElement) {
 		if(targetElement == null || targetElement.getName() == null) {
@@ -81,41 +129,9 @@ public class ElementPaint extends Action {
 	}
 
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
-			IterationContent rootElement) throws NndlActionException {
-		WebElement target = null;
-		if(isTargetSpecial(paintableElement)) {
-			target = webDriver.getWebDriver().switchTo().activeElement();
-		} else {
-			if(paintableElement != null) {
-				target = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-						.until(paintableElement.elementToBeClickable(webDriver));
-			} else {
-				target = rootElement.getRootElement();
-			}
-		}
-		Advice advice = runElement(webDriver, webDriverWait, rootElement, target);
-		setActionPerformed(true);
-		return advice;
-	}
-
-	@Override
-	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
-			throws NndlActionException {
-		WebElement element =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(paintableElement.elementToBeClickable(webDriver));
-		return runElement(webDriver, webDriverWait, null, element);
-	}
-	
-	public Advice runElement(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
-			IterationContent rootElement, WebElement element) {
-		if(checkCondition(webDriver, webDriverWait, rootElement)) {
-			webDriver.getWebDriver().executeScript("arguments[0].style.backgroundColor = arguments[1]", element, color);		
-			setActionPerformed(true);
-		} else {
-			setActionPerformed(false);
-		}
-		return new ContinueAdvice();
+	public String toString() {
+		return org.apache.commons.lang.builder.ToStringBuilder.reflectionToString(this,
+				org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 }

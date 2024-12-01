@@ -1,5 +1,7 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
+import static dev.edumelo.com.nndl_core.action.ElementWaitCondition.CLICKABLE;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +12,9 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.action.ElementWaitCondition;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
+import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
@@ -56,15 +60,24 @@ public class SendKey extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait,
-			IterationContent rootElement) {
+	public ElementWaitCondition getDefaultWaitCondition() {
+		return CLICKABLE;
+	}
+	
+	@Override
+	public StepElement getRelevantElment() {
+		return this.targetElement;
+	}
+	
+	@Override
+	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) throws NndlActionException {
 		WebElement target = null;
 		if(isTargetSpecial(targetElement)) {
-			target = remoteWebDriver.getWebDriver().switchTo().activeElement();
+			target = webDriver.getWebDriver().switchTo().activeElement();
 		} else {
 			if(targetElement != null) {
-				target =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-						.until(targetElement.elementToBeClickable(remoteWebDriver));
+				target = wait(webDriver, webDriverWait);
 			} else {
 				target = rootElement.getRootElement();
 			}			
@@ -98,6 +111,11 @@ public class SendKey extends LandmarkConditionAction {
 		return new ContinueAdvice();
 	}
 	
+	@Override
+	public void runPreviousModification(ActionModificator modificiator) {
+		// TODO Auto-generated method stub
+	}
+	
 	public WebElement runElement(SeleniumSndlWebDriver remoteWebDriver) {
 		return remoteWebDriver.getWebDriver().findElement(By.tagName("html"));
 	}
@@ -125,15 +143,10 @@ public class SendKey extends LandmarkConditionAction {
 	private void extractIgnoreRoot(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		ignoreRoot = mappedAction.getScalarValueFromChild(IGNORE_ROOT_TAG, Boolean.class).orElse(false);
 	}
-	
-	@Override
-	public void runPreviousModification(ActionModificator modificiator) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public String toString() {
-		return "SendKey [key=" + key + ", targetElement=" + targetElement + ", ignoreRoot=" + ignoreRoot + "]";
+		return org.apache.commons.lang.builder.ToStringBuilder.reflectionToString(this,
+				org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 }

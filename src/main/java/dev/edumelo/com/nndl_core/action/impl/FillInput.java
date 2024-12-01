@@ -1,11 +1,15 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
+import static dev.edumelo.com.nndl_core.action.ElementWaitCondition.CLICKABLE;
+
 import java.util.Map;
 
 import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.action.ElementWaitCondition;
+import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
@@ -44,22 +48,35 @@ public class FillInput extends Action {
 	public NndlNode getRelevantNode() {
 		return this.relevantNode;
 	}
+	
+	@Override
+	public ElementWaitCondition getDefaultWaitCondition() {
+		return CLICKABLE;
+	}
+	
+	@Override
+	public StepElement getRelevantElment() {
+		return this.inputElement;
+	}
 
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait,
-			IterationContent rootElement) {
-		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(inputElement.elementToBeClickable(remoteWebDriver));
+	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement) throws NndlActionException {
+		WebElement input = wait(webDriver, webDriverWait);
 		return runElement(input);
 	}
 	
 	@Override
-	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {	
-		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(inputElement.elementToBeClickable(remoteWebDriver));		
-		
+	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
+			throws NndlActionException {	
+		WebElement input = wait(webDriver, webDriverWait);		
 		setActionPerformed(true);
 		return runElement(input);
+	}
+	
+	@Override
+	public void runPreviousModification(ActionModificator modificiator) {
+		// TODO Auto-generated method stub	
 	}
 	
 	public Advice runElement(WebElement input) {
@@ -79,13 +96,8 @@ public class FillInput extends Action {
 	}
 
 	@Override
-	public void runPreviousModification(ActionModificator modificiator) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public String toString() {
-		return "FillInput [inputElement=" + inputElement + ", value=" + value + "]";
+		return org.apache.commons.lang.builder.ToStringBuilder.reflectionToString(this,
+				org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 }

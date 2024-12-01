@@ -1,11 +1,14 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
+import static dev.edumelo.com.nndl_core.action.ElementWaitCondition.CLICKABLE;
+
 import java.util.Map;
 
 import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.action.ElementWaitCondition;
 import dev.edumelo.com.nndl_core.contextAdapter.ClipboardTextFactory;
 import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
@@ -56,16 +59,16 @@ public class Extract extends Action {
 		
 	}
 	
-	private boolean getFromClipboard(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
-		return mappedAction.getScalarValueFromChild(FROM_CLIPBOARD_TAG, Boolean.class).orElse(false);
+	@Override
+	public ElementWaitCondition getDefaultWaitCondition() {
+		return CLICKABLE;
 	}
 	
-	private StepElement getTargetElement(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
-		return mappedAction.getScalarValueFromChild(TARGET_TAG)
-				.map(mappedElements::get)
-				.orElse(null);
+	@Override
+	public StepElement getRelevantElment() {
+		return this.targetElement;
 	}
-
+	
 	@Override
 	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) throws NndlActionException {
@@ -81,10 +84,18 @@ public class Extract extends Action {
 		if(fromClipboard) {
 			return runElementFromClipboard(webDriver);
 		}
-		WebElement target =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(targetElement.elementToBeClickable(webDriver));
-		
+		WebElement target =  wait(webDriver, webDriverWait);
 		return runElement(webDriver, target);
+	}
+	
+	private boolean getFromClipboard(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		return mappedAction.getScalarValueFromChild(FROM_CLIPBOARD_TAG, Boolean.class).orElse(false);
+	}
+	
+	private StepElement getTargetElement(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		return mappedAction.getScalarValueFromChild(TARGET_TAG)
+				.map(mappedElements::get)
+				.orElse(null);
 	}
 	
 	private Advice runElementFromClipboard(SeleniumSndlWebDriver webDriver) {
@@ -101,13 +112,10 @@ public class Extract extends Action {
 				.get("Action Extract should have "+TAG+" tag.", mappedAction));
 	}
 	
-
 	@Override
 	public String toString() {
-		return "Extract [extractDataBindAdapterName=" + extractDataBindAdapterName
-				+ ", targetElement=" + targetElement + "]";
+		return org.apache.commons.lang.builder.ToStringBuilder.reflectionToString(this,
+				org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 	
-	
-
 }

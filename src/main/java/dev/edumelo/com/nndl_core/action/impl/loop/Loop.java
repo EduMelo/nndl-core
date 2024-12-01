@@ -1,15 +1,15 @@
 package dev.edumelo.com.nndl_core.action.impl.loop;
 
-import java.util.Collection;
+import static dev.edumelo.com.nndl_core.action.ElementWaitCondition.NONE;
+
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dev.edumelo.com.nndl_core.ExtractDataBind;
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
-import dev.edumelo.com.nndl_core.contextAdapter.ExtractDataBindAdapter;
+import dev.edumelo.com.nndl_core.action.ElementWaitCondition;
 import dev.edumelo.com.nndl_core.exceptions.checked.InfiniteScrollMaxLoopCountReached;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
@@ -29,16 +29,11 @@ import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
 
 public class Loop extends Action {
-	
 	private static final Logger log = LoggerFactory.getLogger(Loop.class);
-	
 	private static final int DEFAULT_MAX_LOOP_COUNT = 50;
 	
 	private Class<ScrollObserver> infinitScrollObserverClass;
-	private Class<ExtractDataBindAdapter<?>> resultFillerClass;
 	private Class<InfiniteScrollCondition> conditionClass;
-	private ScrollObserver extractorObserver;
-	private Collection<ExtractDataBind> extractData;
 	private Step iterationStep;
 	private LoopIterationScope iterationScope;
 	private int scrollCount = 15;
@@ -54,7 +49,6 @@ public class Loop extends Action {
 			Map<String, ?> mappedSubSteps, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
 		this.infinitScrollObserverClass = LoopExtractor.extractInfiniteScrollObserversClass(mappedAction);
-		this.resultFillerClass = LoopExtractor.extractResultFillerClass(mappedAction);
 		this.conditionClass = LoopExtractor.extractConditionClass(mappedAction);
 		this.iterationStep = LoopExtractor.extractIterationStep(mappedAction, mappedSubSteps);
 		this.iterationScope = LoopExtractor.extractIterationScope(mappedAction, mappedElements);
@@ -81,6 +75,16 @@ public class Loop extends Action {
 	@Override
 	public NndlNode getRelevantNode() {
 		return this.relevantNode;
+	}
+	
+	@Override
+	public ElementWaitCondition getDefaultWaitCondition() {
+		return NONE;
+	}
+	
+	@Override
+	public StepElement getRelevantElment() {
+		return null;
 	}
 	
 	@Override
@@ -144,13 +148,11 @@ public class Loop extends Action {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	@Override
 	public String toString() {
-		return "Loop [infinitScrollObserverClass=" + infinitScrollObserverClass + ", resultFillerClass="
-				+ resultFillerClass + ", conditionClass=" + conditionClass + ", extractorObserver=" + extractorObserver
-				+ ", extractData=" + extractData + ", iterationStep=" + iterationStep + ", iterationScope="
-				+ iterationScope + ", scrollCount=" + scrollCount + ", limit=" + limit + ", autoScrool=" + autoScrool
-				+ ", ignoreMaxLoopCountException=" + ignoreMaxLoopCountException + "]";
+		return org.apache.commons.lang.builder.ToStringBuilder.reflectionToString(this,
+				org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE);
 	}
+
 }

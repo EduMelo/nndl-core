@@ -1,11 +1,14 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
+import static dev.edumelo.com.nndl_core.action.ElementWaitCondition.PRESENT;
+
 import java.util.Map;
 
 import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.action.ElementWaitCondition;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
@@ -59,6 +62,16 @@ public class ElementMark extends Action {
 	}
 	
 	@Override
+	public ElementWaitCondition getDefaultWaitCondition() {
+		return PRESENT;
+	}
+	
+	@Override
+	public StepElement getRelevantElment() {
+		return this.markableElement;
+	}
+	
+	@Override
 	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement)
 					throws NndlActionException {
@@ -67,8 +80,7 @@ public class ElementMark extends Action {
 			target = webDriver.getWebDriver().switchTo().activeElement();
 		} else {
 			if(markableElement != null) {
-				target = webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-						.until(markableElement.elementToBeClickable(webDriver));
+				target = wait(webDriver, webDriverWait);
 			} else {
 				target = rootElement.getRootElement();
 			}
@@ -82,8 +94,7 @@ public class ElementMark extends Action {
 	@Override
 	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
 			throws NndlActionException {
-		WebElement element =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(markableElement.presenceOfElementLocated(webDriver));
+		WebElement element =  wait(webDriver, webDriverWait);
 		setActionPerformed(true);
 		return runElement(webDriver, webDriverWait, null, element);
 	}
@@ -119,6 +130,12 @@ public class ElementMark extends Action {
 			setActionPerformed(false);
 		}
 		return new ContinueAdvice();
+	}
+	
+	@Override
+	public String toString() {
+		return org.apache.commons.lang.builder.ToStringBuilder.reflectionToString(this,
+				org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 }

@@ -1,6 +1,7 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
-import java.util.Arrays;
+import static dev.edumelo.com.nndl_core.action.ElementWaitCondition.NONE;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -9,6 +10,7 @@ import java.util.Set;
 import org.openqa.selenium.Cookie;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.action.ElementWaitCondition;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
@@ -55,6 +57,16 @@ public class StoreCookies extends LandmarkConditionAction {
 	}
 	
 	@Override
+	public ElementWaitCondition getDefaultWaitCondition() {
+		return NONE;
+	}
+	
+	@Override
+	public StepElement getRelevantElment() {
+		return null;
+	}
+	
+	@Override
 	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) {
 		return runElement(remoteWebDriver);
@@ -92,7 +104,8 @@ public class StoreCookies extends LandmarkConditionAction {
 
 	@Override
 	public String toString() {
-		return "StoreCookies [storerParams=" + Arrays.toString(storerParams) + "]";
+		return org.apache.commons.lang.builder.ToStringBuilder.reflectionToString(this,
+				org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 }

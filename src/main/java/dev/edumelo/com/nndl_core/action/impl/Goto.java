@@ -1,11 +1,14 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
+import static dev.edumelo.com.nndl_core.action.ElementWaitCondition.NONE;
+
 import java.net.URL;
 import java.util.Map;
 
 import org.openqa.selenium.WebDriverException;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.action.ElementWaitCondition;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
@@ -67,11 +70,15 @@ public class Goto extends LandmarkConditionAction {
 		setActionPerformed(false);
 		return new ContinueAdvice();
 	}
-
-	private URL getUrl(NndlNode mappedAction) {
-		return mappedAction.getScalarValueFromChild(TAG)
-				.flatMap(UrlUtils::createUrl)
-				.orElseThrow(NndlParserRuntimeException.get("Goto action should have "+TAG+" tag.", mappedAction));
+	
+	@Override
+	public ElementWaitCondition getDefaultWaitCondition() {
+		return NONE;
+	}
+	
+	@Override
+	public StepElement getRelevantElment() {
+		return null;
 	}
 
 	@Override
@@ -80,8 +87,15 @@ public class Goto extends LandmarkConditionAction {
 		
 	}
 
+	private URL getUrl(NndlNode mappedAction) {
+		return mappedAction.getScalarValueFromChild(TAG)
+				.flatMap(UrlUtils::createUrl)
+				.orElseThrow(NndlParserRuntimeException.get("Goto action should have "+TAG+" tag.", mappedAction));
+	}
+	
 	@Override
 	public String toString() {
-		return "Goto [url=" + url + "]";
+		return org.apache.commons.lang.builder.ToStringBuilder.reflectionToString(this,
+				org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 }

@@ -11,6 +11,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.action.ElementWaitCondition;
+import static dev.edumelo.com.nndl_core.action.ElementWaitCondition.PRESENT;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
@@ -37,7 +39,6 @@ public class UploadFile extends Action {
 		this.inputElement = getElement(mappedAction, mappedElements);
 		this.url = getUrl(mappedAction);
 		this.relevantNode = mappedAction;
-		
 	}
 
 	@Override
@@ -73,12 +74,25 @@ public class UploadFile extends Action {
 		return runElement(webDriver, webDriverWait);
 	}
 	
-	private Advice runElement(SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) {
+	@Override
+	public ElementWaitCondition getDefaultWaitCondition() {
+		return PRESENT;
+	}
+	
+	@Override
+	public StepElement getRelevantElment() {
+		return this.inputElement;
+	}
+	
+	private Advice runElement(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
+			throws NndlActionException {
 		RemoteWebDriver driver = webDriver.getWebDriver();
 		
+		//abre uma nova aba
 		driver.executeScript("window.open()");
 		List<String> tabs = new ArrayList<>(driver.getWindowHandles());
+		
+		//muda para nova aba
 		driver.switchTo().window(tabs.get(tabs.size()-1));
 		driver.get("chrome://downloads/");
 		
@@ -92,7 +106,7 @@ public class UploadFile extends Action {
 		
 		String waitCode = "var items = document.querySelector('downloads-manager')"+"\n"+
 				".shadowRoot.getElementById('downloadsList').items;"+"\n"+
-				"if (items.every(e => e.state === 'COMPLETE'))"+"\n"+
+				"if (items.every(e => e.state === 2))"+"\n"+
 				"{return items.map(e => e.fileUrl || e.file_url);}";
 		
 		webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
@@ -101,8 +115,7 @@ public class UploadFile extends Action {
 		driver.close();
 		driver.switchTo().window(tabs.get(0));
 		
-		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(inputElement.presenceOfElementLocated(webDriver));
+		WebElement input = wait(webDriver, webDriverWait);
 		
 		String[] fileNameArray = url.toString().split("/");
 		String fileName = fileNameArray[fileNameArray.length-1];
@@ -124,6 +137,12 @@ public class UploadFile extends Action {
 		return mappedAction.getScalarValueFromChild(URL_TAG)
 				.flatMap(urlString -> UrlUtils.createUrl(urlString))
 				.orElseThrow(() -> new NndlParserRuntimeException("Upload action should have an url tag", mappedAction));
+	}
+	
+	@Override
+	public String toString() {
+		return org.apache.commons.lang.builder.ToStringBuilder.reflectionToString(this,
+				org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 }

@@ -1,5 +1,7 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
+import static dev.edumelo.com.nndl_core.action.ElementWaitCondition.CLICKABLE;
+
 import java.util.Map;
 
 import org.openqa.selenium.Keys;
@@ -7,6 +9,7 @@ import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
+import dev.edumelo.com.nndl_core.action.ElementWaitCondition;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
@@ -50,22 +53,28 @@ public class ClearInput extends Action {
 		// TODO Auto-generated method stub
 
 	}
+	
+	@Override
+	public ElementWaitCondition getDefaultWaitCondition() {
+		return CLICKABLE;
+	}
+	
+	@Override
+	public StepElement getRelevantElment() {
+		return this.inputElement;
+	}
 
 	@Override
 	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) throws NndlActionException {
-		//TODO parametrized duration
-		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(inputElement.elementToBeClickable(webDriver));
+		WebElement input = wait(webDriver, webDriverWait);
 		return runElement(input);
 	}
 
 	@Override
 	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
 			throws NndlActionException {
-		WebElement input =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(inputElement.elementToBeClickable(webDriver));		
-		
+		WebElement input =  wait(webDriver, webDriverWait);
 		setActionPerformed(true);
 		return runElement(input);
 	}
@@ -79,6 +88,12 @@ public class ClearInput extends Action {
 	private Advice runElement(WebElement input) {
 		input.sendKeys(Keys.chord(Keys.CONTROL,"a",Keys.DELETE));
 		return new ContinueAdvice();
+	}
+	
+	@Override
+	public String toString() {
+		return org.apache.commons.lang.builder.ToStringBuilder.reflectionToString(this,
+				org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 }

@@ -21,13 +21,14 @@ public class LandmarkFactory {
 		switch (type) {
 		case ELEMENT:
 			NndlNode elementNode = landmarkMap.getValueFromChild(LandmarkElement.getTag())
-			.orElseThrow(() -> new NndlParserRuntimeException("Landkmark tag should have "+LandmarkElement.getTag()+" tag",
-					landmarkMap));
+			.orElseThrow(() -> new NndlParserRuntimeException("Landkmark tag should have "+LandmarkElement.getTag()
+				+" tag", landmarkMap));
 			String elementName = elementNode.getScalarValue()
 					.orElseThrow(() -> new NndlParserRuntimeException("Element tag should have name tag",
 							landmarkMap));;
 			StepElement element = mappedElements.get(elementName);
 			if(landmarkConditionAggregationType.equals(LandmarkConditionAggregationType.CONJUNCTION)) {
+				//track1
 				return new LandmarkElement(element, landmarkMap);				
 			} else {
 				return new ForkElement(mappedElements, landmarkMap);

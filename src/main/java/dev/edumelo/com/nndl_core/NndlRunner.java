@@ -37,6 +37,7 @@ public class NndlRunner {
 	public NndlResult runFromStack(Nndl nndl, ContextAdapter... adapters) {
 		try {
 			ThreadLocalManager.setAdapters(Arrays.asList(adapters));
+			//track2
 			nndl.loadSteps(ThreadLocalManager.getVariableSubstitutionMap());
 			return runStack(nndl);			
 		} finally {

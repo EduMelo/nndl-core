@@ -1,14 +1,13 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
-import static dev.edumelo.com.nndl_core.action.ElementWaitCondition.PRESENT;
-
 import java.util.Map;
 
 import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
-import dev.edumelo.com.nndl_core.action.ElementWaitCondition;
+import dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy;
+import dev.edumelo.com.nndl_core.action.landmark.LandmarkStrategies;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
@@ -62,8 +61,8 @@ public class ElementMark extends Action {
 	}
 	
 	@Override
-	public ElementWaitCondition getDefaultWaitCondition() {
-		return PRESENT;
+	public LandmarkStrategies getDefaultWaitCondition() {
+		return new LandmarkStrategies(LandmarkAchievementStrategy.IS_PRESENT);
 	}
 	
 	@Override

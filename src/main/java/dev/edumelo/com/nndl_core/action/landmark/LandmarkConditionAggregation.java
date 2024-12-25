@@ -19,6 +19,7 @@ public abstract class LandmarkConditionAggregation {
 		
 		switch(landmarkConditionAggregationType) {
 			case CONJUNCTION:
+				//track1
 				createdLandmarkConditionAggregation = new ConjunctionLandmarkCondition(mappedAction, mappedElements);
 				break;
 			case DISJUNCTION:

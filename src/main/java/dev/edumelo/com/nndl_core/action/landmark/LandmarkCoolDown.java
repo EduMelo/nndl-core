@@ -47,7 +47,14 @@ public class LandmarkCoolDown implements Landmark {
 	}
 	
 	@Override
-	public ExpectedCondition<WebElement> visibilityOfElementLocated(NndlWebDriver remoteWebDriver) {
+	public LandmarkStrategies getStrategy() {
 		return null;
 	}
+	
+	@Override
+	public ExpectedCondition<WebElement> landmarkAchiveable(NndlWebDriver remoteWebDriver,
+			LandmarkStrategies strategies) {
+		return null;
+	}
+	
 }

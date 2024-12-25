@@ -25,15 +25,17 @@ public class Step {
 	private Map<String, StepElement> elements;
 	private Map<String, Step> subSteps;
 
-	public Step(SeleniumHubProperties seleniumHubProperties, NndlNode node) {
-		List<NndlNode> listedElements = node.getListedValuesFromChild(StepElement.getTag()).orElse(new ArrayList<>());
-		List<NndlNode> listedSubSteps = node.getListedValuesFromChild(SUBSTEP_TAG).orElse(null);
-		List<NndlNode> listedActions = node.getListedValuesFromChild(Action.getActionTag())
-				.orElseThrow(() -> new NndlParserRuntimeException("A steps tag should have a actions mark", node));
+	public Step(SeleniumHubProperties seleniumHubProperties, NndlNode stepsNode) {
+		List<NndlNode> listedElements = stepsNode.getListedValuesFromChild(StepElement.TAG).orElse(new ArrayList<>());
+		List<NndlNode> listedSubSteps = stepsNode.getListedValuesFromChild(SUBSTEP_TAG).orElse(null);
+		List<NndlNode> listedActions = stepsNode.getListedValuesFromChild(Action.getActionTag())
+				.orElseThrow(() -> new NndlParserRuntimeException("A steps tag should have a actions mark", stepsNode));
 
-		this.name = node.getScalarValueFromChild(NAME_TAG).get();
+		this.name = stepsNode.getScalarValueFromChild(NAME_TAG).get();
+		//track2
 		this.elements = extractElements(listedElements);
 		this.subSteps = extractedSubSteps(seleniumHubProperties, listedSubSteps);
+		//track1
 		this.actions = extractedActions(seleniumHubProperties, this.elements, subSteps, listedActions);
 	}
 	
@@ -91,6 +93,7 @@ public class Step {
 	}
 
 	private Map<String, StepElement> extractElements(List<NndlNode> listedElements) {
+		//track2
 		if(Objects.isNull(listedElements)) {
 			return null;
 		}
@@ -102,6 +105,7 @@ public class Step {
 	private LinkedList<Action> extractedActions(SeleniumHubProperties seleniumHubProperties,
 			Map<String, StepElement> mappedElements, Map<String, Step> mappedSubSteps,
 			List<NndlNode> listedActions) {
+		//track1
 		return listedActions.stream()
 				.map(m -> Action.createAction(seleniumHubProperties, mappedElements, mappedSubSteps,
 						m))

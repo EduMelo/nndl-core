@@ -1,15 +1,14 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
-import static dev.edumelo.com.nndl_core.action.ElementWaitCondition.NONE;
-
 import java.net.URL;
 import java.util.Map;
 
 import org.openqa.selenium.WebDriverException;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
-import dev.edumelo.com.nndl_core.action.ElementWaitCondition;
+import dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
+import dev.edumelo.com.nndl_core.action.landmark.LandmarkStrategies;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
@@ -72,8 +71,8 @@ public class Goto extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public ElementWaitCondition getDefaultWaitCondition() {
-		return NONE;
+	public LandmarkStrategies getDefaultWaitCondition() {
+		return new LandmarkStrategies(LandmarkAchievementStrategy.NONE);
 	}
 	
 	@Override

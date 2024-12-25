@@ -1,7 +1,5 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
-import static dev.edumelo.com.nndl_core.action.ElementWaitCondition.NONE;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +10,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
-import dev.edumelo.com.nndl_core.action.ElementWaitCondition;
+import dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy;
+import dev.edumelo.com.nndl_core.action.landmark.LandmarkStrategies;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
@@ -78,8 +77,8 @@ public class DownloadFile extends Action {
 	}
 	
 	@Override
-	public ElementWaitCondition getDefaultWaitCondition() {
-		return NONE;
+	public LandmarkStrategies getDefaultWaitCondition() {
+		return new LandmarkStrategies(LandmarkAchievementStrategy.NONE);
 	}
 	
 	@Override

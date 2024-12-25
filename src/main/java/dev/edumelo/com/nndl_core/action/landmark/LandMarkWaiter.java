@@ -11,7 +11,6 @@ import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlLandmarkException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
@@ -58,7 +57,7 @@ public class LandMarkWaiter {
 							try {
 								webDriverWait.getWebDriverWaiter()
 									.withTimeout(Duration.ofSeconds(landmark.getTimeout()))
-									.until(landmark.visibilityOfElementLocated(webDriver));						
+									.until(landmark.landmarkAchiveable(webDriver, landmark.getStrategy()));						
 							} catch(WebDriverException e) {
 								log.debug("Landmark wait interrupt. Landmark: {}", landmark);
 								exceptionCapture.setExceptionCaptured(true);
@@ -66,7 +65,7 @@ public class LandMarkWaiter {
 								exceptionCapture.setNode(action);
 								completableFuture.complete(landmark.getLandMarkAdvice());
 								return;
-							}							
+							}		
 						}
 						log.debug("Landmark properly found. Landmark: {}", landmark);
 						completableFuture.complete(landmark.getLandMarkAdvice());
@@ -86,8 +85,8 @@ public class LandMarkWaiter {
 		threads.forEach(Thread::interrupt);
 		
 		if(exceptionCapture.isExceptionCaptured()) {
-			ThreadLocalManager.storeSourceCode(action.getConcatenadedLines(), webDriver.getPageSource());
-			throw new NndlLandmarkException("Exception captured", exceptionCapture.getNode(), exceptionCapture.getThrowable());
+			throw new NndlLandmarkException("Exception captured", exceptionCapture.getNode(), exceptionCapture
+					.getThrowable());
 		}
 		
 		return landmarkList.stream()

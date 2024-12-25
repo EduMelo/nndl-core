@@ -1,6 +1,8 @@
 package dev.edumelo.com.nndl_core.action.landmark;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -20,11 +22,13 @@ public class ForkElement implements Landmark {
 	private StepElement element;
 	private String fork;
 	private Integer timeout;
+	private LandmarkStrategies strategy;
 	
 	public ForkElement(Map<String, StepElement> mappedElements, NndlNode mappedForkElement) {
 		this.element = extractElement(mappedElements, mappedForkElement);
 		this.fork = extractFork(mappedForkElement);
 		this.timeout = extractTimeout(mappedForkElement);
+		this.strategy = extractStrategy(mappedForkElement);
 	}
 
 	@Override
@@ -41,8 +45,14 @@ public class ForkElement implements Landmark {
 	}
 	
 	@Override
-	public ExpectedCondition<WebElement> visibilityOfElementLocated(NndlWebDriver remoteWebDriver){
-		return this.element.visibilityOfElementLocated(remoteWebDriver);
+	public LandmarkStrategies getStrategy() {
+		return strategy;
+	}
+	
+	@Override
+	public ExpectedCondition<WebElement> landmarkAchiveable(NndlWebDriver remoteWebDriver,
+			LandmarkStrategies strategies) {
+		return this.element.landmarkAchiveable(remoteWebDriver, strategies);
 	}
 
 	private Integer extractTimeout(NndlNode mappedForkElement) {
@@ -58,9 +68,22 @@ public class ForkElement implements Landmark {
 				.orElseThrow(() -> new NndlParserRuntimeException("Fork tag should have "+TAG+" tag", mappedForkElement));
 		return (StepElement) mappedElements.get(elementKey);
 	}
+	
+	private LandmarkStrategies extractStrategy(NndlNode landMarkNode) {
+		LandmarkAchievementStrategy[] strategies = landMarkNode.getValueFromChild(LandmarkStrategies.WAIT_CONDITION_TAG)
+				.flatMap(NndlNode::getListedValues)
+				.stream()
+				.flatMap(List::stream)
+				.map(NndlNode::getScalarValue)
+				.flatMap(Optional::stream)
+				.map(LandmarkAchievementStrategy::getFromTag)
+				.toArray(LandmarkAchievementStrategy[]::new);
+		return new LandmarkStrategies(strategies);
+	}
 
 	@Override
 	public String toString() {
 		return "ForkElement [element=" + element + ", fork=" + fork + ", timeout=" + timeout + "]";
 	}
+
 }

@@ -1,14 +1,14 @@
 package dev.edumelo.com.nndl_core.action.impl.triggerer;
 
-import static dev.edumelo.com.nndl_core.action.ElementWaitCondition.NONE;
 import static java.util.stream.Collectors.toList;
 
 import java.util.Arrays;
 import java.util.Map;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
-import dev.edumelo.com.nndl_core.action.ElementWaitCondition;
+import dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
+import dev.edumelo.com.nndl_core.action.landmark.LandmarkStrategies;
 import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
@@ -68,8 +68,8 @@ public class ActionTriggerer extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public ElementWaitCondition getDefaultWaitCondition() {
-		return NONE;
+	public LandmarkStrategies getDefaultWaitCondition() {
+		return new LandmarkStrategies(LandmarkAchievementStrategy.NONE);
 	}
 	
 	@Override

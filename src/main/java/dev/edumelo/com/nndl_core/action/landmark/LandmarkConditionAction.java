@@ -35,6 +35,7 @@ public abstract class LandmarkConditionAction extends Action {
 
 	protected void setLandMarkConditionAgregation(NndlNode mappedAction,
 			Map<String, StepElement> mappedElements) {
+		//track1
 		this.landmarkConditionAggregation = LandmarkConditionAggregation.createLandmarkConditionAggregation(
 				mappedElements, mappedAction);
 	}

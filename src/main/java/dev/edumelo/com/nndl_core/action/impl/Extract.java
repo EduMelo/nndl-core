@@ -1,14 +1,13 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
-import static dev.edumelo.com.nndl_core.action.ElementWaitCondition.CLICKABLE;
-
 import java.util.Map;
 
 import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
-import dev.edumelo.com.nndl_core.action.ElementWaitCondition;
+import dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy;
+import dev.edumelo.com.nndl_core.action.landmark.LandmarkStrategies;
 import dev.edumelo.com.nndl_core.contextAdapter.ClipboardTextFactory;
 import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
@@ -60,8 +59,8 @@ public class Extract extends Action {
 	}
 	
 	@Override
-	public ElementWaitCondition getDefaultWaitCondition() {
-		return CLICKABLE;
+	public LandmarkStrategies getDefaultWaitCondition() {
+		return new LandmarkStrategies(LandmarkAchievementStrategy.IS_CLICKABLE);
 	}
 	
 	@Override

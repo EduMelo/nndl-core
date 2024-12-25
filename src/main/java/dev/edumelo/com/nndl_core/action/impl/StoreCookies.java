@@ -1,7 +1,5 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
-import static dev.edumelo.com.nndl_core.action.ElementWaitCondition.NONE;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -10,8 +8,9 @@ import java.util.Set;
 import org.openqa.selenium.Cookie;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
-import dev.edumelo.com.nndl_core.action.ElementWaitCondition;
+import dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
+import dev.edumelo.com.nndl_core.action.landmark.LandmarkStrategies;
 import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
@@ -57,8 +56,8 @@ public class StoreCookies extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public ElementWaitCondition getDefaultWaitCondition() {
-		return NONE;
+	public LandmarkStrategies getDefaultWaitCondition() {
+		return new LandmarkStrategies(LandmarkAchievementStrategy.NONE);
 	}
 	
 	@Override

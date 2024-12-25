@@ -9,5 +9,7 @@ import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
 public interface Landmark {
 	Advice getLandMarkAdvice();
 	Integer getTimeout();
-	ExpectedCondition<WebElement> visibilityOfElementLocated(NndlWebDriver remoteWebDriver);
+	LandmarkStrategies getStrategy();
+	ExpectedCondition<WebElement> landmarkAchiveable(NndlWebDriver remoteWebDriver,
+			LandmarkStrategies strategies);
 }

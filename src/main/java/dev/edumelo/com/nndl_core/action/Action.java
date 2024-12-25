@@ -1,10 +1,14 @@
 package dev.edumelo.com.nndl_core.action;
 
-import static dev.edumelo.com.nndl_core.action.ElementWaitCondition.CLICKABLE;
+import static dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy.IS_CLICKABLE;
+import static dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy.IS_DISPLAYED;
+import static dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy.IS_ENABLED;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotInteractableException;
@@ -14,6 +18,8 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy;
+import dev.edumelo.com.nndl_core.action.landmark.LandmarkStrategies;
 import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatus;
 import dev.edumelo.com.nndl_core.action.utils.Position;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
@@ -31,7 +37,6 @@ public abstract class Action {
 	private final static String TAG = "actions";
 	
 	private final String TIMEOUT_TAG = "timeout";
-	private final String WAIT_CONDITION_TAG = "waitCondition";
 	private final int DEFAULT_TIMEOUT = 50;
 	
 	private int order;
@@ -40,7 +45,7 @@ public abstract class Action {
 	private int timeoutSeconds;
 	private boolean limitRequirement;
 	private boolean actionPerformed;
-	private ElementWaitCondition waitCondition = CLICKABLE;
+	private LandmarkStrategies waitCondition = new LandmarkStrategies(IS_CLICKABLE);
 	private Class<ActionCondition> conditionClass;
 	private RequirementStatus requirementStatus;
 	private StepElement conditionElement;
@@ -52,9 +57,15 @@ public abstract class Action {
 			Map<String, StepElement> mappedElements) {
 		this.seleniumHubProperties = seleniumHubProperties;
 		timeoutSeconds = mappedAction.getScalarValueFromChild(TIMEOUT_TAG, Integer.class).orElse(getDefaultTimeout());
-		waitCondition = mappedAction.getScalarValueFromChild(WAIT_CONDITION_TAG, String.class)
-							.map(ElementWaitCondition::getFromTag)
-							.orElse(getDefaultWaitCondition());
+		LandmarkAchievementStrategy[] strategies = mappedAction.getValueFromChild(LandmarkStrategies.WAIT_CONDITION_TAG)
+							.flatMap(NndlNode::getListedValues)
+							.stream()
+							.flatMap(List::stream)
+							.map(NndlNode::getScalarValue)
+							.flatMap(Optional::stream)
+							.map(LandmarkAchievementStrategy::getFromTag)
+							.toArray(LandmarkAchievementStrategy[]::new);
+		waitCondition = new LandmarkStrategies(strategies);
 	}
 	
 	//Abstract methods
@@ -63,7 +74,7 @@ public abstract class Action {
 	public abstract String getTag();
 	public abstract NndlNode getRelevantNode();
 	public abstract StepElement getRelevantElment();
-	public abstract ElementWaitCondition getDefaultWaitCondition();
+	public abstract LandmarkStrategies getDefaultWaitCondition();
 	public abstract Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) throws NndlActionException;
 	public abstract Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
@@ -147,7 +158,7 @@ public abstract class Action {
 		return DEFAULT_TIMEOUT;
 	}
 	
-	protected ElementWaitCondition getWaitCondition() {
+	protected LandmarkStrategies getWaitCondition() {
 		return waitCondition;
 	}
 	
@@ -169,10 +180,12 @@ public abstract class Action {
 			WebElement target;
 			if(rootElement != null) {
 				target = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
-						.until(conditionElement.elementToBeClickable(webDriver));				
+						.until(conditionElement.landmarkAchiveable(webDriver, new LandmarkStrategies(IS_DISPLAYED,
+								IS_ENABLED)));				
 			} else {
 				target = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
-						.until(conditionElement.elementToBeClickable(webDriver));
+						.until(conditionElement.landmarkAchiveable(webDriver, new LandmarkStrategies(IS_DISPLAYED,
+								IS_ENABLED)));
 			}
 			
 			ActionCondition condition = conditionClass.getConstructor().newInstance();
@@ -219,6 +232,7 @@ public abstract class Action {
 						.getConstructor(SeleniumHubProperties.class, NndlNode.class, Map.class, Map.class)
 						.newInstance(seleniumHubProperties, mappedAction, mappedSubSteps, mappedElements);				
 			} else {
+				//track1
 				createdAction = actionType.getAction().getConstructor(SeleniumHubProperties.class,
 						NndlNode.class, Map.class)
 						.newInstance(seleniumHubProperties, mappedAction, mappedElements);
@@ -282,21 +296,8 @@ public abstract class Action {
 	
 	protected WebElement wait(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
 			throws NndlActionException {
-		switch(waitCondition) {
-			case CLICKABLE:
-				return webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-						.until(getRelevantElment().elementToBeClickable(webDriver));
-			case PRESENT:
-				return webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(getRelevantElment().presenceOfElementLocated(webDriver));
-			case VISIBLE:
-				return webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(getRelevantElment().visibilityOfElementLocated(webDriver));
-			case NONE:
-				return null;
-			default:
-				throw new NndlActionException("Wait condition not implemented. "+waitCondition, getRelevantNode());
-		}
+		return webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
+				.until(getRelevantElment().landmarkAchiveable(webDriver, waitCondition));
 	}
 	
 	@Override

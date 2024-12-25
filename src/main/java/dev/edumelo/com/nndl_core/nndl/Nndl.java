@@ -117,9 +117,12 @@ public class Nndl {
 	}
 	
 	public NndlNode loadSteps(Map<String, String> variableSubstitutionMap) {
+		//track2
 		NndlNode stepsNode = (NndlNode) nndlMap.get(STEPS_TAG);
 		stepsNode.setVariableSubstitutionMap(variableSubstitutionMap);
-		imports.stream().forEach(i -> stepsNode.mergeNodes(i.loadSteps(variableSubstitutionMap)));
+		if(imports != null) {
+			imports.stream().forEach(i -> stepsNode.mergeNodes(i.loadSteps(variableSubstitutionMap)));			
+		}
 		this.stepsNode = stepsNode;
 		return stepsNode;
 	}
@@ -157,6 +160,7 @@ public class Nndl {
 	public int hashCode() {
 		return Objects.hash(imports, name, value);
 	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -169,6 +173,7 @@ public class Nndl {
 		return Objects.equals(imports, other.imports) && Objects.equals(name, other.name)
 				&& Objects.equals(value, other.value);
 	}
+	
 	@Override
 	public String toString() {
 		return "Nndl [name=" + name + ", value=" + value + ", imports=" + imports + "]";

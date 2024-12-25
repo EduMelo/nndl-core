@@ -7,6 +7,8 @@ import org.openqa.selenium.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy.*;
+import dev.edumelo.com.nndl_core.action.landmark.LandmarkStrategies;
 import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.StepRunner;
@@ -106,7 +108,7 @@ public class DefaultScrollObserver implements ScrollObserver {
     		} else {
     			return webDriverWait.getWebDriverWaiter().withTimeout(
     						Duration.ofSeconds(elementTimeoutWait))
-    					.until(element.presenceOfAllElementsLocatedBy(webDriver)).stream()
+    					.until(element.allLandmarkAchiveable(webDriver, new LandmarkStrategies(IS_PRESENT))).stream()
     					.filter(e -> infiniteScrollCondition.checkCondition(e))
     					.map(e -> new IterationContent(e, loopCount))
     					.map(e -> runner.runStep(iterationStep, e))

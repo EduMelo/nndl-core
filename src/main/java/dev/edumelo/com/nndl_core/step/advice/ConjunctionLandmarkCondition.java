@@ -26,15 +26,18 @@ public class ConjunctionLandmarkCondition extends LandmarkConditionAggregation {
 	}
 
 	public ConjunctionLandmarkCondition(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		//track1
 		this.landmarkConditions = getLandmarkConditions(mappedAction, mappedElements);
 	}
 	
 	private List<Landmark> getLandmarkConditions(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		List<NndlNode> landmarkList = mappedAction.getListedValuesFromChild(TAG)
-				.orElseThrow(() -> new NndlParserRuntimeException("Conjuction landmark should have "+TAG+" tag", mappedAction));
+				.orElseThrow(() -> new NndlParserRuntimeException("Conjuction landmark should have "+TAG+" tag",
+						mappedAction));
 		
 		List<Landmark> landmarkConditions = new ArrayList<Landmark>();
 		for (NndlNode landmark : landmarkList) {
+			//track1
 			landmarkConditions.add(LandmarkFactory.createLandmark(landmark, mappedElements, getType()));
 		}
 		

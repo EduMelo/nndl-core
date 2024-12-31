@@ -14,8 +14,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
 
+import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 
@@ -28,7 +28,7 @@ public class Nndl {
 	private String name;
 	private String value;
 	private List<Nndl> imports;
-	private Map<String, NndlNode> nndlMap;
+	private NndlNode rootNode;
 	private NndlNode stepsNode;
 	
 	public Nndl() {
@@ -79,8 +79,7 @@ public class Nndl {
 		if(value == null) {
 			throw new RuntimeException("NndlMap cannot be loaded because value is empty.");
 		}
-		Yaml yaml = new Yaml(new NndlConstructor(value));
-		nndlMap = yaml.load(value);
+		rootNode = new YamlNndlLoader().load(value);
 		
 		if(CollectionUtils.isNotEmpty(imports)) {
 			for (Nndl nndl : imports) {
@@ -90,35 +89,23 @@ public class Nndl {
 	}
 	
 	public Optional<List<String>> extractImportsNames() {
-		List<String> nodes = nndlMap.get("imports")
-				.getListedValues()
-				.orElse(new ArrayList<NndlNode>())
-				.stream()
-				.map(NndlNode::getScalarValue)
-				.filter(n -> !n.isEmpty())
-				.map(Optional::get)
-				.collect(Collectors.toList());
+		List<String> nodes = rootNode.extractScalarList("imports");
 		return Optional.ofNullable(nodes);
 	}
 	
 	public boolean hasAsyncSteps() {
-		return nndlMap.containsKey(ASYNCHRONOUS_STEPS_TAG);
+		return rootNode.hasValueFromChild(ASYNCHRONOUS_STEPS_TAG);
 	}
 	
 	private List<String> getAsyncStepsNames() {
-		NndlNode assyncSteps = nndlMap.get(ASYNCHRONOUS_STEPS_TAG);
-		if(assyncSteps == null) {
-			return new ArrayList<String>();
-		}
-		CollectionNodeValue collectionNodeValue = (CollectionNodeValue) assyncSteps.getValue();
-		return collectionNodeValue.getValue().stream()
-				.map(o -> o.toString())
-				.collect(Collectors.toList());
+		return rootNode.extractScalarList(ASYNCHRONOUS_STEPS_TAG);
 	}
 	
 	public NndlNode loadSteps(Map<String, String> variableSubstitutionMap) {
 		//track2
-		NndlNode stepsNode = (NndlNode) nndlMap.get(STEPS_TAG);
+		NndlNode stepsNode = rootNode.getValueFromMapChild(STEPS_TAG)
+				.orElseThrow(() -> new NndlParserRuntimeException("The nndl root node doesn't has a step tag.",
+						rootNode));
 		stepsNode.setVariableSubstitutionMap(variableSubstitutionMap);
 		if(imports != null) {
 			imports.stream().forEach(i -> stepsNode.mergeNodes(i.loadSteps(variableSubstitutionMap)));			
@@ -134,7 +121,7 @@ public class Nndl {
 				.getListedValues()
 				.get()
 				.stream()
-				.map(s -> new Step(seleniumHubProperties, (NndlNode) s))
+				.map(s -> new Step(seleniumHubProperties, s))
 				.filter(s -> asyncStepsNames.contains(s.getName()))
 				.collect(Collectors.toMap(Step::getName, Function.identity()));
 	}	
@@ -146,14 +133,15 @@ public class Nndl {
 				.getListedValues()
 				.get()
 				.stream()
-				.map(s -> new Step(seleniumHubProperties, (NndlNode) s))
+				.map(s -> new Step(seleniumHubProperties, s))
 				.filter(s -> !asyncStepsNames.contains(s.getName()))
 				.collect(Collectors.toMap(Step::getName, Function.identity()));
 	}
 	
 	public String getEntryStep() {
-		NndlNode entryStepNode = (NndlNode) nndlMap.get(ENTRY_STEP_TAG);
-		return ((ScalarNodeValue) entryStepNode.getValue()).getValue();
+		return rootNode.getScalarValueFromChild(ENTRY_STEP_TAG)
+			.orElseThrow(() -> new NndlParserRuntimeException("The nndl root node doesn't have a entryStep tag.",
+					rootNode));
 	}
 	
 	@Override

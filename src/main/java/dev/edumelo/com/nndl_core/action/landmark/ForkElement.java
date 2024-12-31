@@ -1,8 +1,6 @@
 package dev.edumelo.com.nndl_core.action.landmark;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -70,13 +68,8 @@ public class ForkElement implements Landmark {
 	}
 	
 	private LandmarkStrategies extractStrategy(NndlNode landMarkNode) {
-		LandmarkAchievementStrategy[] strategies = landMarkNode.getValueFromChild(LandmarkStrategies.WAIT_CONDITION_TAG)
-				.flatMap(NndlNode::getListedValues)
-				.stream()
-				.flatMap(List::stream)
-				.map(NndlNode::getScalarValue)
-				.flatMap(Optional::stream)
-				.map(LandmarkAchievementStrategy::getFromTag)
+		LandmarkAchievementStrategy[] strategies = landMarkNode
+				.extractListOfValues(LandmarkStrategies.WAIT_CONDITION_TAG, LandmarkAchievementStrategy::getFromTag)
 				.toArray(LandmarkAchievementStrategy[]::new);
 		return new LandmarkStrategies(strategies);
 	}

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
 
-class NndlNodeTest {
+class YamlNndlNodeTest {
 	private NndlNode stepNode;
 
     @BeforeEach

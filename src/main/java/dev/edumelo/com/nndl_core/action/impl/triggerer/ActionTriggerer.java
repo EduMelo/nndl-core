@@ -32,8 +32,8 @@ public class ActionTriggerer extends LandmarkConditionAction {
 	
 	public ActionTriggerer(SeleniumHubProperties seleniumHubProperties, NndlNode mappedAction, Map<String, StepElement> mappedElements) {
 		super(seleniumHubProperties, mappedAction, mappedElements);
-		NndlNode mappedActionTrigger = mappedAction.getValueFromChild(TAG).orElseThrow(NndlParserRuntimeException
-				.get("Tag LandmarkConditionAction should have "+TAG+" tag", mappedAction));
+		NndlNode mappedActionTrigger = mappedAction.getValueFromChild(TAG).orElseThrow(
+				NndlParserRuntimeException.get("Tag LandmarkConditionAction should have "+TAG+" tag", mappedAction));
 		triggerId = getTriggerId(mappedActionTrigger);
 		triggerParams = getTriggerParams(mappedActionTrigger);
 		this.relevantNode = mappedAction;

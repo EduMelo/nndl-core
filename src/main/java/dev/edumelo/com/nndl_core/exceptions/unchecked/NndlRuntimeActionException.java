@@ -9,7 +9,7 @@ public class NndlRuntimeActionException extends NndlRuntimeException {
 	private static final long serialVersionUID = 1275109293140522052L;
 	
 	private static String getMessage(String msg, NndlNode node) {
-		return msg + (node != null ? node.exceptionMessage() : "");
+		return msg + (node != null ? node.getExceptionMessage() : "");
 	}
 
 	public NndlRuntimeActionException(String msg, NndlNode node) {

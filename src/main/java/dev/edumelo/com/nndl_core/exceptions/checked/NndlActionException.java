@@ -9,11 +9,11 @@ public class NndlActionException extends NndlException {
 	private static final long serialVersionUID = 1275109293140522052L;
 	
 	public NndlActionException(String msg, NndlNode node) {
-		super(msg + (node != null ? node.exceptionMessage() : ""));
+		super(msg + (node != null ? node.getExceptionMessage() : ""));
 	}
 	
 	public NndlActionException(String msg, NndlNode node, Throwable e) {
-		super(msg + (node != null ? node.exceptionMessage() : ""), e);
+		super(msg + (node != null ? node.getExceptionMessage() : ""), e);
 	}
 
 }

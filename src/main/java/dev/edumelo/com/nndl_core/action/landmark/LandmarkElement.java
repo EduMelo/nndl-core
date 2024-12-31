@@ -1,8 +1,5 @@
 package dev.edumelo.com.nndl_core.action.landmark;
 
-import java.util.List;
-import java.util.Optional;
-
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
@@ -48,13 +45,8 @@ public class LandmarkElement extends StepElement implements Landmark {
 	}
 	
 	private LandmarkStrategies extractStrategy(NndlNode landMarkNode) {
-		LandmarkAchievementStrategy[] strategies = landMarkNode.getValueFromChild(LandmarkStrategies.WAIT_CONDITION_TAG)
-				.flatMap(NndlNode::getListedValues)
-				.stream()
-				.flatMap(List::stream)
-				.map(NndlNode::getScalarValue)
-				.flatMap(Optional::stream)
-				.map(LandmarkAchievementStrategy::getFromTag)
+		LandmarkAchievementStrategy[] strategies = landMarkNode
+				.extractListOfValues(LandmarkStrategies.WAIT_CONDITION_TAG, LandmarkAchievementStrategy::getFromTag)
 				.toArray(LandmarkAchievementStrategy[]::new);
 		return new LandmarkStrategies(strategies);
 	}

@@ -6,9 +6,7 @@ import static dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrat
 
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotInteractableException;
@@ -57,14 +55,9 @@ public abstract class Action {
 			Map<String, StepElement> mappedElements) {
 		this.seleniumHubProperties = seleniumHubProperties;
 		timeoutSeconds = mappedAction.getScalarValueFromChild(TIMEOUT_TAG, Integer.class).orElse(getDefaultTimeout());
-		LandmarkAchievementStrategy[] strategies = mappedAction.getValueFromChild(LandmarkStrategies.WAIT_CONDITION_TAG)
-							.flatMap(NndlNode::getListedValues)
-							.stream()
-							.flatMap(List::stream)
-							.map(NndlNode::getScalarValue)
-							.flatMap(Optional::stream)
-							.map(LandmarkAchievementStrategy::getFromTag)
-							.toArray(LandmarkAchievementStrategy[]::new);
+		LandmarkAchievementStrategy[] strategies = mappedAction
+				.extractListOfValues(LandmarkStrategies.WAIT_CONDITION_TAG, LandmarkAchievementStrategy::getFromTag)
+				.toArray(LandmarkAchievementStrategy[]::new);
 		waitCondition = new LandmarkStrategies(strategies);
 	}
 	

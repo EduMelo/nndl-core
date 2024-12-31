@@ -1,279 +1,206 @@
 package dev.edumelo.com.nndl_core.nndl;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.yaml.snakeyaml.error.Mark;
-import org.yaml.snakeyaml.nodes.MappingNode;
-import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.nodes.NodeTuple;
-import org.yaml.snakeyaml.nodes.ScalarNode;
-import org.yaml.snakeyaml.nodes.SequenceNode;
 
-import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
-import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
-
-public class NndlNode {
-	private String name;
-	private NodeValue value;
-	private Mark start;
-    private Mark end;
-    private List<String> lines;
-    private String parentNodeName;
-    private NndlChild children;
-    private Map<String, String> variableSubstitutionMap;
+public abstract class NndlNode {
 	
-    public NndlNode(String name, Node node, Mark start, Mark end, String parentNodeName, List<String> lines) {
-    	this.name = name;
-    	this.start = start;
-		this.end = end;
-		this.parentNodeName = parentNodeName;
-		this.lines = lines;
-		
-		if (node instanceof ScalarNode) {
-            value = new ScalarNodeValue(((ScalarNode) node).getValue());
-        } else if (node instanceof MappingNode) {
-            value = new MappingNodeValue(((MappingNode) node).getValue());
-            if(children == null) {
-            	children = new NndlMapChild();            	
-            }
-            constructChildren((MappingNode) node);
-        } else if (node instanceof SequenceNode) {
-            value = new CollectionNodeValue(((SequenceNode) node).getValue());
-            if(children == null) {
-            	children = new NndlListChild();
-            }
-            constructChildren((SequenceNode) node);
-        } else {
-            throw new NndlParserRuntimeException("node type not recognized. Node: " + node, this);
-        }
-	}
+	/**
+	 * Retrieves the start mark
+	 * 
+	 * @return the {@code Mark} representing the start of this node.
+	 */
+	public abstract Mark getStart();
+	
+	/**
+	 * Retrieves the end mark
+	 * 
+	 * @return the {@code Mark} representing the end of this node.
+	 */
+	public abstract Mark getEnd();
+	
+	/**
+	 * Retrieves the lines
+	 * 
+	 * @return the {@code List} representing the lines of this node.
+	 */
+	public abstract List<String> getLines();
+	
+	/**
+	 * Retrieves the lines as a single concatenated line
+	 * 
+	 * @return the {@code List} representing the lines of this node.
+	 */
+	public abstract String getConcatenadedLines();
+	
+	/**
+     * Retrieves the value associated with this node.
+     * 
+     * @return the {@code NodeValue} representing the value of this node.
+     */
+	public abstract NodeValue getValue();
+	
+	/**
+     * Retrieves the child container associated with this node.
+     * 
+     * @return the {@code NndlChild} representing the child container of this node.
+     */
+	public abstract NndlChild getNndlChild();
+	
+	/**
+	 * Retrieves if a child node with this key exists.
+	 * 
+	 * @param key the key of the child node to retrieve.
+	 * @return a boolean value
+	 */
+	public abstract boolean hasValueFromChild(String key);
+	
+	/**
+     * Retrieves a child node by its key, regardless of whether the children are stored
+     * as a list or a map.
+     * 
+     * @param key the key of the child node to retrieve.
+     * @return an {@code Optional} containing the child node if found, or empty otherwise.
+     * @throws NndlParserRuntimeException if the children type cannot be determined.
+     */
+	public abstract Optional<NndlNode> getValueFromChild(String key);
+	
+	/**
+     * Retrieves a child node by its key when the children are stored as a list.
+     * 
+     * @param key the key of the child node to retrieve.
+     * @return an {@code Optional} containing the child node if found, or empty otherwise.
+     */
+	public abstract Optional<NndlNode> getValueFromListChild(String key);
+	
+	/**
+     * Retrieves a child node by its key when the children are stored as a map.
+     * 
+     * @param key the key of the child node to retrieve.
+     * @return an {@code Optional} containing the child node if found, or empty otherwise.
+     */
+	public abstract Optional<NndlNode> getValueFromMapChild(String key);
+	
+	/**
+     * Retrieves the scalar value of the current node, applying variable substitution if applicable.
+     * 
+     * @return an {@code Optional} containing the scalar value, or empty if the node does not have a scalar value.
+     */
+	public abstract Optional<String> getScalarValue();
+	
+	/**
+     * Retrieves the scalar value of a child node by its key and converts it to the specified type.
+     * 
+     * @param <T>   the target type of the scalar value.
+     * @param key   the key of the child node.
+     * @param clazz the class of the target type.
+     * @return an {@code Optional} containing the converted value, or empty if conversion fails.
+     */
+	public abstract <T> Optional<T> getScalarValueFromChild(String key, Class<T> clazz);
+	
+	/**
+     * Retrieves the scalar value of a child node by its key, applying variable substitution if applicable.
+     * 
+     * @param key the key of the child node.
+     * @return an {@code Optional} containing the scalar value, or empty if not found or not scalar.
+     */
+	public abstract Optional<String> getScalarValueFromChild(String key);
+	
+	/**
+     * Retrieves the children of the current node as a list.
+     * 
+     * @return an {@code Optional} containing a list of child nodes, or empty if there are no children.
+     */
+	public abstract Optional<List<NndlNode>> getListedValues();
+	
+	/**
+     * Retrieves the children of a child node identified by a key as a list.
+     * 
+     * @param key the key of the child node.
+     * @return an {@code Optional} containing a list of child nodes, or empty if not found.
+     */
+	public abstract Optional<List<NndlNode>> getListedValuesFromChild(String key);
+	
+	/**
+	 * Retrieves the exception message of the current node
+	 * 
+	 * @return an {@code String} containing the exception message.
+	 */
+	public abstract String getExceptionMessage();
+	
+	/**
+     * Sets the variable substitution map for this node, allowing dynamic resolution
+     * of variables within scalar values.
+     * 
+     * @param variableSubstitutionMap the map containing variable substitutions.
+     */
+	public abstract void setVariableSubstitutionMap(Map<String, String> variableSubstitutionMap);
+	
+	/**
+	 * Extracts a list of scalar values from a child node identified by a key and maps each value
+	 * using the provided mapper function.
+	 * 
+	 * @param <T>    the type of the mapped values.
+	 * @param key    the key of the child node to extract the list from.
+	 * @param mapper a function to map each scalar value to the desired type.
+	 * @return a {@code List<T>} containing the mapped values, or an empty list if no values are found.
+	 */
+	public abstract <T> List<T> extractListOfValues(String key, Function<String, T> mapper);
+	
+	/**
+	 * Extracts a list of scalar values from a child node identified by a key.
+	 *
+	 * @param key the key of the child node to extract the list from.
+	 * @return a {@code List<String>} containing the scalar values, or an empty list if no values are found.
+	 */
+	public abstract List<String> extractScalarList(String key);
     
-    public String getName() {
-    	return name;
-    }
-	public NodeValue getValue() {
-		return value;
-	}	
-	public Mark getStart() {
-		return start;
-	}
-	public Mark getEnd() {
-		return end;
-	}
-	public String getParentNodeName() {
-		return parentNodeName;
-	}
-	public void setParentNodeName(String parentNodeName) {
-		this.parentNodeName = parentNodeName;
-	}
+    /**
+     * Extracts a single scalar value from a child node identified by a key, or returns a default value if not found.
+     * 
+     * @param key          the key of the child node.
+     * @param defaultValue the default value to return if the scalar value is not found.
+     * @return the scalar value as a {@code String} or the default value.
+     */
+    public abstract String extractSingleValue(String key, String defaultValue);
+    
+    /**
+     * Extracts an optional scalar value from a child node identified by a key.
+     * 
+     * @param key the key of the child node.
+     * @return an {@code Optional<String>} containing the scalar value if found, or empty otherwise.
+     */
+    public abstract Optional<String> extractOptionalValue(String key);
+    
+    /**
+     * Retrieves a list of child nodes for a child node identified by a key.
+     * 
+     * @param key the key of the child node.
+     * @return a {@code List<NndlNode>} of child nodes, or an empty list if none are found.
+     */
+    public abstract List<NndlNode> extractChildNodes(String key);
+    
+    /**
+     * Maps child nodes of a child node identified by a key to another type using a mapper function.
+     * 
+     * @param <T>    the target type to map to.
+     * @param key    the key of the child node.
+     * @param mapper the function to map each child node.
+     * @return a {@code List<T>} containing the mapped values.
+     */
+    public abstract <T> List<T> mapChildNodes(String key, Function<NndlNode, T> mapper);
 
-	public List<String> getLines() {
-		return lines;
-	}
-	public String getConcatenadedLines() {
-		if(CollectionUtils.isEmpty(lines)) {
-			return null;
-		}
-		return lines.stream().collect(Collectors.joining("\n"));
-	}
-	public NndlChild getChildren() {
-		return children;
-	}
-
-	private void constructChildren(MappingNode mappingNode) {
-        for (NodeTuple tuple : mappingNode.getValue()) {
-        	String parentNodeName = this.parentNodeName.replace(":", "");
-            String key = ((ScalarNode) tuple.getKeyNode()).getValue();
-            Node childNode = tuple.getValueNode();
-            Mark childStart = childNode.getStartMark();
-            Mark childEnd = childNode.getEndMark();
-            int startIndex = start.getLine();
-            int childStartIndex = childStart.getLine()-startIndex;
-            int childEndIndex = childEnd.getLine()-startIndex;
-            List<String> childlines = lines.subList(childStartIndex, childEndIndex);
-
-            NndlNode child = new NndlNode(key, childNode, childStart, childEnd, parentNodeName, childlines);
-            ((NndlMapChild) children).put(key, child);
-        }
-    }
+    /**
+     * Merges the children of the current node with the children of another node.
+     * 
+     * @param otherNode the {@code NndlNode} whose children are to be merged with the current node's children.
+     * @param <T>       the type of the child container ({@code NndlChild}).
+     * @throws NullPointerException if the {@code otherNode} or its children are null.
+     */
+	public abstract <T> void mergeNodes(NndlNode otherNode);
 	
-	private void constructChildren(SequenceNode sequenceNode) {
-		for (int i = 0; i < sequenceNode.getValue().size(); i++) {
-			String parentNodeName = this.parentNodeName.replace(":", "");
-			Node childNode = sequenceNode.getValue().get(i);
-			Mark childStart = childNode.getStartMark();
-            Mark childEnd = childNode.getEndMark();
-            int startIndex = start.getLine();
-            int childStartIndex = childStart.getLine()-startIndex;
-            int childEndIndex = childEnd.getLine()-startIndex;
-            List<String> childlines = lines.subList(childStartIndex, childEndIndex);
-			
-			NndlNode child = new NndlNode(parentNodeName+"List"+i, childNode, childStart, childEnd, parentNodeName, childlines);
-			((NndlListChild) children).add(child);			
-		}
-    }
-	
-	public <T> void mergeNodes(NndlNode otherNode) {
-		children.merge(otherNode.children);
-	}
-	
-	public Optional<String> substituteVariables(Optional<String> child) {
-	    Pattern pattern = Pattern.compile("\\$\\{(\\w+)}");
-
-	    return child.map(value -> {
-	        Matcher matcher = pattern.matcher(value);
-	        StringBuffer result = new StringBuffer();
-
-	        while (matcher.find()) {
-	            String key = matcher.group(1);
-	            String replacement = variableSubstitutionMap.getOrDefault(key, matcher.group(0)); // Keep original if no match
-	            matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
-	        }
-	        
-	        matcher.appendTail(result);
-	        return result.toString();
-	    });
-	}
-	
-	public boolean hasValueFromChild(String key) {
-		return getValueFromChild(key).isPresent();
-	}
-	
-	public Optional<NndlNode> getValueFromChild(String key) {
-		if(children instanceof NndlListChild) {
-			return getValueFromListChild(key);
-		} else if(children instanceof NndlMapChild) {
-			return getValueFromMapChild(key);
-		}
-		throw new NndlParserRuntimeException("It wasn't possible to verify node children type. Children: "+children, this);
-	}
-	
-	public Optional<NndlNode> getValueFromListChild(String key) {
-		NndlListChild listChild = (NndlListChild) children;
-        for (NndlNode childNode : listChild) {
-        	NndlMapChild childMap = (NndlMapChild) childNode.getChildren();
-        	if (childMap.containsKey(key)) {
-        		return Optional.of((NndlNode) childMap.get(key));
-        	}
-		}
-        return Optional.empty();
-    }
-	
-	public Optional<NndlNode> getValueFromMapChild(String key) {
-		NndlMapChild listMap = (NndlMapChild) children;
-		return Optional.ofNullable((NndlNode) listMap.get(key));
-    }
-	
-	public Optional<String> getScalarValue() {
-        Optional<String> child = Optional.ofNullable(getValue())
-        		.map(v -> ((ScalarNodeValue) v).getValue());
-        return substituteVariables(child);
-    }
-	
-	public <T> Optional<T> getScalarValueFromChild(String key, Class<T> clazz) {
-        return getScalarValueFromChild(key)
-        		.flatMap(v -> {
-                    try {
-                        Object convertedValue;
-                        if (clazz == Integer.class) {
-                            convertedValue = Integer.valueOf(v);
-                        } else if (clazz == Boolean.class) {
-                            convertedValue = Boolean.valueOf(v);
-                        } else if (clazz == Long.class) {
-                            convertedValue = Long.valueOf(v);
-                        } else if (clazz == Double.class) {
-                            convertedValue = Double.valueOf(v);
-                        } else if (clazz == String.class) {
-                            convertedValue = v;
-                        } else {
-                            return Optional.empty();
-                        }
-                        return Optional.of(clazz.cast(convertedValue));
-                    } catch (NumberFormatException e) {
-                        return Optional.empty();
-                    }
-                });
-    }
-	
-	public Optional<String> getScalarValueFromChild(String key) {
-		Optional<String> child = getValueFromChild(key)
-				.filter(n -> n.getValue() instanceof ScalarNodeValue)
-				.map(NndlNode::getValue)
-				.map(v -> ((ScalarNodeValue) v).getValue());
-        return substituteVariables(child);
-    }
-	
-	@SuppressWarnings("unchecked")
-	public Optional<List<NndlNode>> getListedValues() {
-		return Optional.ofNullable((List<NndlNode>) getChildren());
-    }
-	
-	@SuppressWarnings("unchecked")
-	public Optional<List<NndlNode>> getListedValuesFromChild(String key) {
-		return getValueFromChild(key)
-                .map(v -> (List<NndlNode>) v.getChildren());
-    }
-	
-	public void setVariableSubstitutionMap(Map<String, String> variableSubstitutionMap) {
-		this.variableSubstitutionMap = variableSubstitutionMap;
-		Collection<NndlNode> childrenCollection = null;
-		if(children instanceof NndlListChild) {
-			childrenCollection = (NndlListChild) children;
-		} else if(children instanceof NndlMapChild) {
-			childrenCollection = ((NndlMapChild) children).values();
-		}
-		if(childrenCollection != null) {
-			childrenCollection.stream()
-			.forEach(n -> n.setVariableSubstitutionMap(variableSubstitutionMap));			
-		}
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(children, end, lines, name, parentNodeName, start, value, variableSubstitutionMap);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		NndlNode other = (NndlNode) obj;
-		return Objects.equals(children, other.children) && Objects.equals(end, other.end)
-				&& Objects.equals(lines, other.lines) && Objects.equals(name, other.name)
-				&& Objects.equals(parentNodeName, other.parentNodeName) && Objects.equals(start, other.start)
-				&& Objects.equals(value, other.value)
-				&& Objects.equals(variableSubstitutionMap, other.variableSubstitutionMap);
-	}
-
-	public String exceptionMessage() {
-		String message = "\n"+ ThreadLocalManager.retrieveNndlName() +" - lines "+(getStart().getLine()+1)+" ~ "+
-				(getEnd().getLine()+1)+" :\n ";
-		for (String line : lines) {
-			if(StringUtils.isEmpty(line.trim())) {
-				continue;
-			}
-			message = message.concat(line).concat("\n");
-		}
-		return message;
-	}
-
-	@Override
-	public String toString() {
-		return "NndlNode [name=" + name + ", parentNodeName=" + parentNodeName + ", variableSubstitutionMap="
-				+ variableSubstitutionMap + "]";
-	}
-
 }

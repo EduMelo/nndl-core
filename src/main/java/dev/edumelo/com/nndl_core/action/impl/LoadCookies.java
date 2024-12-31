@@ -2,7 +2,6 @@ package dev.edumelo.com.nndl_core.action.impl;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import org.openqa.selenium.Cookie;
@@ -86,11 +85,7 @@ public class LoadCookies extends LandmarkConditionAction {
 
 	private String[] getRetrieverParams(NndlNode mappedLoadCookies) {
 		return mappedLoadCookies
-				.getListedValuesFromChild(RETRIEVER_PARAMS_TAG)
-				.get()
-				.stream()
-				.map(n -> n.getScalarValue())
-				.map(Optional::get)
+				.extractScalarList(RETRIEVER_PARAMS_TAG)
 				.toArray(String[]::new);
 	}
 

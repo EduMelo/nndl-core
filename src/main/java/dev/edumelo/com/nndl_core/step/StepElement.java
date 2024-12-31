@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.openqa.selenium.By;
@@ -47,13 +46,7 @@ public class StepElement {
 				.orElseThrow(NndlParserRuntimeException.get("StepElement should have "+NAME_TAG+" tag.", nndlElement));
 		this.matchExp = nndlElement.getScalarValueFromChild(MATCH_EXP_TAG).get();
 		this.ignoreRoot = nndlElement.getScalarValueFromChild(IGNORE_ROOT_TAG, Boolean.class).orElse(false);		
-		nndlElement.getValueFromChild(SHADOW_PATH_TAG)
-				.flatMap(NndlNode::getListedValues)
-				.stream()
-				.flatMap(List::stream)
-				.map(NndlNode::getScalarValue)
-				.flatMap(Optional::stream)
-				.forEach(this::addShadowPath);
+		nndlElement.extractScalarList(SHADOW_PATH_TAG).forEach(this::addShadowPath);
 	}
 	
 	public StepElement(StepElement stepElement) {

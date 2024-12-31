@@ -46,7 +46,7 @@ public class NndlConstructor extends Constructor {
 
             // Constrói e adiciona o NndlNode ao map
             String key = ((ScalarNode) keyNode).getValue();
-            NndlNode value = new NndlNode(key, valueNode, start, end, parentNodeName, subLines);
+            NndlNode value = new YamlNndlNode(key, valueNode, start, end, parentNodeName, subLines);
             result.put(key, value);
         }
 

@@ -2,6 +2,7 @@ package dev.edumelo.com.nndl_core.step;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -20,17 +21,19 @@ public class Step {
 	private static final String NAME_TAG = "name";
 	
 	private String name;
+	private String nndlName;
 	private boolean limitCountInvalidate = false;
 	private LinkedList<Action> actions;
 	private Map<String, StepElement> elements;
 	private Map<String, Step> subSteps;
 
-	public Step(SeleniumHubProperties seleniumHubProperties, NndlNode stepsNode) {
+	public Step(SeleniumHubProperties seleniumHubProperties, NndlNode stepsNode, String nndlName) {
 		List<NndlNode> listedElements = stepsNode.getListedValuesFromChild(StepElement.TAG).orElse(new ArrayList<>());
 		List<NndlNode> listedSubSteps = stepsNode.getListedValuesFromChild(SUBSTEP_TAG).orElse(null);
 		List<NndlNode> listedActions = stepsNode.getListedValuesFromChild(Action.getActionTag())
 				.orElseThrow(() -> new NndlParserRuntimeException("A steps tag should have a actions mark", stepsNode));
 
+		this.nndlName = nndlName;
 		this.name = stepsNode.getScalarValueFromChild(NAME_TAG).get();
 		//track2
 		this.elements = extractElements(listedElements);
@@ -85,11 +88,16 @@ public class Step {
 	private Map<String, Step> extractedSubSteps(SeleniumHubProperties seleniumHubProperties, List<NndlNode> listedSubSteps) {
 		if(listedSubSteps == null || listedSubSteps.size() == 0) {
 			return null;
-		}	
+		}
 		
-		return listedSubSteps.stream()
-				.map(s -> new Step(seleniumHubProperties, s))
-				.collect(Collectors.toMap(Step::getName, Function.identity()));
+		Map<String, Step> stepsMap = new HashMap<>();
+		for (int i = 0; i < listedSubSteps.size(); i++) {
+		    NndlNode node = listedSubSteps.get(i);
+		    Step step = new Step(seleniumHubProperties, node, nndlName + "." + i);
+		    stepsMap.put(step.getName(), step);
+		}
+		
+		return stepsMap;
 	}
 
 	private Map<String, StepElement> extractElements(List<NndlNode> listedElements) {

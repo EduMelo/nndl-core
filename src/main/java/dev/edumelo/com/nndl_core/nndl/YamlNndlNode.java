@@ -33,13 +33,16 @@ public class YamlNndlNode extends NndlNode {
     private String parentNodeName;
     private NndlChild children;
     private Map<String, String> variableSubstitutionMap;
+    private String nndlName;
 	
-    public YamlNndlNode(String name, Node node, Mark start, Mark end, String parentNodeName, List<String> lines) {
+    public YamlNndlNode(String name, Node node, Mark start, Mark end, String parentNodeName, List<String> lines,
+    		String nndlName) {
     	this.name = name;
     	this.start = start;
 		this.end = end;
 		this.parentNodeName = parentNodeName;
 		this.lines = lines;
+		this.nndlName = nndlName;
 		
 		if (node instanceof ScalarNode) {
             value = new ScalarNodeValue(((ScalarNode) node).getValue());
@@ -60,7 +63,7 @@ public class YamlNndlNode extends NndlNode {
         }
 	}
     
-    public YamlNndlNode(String name, Map<String, NndlNode> childrenMap) {
+    public YamlNndlNode(String name, Map<String, NndlNode> childrenMap, String nndlName) {
     	if(childrenMap == null || childrenMap.isEmpty()) {
     		throw new RuntimeException("childrenMap should have entries. childrenMap: " + childrenMap);
     	}
@@ -78,6 +81,7 @@ public class YamlNndlNode extends NndlNode {
 		this.end = lastValue.getEnd();
 		this.parentNodeName = "";
 		this.lines = lines;
+		this.nndlName = nndlName;
     	
 		if(children == null) {
         	children = new NndlMapChild();            	
@@ -116,14 +120,15 @@ public class YamlNndlNode extends NndlNode {
             int childEndIndex = childEnd.getLine()-startIndex;
             List<String> childlines = lines.subList(childStartIndex, childEndIndex);
 
-            NndlNode child = new YamlNndlNode(key, childNode, childStart, childEnd, parentNodeName, childlines);
+            NndlNode child = new YamlNndlNode(key, childNode, childStart, childEnd, parentNodeName, childlines,
+            		nndlName);
             ((NndlMapChild) children).put(key, child);
         }
     }
 	
 	private void constructChildren(SequenceNode sequenceNode) {
 		for (int i = 0; i < sequenceNode.getValue().size(); i++) {
-			String parentNodeName = this.parentNodeName.replace(":", "");
+			String parentNodeName = this.parentNodeName.replace(":", "").trim();
 			Node childNode = sequenceNode.getValue().get(i);
 			Mark childStart = childNode.getStartMark();
             Mark childEnd = childNode.getEndMark();
@@ -132,7 +137,8 @@ public class YamlNndlNode extends NndlNode {
             int childEndIndex = childEnd.getLine()-startIndex;
             List<String> childlines = lines.subList(childStartIndex, childEndIndex);
 			
-			NndlNode child = new YamlNndlNode(parentNodeName+"List"+i, childNode, childStart, childEnd, parentNodeName, childlines);
+			NndlNode child = new YamlNndlNode(nndlName + "." + parentNodeName+".list"+i, childNode, childStart,
+					childEnd, parentNodeName, childlines, nndlName);
 			((NndlListChild) children).add(child);			
 		}
     }

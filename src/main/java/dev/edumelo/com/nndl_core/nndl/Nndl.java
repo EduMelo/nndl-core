@@ -79,7 +79,7 @@ public class Nndl {
 		if(value == null) {
 			throw new RuntimeException("NndlMap cannot be loaded because value is empty.");
 		}
-		rootNode = new YamlNndlLoader().load(value);
+		rootNode = new YamlNndlLoader().load(name, value);
 		
 		if(CollectionUtils.isNotEmpty(imports)) {
 			for (Nndl nndl : imports) {
@@ -121,7 +121,7 @@ public class Nndl {
 				.getListedValues()
 				.get()
 				.stream()
-				.map(s -> new Step(seleniumHubProperties, s))
+				.map(s -> new Step(seleniumHubProperties, s, name))
 				.filter(s -> asyncStepsNames.contains(s.getName()))
 				.collect(Collectors.toMap(Step::getName, Function.identity()));
 	}	
@@ -133,15 +133,16 @@ public class Nndl {
 				.getListedValues()
 				.get()
 				.stream()
-				.map(s -> new Step(seleniumHubProperties, s))
+				.map(s -> new Step(seleniumHubProperties, s, name))
 				.filter(s -> !asyncStepsNames.contains(s.getName()))
 				.collect(Collectors.toMap(Step::getName, Function.identity()));
 	}
 	
 	public String getEntryStep() {
-		return rootNode.getScalarValueFromChild(ENTRY_STEP_TAG)
+		String entyStepName =  rootNode.getScalarValueFromChild(ENTRY_STEP_TAG)
 			.orElseThrow(() -> new NndlParserRuntimeException("The nndl root node doesn't have a entryStep tag.",
 					rootNode));
+		return entyStepName;
 	}
 	
 	@Override

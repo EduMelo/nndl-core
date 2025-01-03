@@ -14,10 +14,12 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 
 public class NndlConstructor extends Constructor {
+	private final String nndlName;
     private final String yamlContent;
 
-    public NndlConstructor(String yamlContent) {
+    public NndlConstructor(String nndlName, String yamlContent) {
         super(new LoaderOptions());
+        this.nndlName = nndlName;
         this.yamlContent = yamlContent;
     }
 
@@ -46,7 +48,7 @@ public class NndlConstructor extends Constructor {
 
             // Constrói e adiciona o NndlNode ao map
             String key = ((ScalarNode) keyNode).getValue();
-            NndlNode value = new YamlNndlNode(key, valueNode, start, end, parentNodeName, subLines);
+            NndlNode value = new YamlNndlNode(key, valueNode, start, end, parentNodeName, subLines, nndlName);
             result.put(key, value);
         }
 

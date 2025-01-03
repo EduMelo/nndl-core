@@ -40,7 +40,7 @@ class YamlNndlNodeTest {
                 "              type: nonRequired\n"+
                 "              stepTreatment: retreat";
 
-        Yaml yaml = new Yaml(new NndlConstructor(yamlContent));
+        Yaml yaml = new Yaml(new NndlConstructor("", yamlContent));
         Map<String, NndlNode> nndlMap = yaml.load(yamlContent);
 
         stepNode = nndlMap.get("steps");

@@ -10,7 +10,7 @@ import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkStrategies;
-import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
+import dev.edumelo.com.nndl_core.contextAdapter.NndlContextManager;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
@@ -75,7 +75,7 @@ public class LoadCookies extends LandmarkConditionAction {
 	}
 	
 	public Advice runElement(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {
-		Set<Cookie> cookies = ThreadLocalManager.retrieveCookies((Object[]) retrieverParams);
+		Set<Cookie> cookies = NndlContextManager.retrieveCookies((Object[]) retrieverParams);
 		cookies.stream().forEach(remoteWebDriver.getWebDriver().manage()::addCookie);
 		remoteWebDriver.getWebDriver().navigate().refresh();
 		

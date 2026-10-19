@@ -2,6 +2,7 @@ package dev.edumelo.com.nndl_core.webdriver;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -173,7 +174,11 @@ public class SeleniumHubProperties {
 			url = String.format("%s://%s:%s@%s:%d", getProtocol(), authUser, authPassword, host, port);
 		}
 		log.debug(String.format("Connecting to remote server: %s", url));
-		return new URL(url);
+		try {
+			return URI.create(url).toURL();
+		} catch (IllegalArgumentException e) {
+			throw new MalformedURLException("Malformed selenium hub url: " + url);
+		}
 	}
 
 	private Object getProtocol() {

@@ -9,7 +9,7 @@ import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkStrategies;
-import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
+import dev.edumelo.com.nndl_core.contextAdapter.NndlContextManager;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
@@ -90,7 +90,7 @@ public class ActionTriggerer extends LandmarkConditionAction {
 				.collect(toList())
 				.toArray(new String[0]);
 				
-		ThreadLocalManager.triggerAction(triggerId, translatedParams);
+		NndlContextManager.triggerAction(triggerId, translatedParams);
 		
 		setActionPerformed(true);			
 		return new ContinueAdvice();

@@ -11,6 +11,8 @@ import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.edumelo.com.nndl_core.contextAdapter.NndlContext;
+import dev.edumelo.com.nndl_core.contextAdapter.NndlContextManager;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlLandmarkException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
@@ -40,12 +42,13 @@ public class LandMarkWaiter {
 		List<CompletableFuture<Advice>> landmarkList = new ArrayList<>();
 		List<Thread> threads = new ArrayList<Thread>();
 		
+		final NndlContext context = NndlContextManager.getContextOrNull();
 		final LandmarkExceptionCapture exceptionCapture = new LandmarkExceptionCapture();
 		for (Landmark landmark : landmarkConditionAggregation.getLandmarkConditions()) {
 			CompletableFuture<Advice> completableFuture = new CompletableFuture<>();
 			landmarkList.add(completableFuture);
 			threads.add(
-					new Thread(() -> {
+					new Thread(() -> NndlContextManager.runWithContext(context, () -> {
 						if(landmark instanceof LandmarkCoolDown) {
 							LandmarkCoolDown cooldown = (LandmarkCoolDown) landmark;
 							try {
@@ -69,7 +72,7 @@ public class LandMarkWaiter {
 						}
 						log.debug("Landmark properly found. Landmark: {}", landmark);
 						completableFuture.complete(landmark.getLandMarkAdvice());
-					})
+					}))
 			);
 		}
 		

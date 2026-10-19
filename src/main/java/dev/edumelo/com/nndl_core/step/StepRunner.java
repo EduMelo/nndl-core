@@ -16,7 +16,7 @@ import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatus;
 import dev.edumelo.com.nndl_core.action.requirementStatus.RestartStepRequirementStatus;
 import dev.edumelo.com.nndl_core.action.runner.ActionRunner;
 import dev.edumelo.com.nndl_core.action.runner.AsynchronousActionRunner;
-import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
+import dev.edumelo.com.nndl_core.contextAdapter.NndlContextManager;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlFlowBreakerException;
 import dev.edumelo.com.nndl_core.exceptions.checked.StepBreakerActionNotPerformed;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlFlowBreakerRuntimeException;
@@ -148,7 +148,7 @@ public class StepRunner {
 				action.setActionPerformed(false);
 				if(caughtException instanceof NndlFlowBreakerException || caughtException instanceof NndlFlowBreakerRuntimeException) {
 					try {
-						ThreadLocalManager.storeSourceCode(action.getRelevantNode().getConcatenadedLines(),
+						NndlContextManager.storeSourceCode(action.getRelevantNode().getConcatenadedLines(),
 								webDriver.getPageSource());
 					} catch (WebDriverException e) {
 						log.error("It wasn't possible to capture exception's page source.");

@@ -11,7 +11,7 @@ import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkStrategies;
-import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
+import dev.edumelo.com.nndl_core.contextAdapter.NndlContextManager;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
@@ -78,7 +78,7 @@ public class StoreCookies extends LandmarkConditionAction {
 	
 	public Advice runElement(SeleniumSndlWebDriver remoteWebDriver) {
 		Set<Cookie> cookies = remoteWebDriver.getWebDriver().manage().getCookies();
-		ThreadLocalManager.storeCookies((Object[]) storerParams, cookies);
+		NndlContextManager.storeCookies((Object[]) storerParams, cookies);
 		
 		setActionPerformed(true);
 		return new ContinueAdvice();

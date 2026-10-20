@@ -1,6 +1,6 @@
 package dev.edumelo.com.nndl_core.utils;
 
-import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
+import dev.edumelo.com.nndl_core.contextAdapter.NndlContextManager;
 
 public class SpecialParamsTranslater {
 
@@ -18,7 +18,7 @@ public class SpecialParamsTranslater {
 
 	private static Object translate(String rawParams) {
 		if(rawParams.startsWith(WEBDRIVER_SESSION_ID)) {
-			return ThreadLocalManager.getWebDriverSessionId();
+			return NndlContextManager.getWebDriverSessionId();
 		}
 		return null;
 	}

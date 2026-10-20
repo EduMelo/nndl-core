@@ -9,7 +9,7 @@ import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkStrategies;
 import dev.edumelo.com.nndl_core.contextAdapter.ClipboardTextFactory;
-import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
+import dev.edumelo.com.nndl_core.contextAdapter.NndlContextManager;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
@@ -98,12 +98,12 @@ public class Extract extends Action {
 	}
 	
 	private Advice runElementFromClipboard(SeleniumSndlWebDriver webDriver) {
-		return ThreadLocalManager.addExtractedData(webDriver, ClipboardTextFactory.class.getName(),
+		return NndlContextManager.addExtractedData(webDriver, ClipboardTextFactory.class.getName(),
 				null);
 	}
 
 	public Advice runElement(SeleniumSndlWebDriver webDriver, WebElement element) {
-		return ThreadLocalManager.addExtractedData(webDriver, extractDataBindAdapterName, element);
+		return NndlContextManager.addExtractedData(webDriver, extractDataBindAdapterName, element);
 	}
 	
 	private String getExtractoClass(NndlNode mappedAction) {

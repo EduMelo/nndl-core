@@ -21,7 +21,7 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 
-import dev.edumelo.com.nndl_core.contextAdapter.ThreadLocalManager;
+import dev.edumelo.com.nndl_core.contextAdapter.NndlContextManager;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 
 public class YamlNndlNode extends NndlNode {
@@ -330,7 +330,7 @@ public class YamlNndlNode extends NndlNode {
 	
 	@Override
 	public String getExceptionMessage() {
-		String message = "\n"+ ThreadLocalManager.retrieveNndlName() +" - lines "+(getStart().getLine()+1)+" ~ "+
+		String message = "\n"+ NndlContextManager.retrieveNndlName() +" - lines "+(getStart().getLine()+1)+" ~ "+
 				(getEnd().getLine()+1)+" :\n ";
 		for (String line : lines) {
 			if(StringUtils.isEmpty(line.trim())) {

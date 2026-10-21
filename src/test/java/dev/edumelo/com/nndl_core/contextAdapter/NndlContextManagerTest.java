@@ -26,6 +26,23 @@ class NndlContextManagerTest {
 	}
 
 	@Test
+	void actionLogsStayOnTheContextInOrder() {
+		NndlContext context = NndlContext.of("flow");
+
+		NndlContextManager.callWithContext(context, () -> {
+			NndlContextManager.recordActionLog("Clicked on image post button");
+			NndlContextManager.recordActionLog("   ");
+			NndlContextManager.recordActionLog("File uploaded successfully: photo.png");
+			return null;
+		});
+
+		assertThat(context.getLogs()).containsExactly(
+				"Clicked on image post button",
+				"File uploaded successfully: photo.png");
+		assertThat(NndlContextManager.getLogs()).isEmpty();
+	}
+
+	@Test
 	void contextIsVisibleInsideScopeOnly() {
 		NndlContext context = NndlContext.of("myFlow");
 

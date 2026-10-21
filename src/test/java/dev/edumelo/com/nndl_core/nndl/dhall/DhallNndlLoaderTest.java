@@ -100,6 +100,18 @@ class DhallNndlLoaderTest {
 	}
 
 	@Test
+	void substitutesTheLogMessage() {
+		Nndl nndl = Nndl.loadDhall(Path.of("nndl_examples/log.dhall"));
+		assertThat(nndl.getMissingStepNames()).isEmpty();
+		nndl.loadSteps(Map.of("img", "https://cdn.example/photo.png"));
+		Step poster = nndl.getStepMap(new SeleniumHubProperties()).get("oldPoster");
+
+		assertThat(poster.getActions().get(0).getLogMessage()).isEqualTo("Clicked on image post button");
+		assertThat(poster.getActions().get(1).getLogMessage())
+				.isEqualTo("File uploaded successfully: https://cdn.example/photo.png");
+	}
+
+	@Test
 	void substitutesLoginVariablesAndReportsTheMissingFork() {
 		Nndl nndl = Nndl.loadDhall(Path.of("nndl_examples/test2.dhall"));
 		assertThat(nndl.getMissingStepNames()).contains("loginSuccessfull");

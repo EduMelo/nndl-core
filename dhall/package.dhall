@@ -157,6 +157,7 @@ let Action =
           , positionBefore : Optional Position.Type
           , positionAfter : Optional Position.Type
           , condition : Optional Condition
+          , log : Optional Text
           }
       , default =
           { timeout = None Natural
@@ -168,6 +169,7 @@ let Action =
           , positionBefore = None Position.Type
           , positionAfter = None Position.Type
           , condition = None Condition
+          , log = None Text
           }
       }
 

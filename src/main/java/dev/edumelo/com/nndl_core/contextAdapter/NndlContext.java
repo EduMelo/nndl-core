@@ -1,6 +1,8 @@
 package dev.edumelo.com.nndl_core.contextAdapter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -21,6 +23,7 @@ public final class NndlContext {
 	private final List<ContextAdapter> adapters;
 	private final Map<String, List<ExtractDataBind>> extractedData;
 	private final String nndlName;
+	private final List<String> logs = Collections.synchronizedList(new ArrayList<>());
 	private volatile String webDriverSessionId;
 
 	public NndlContext(String nndlName, List<ContextAdapter> adapters,
@@ -55,6 +58,14 @@ public final class NndlContext {
 
 	public void setWebDriverSessionId(String webDriverSessionId) {
 		this.webDriverSessionId = webDriverSessionId;
+	}
+
+	public void addLog(String message) {
+		logs.add(message);
+	}
+
+	public List<String> getLogs() {
+		return List.copyOf(logs);
 	}
 
 }

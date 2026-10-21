@@ -64,6 +64,26 @@ class LegacyNndlEncoderTest {
 	}
 
 	@Test
+	void keepsTheLogBesideTheAction() {
+		String json = """
+				{"steps":[{"name":"oldPoster","actions":[
+				  {"kind":{"type":"elementClick","element":"imagePost"},
+				   "log":"Clicked on image post button"},
+				  {"kind":{"type":"uploadFile","input":"fileInput","url":"${img}"},
+				   "log":"File uploaded successfully: ${img}"}
+				]}]}
+				""";
+
+		String yaml = new LegacyNndlEncoder().encode(Json.parse(json)).yaml();
+
+		assertThat(yaml).contains("elementClick: imagePost")
+				.contains("log: Clicked on image post button")
+				.contains("uploadFile: true")
+				.contains("input: fileInput")
+				.contains("File uploaded successfully: ${img}");
+	}
+
+	@Test
 	void reportsForkToAnUnknownStep() {
 		String json = """
 				{"entryStep":"main","steps":[{"name":"main","actions":[

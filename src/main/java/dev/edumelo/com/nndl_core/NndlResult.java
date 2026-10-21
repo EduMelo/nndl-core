@@ -9,9 +9,19 @@ import dev.edumelo.com.nndl_core.contextAdapter.ExtractDataBindAdapter;
 
 public class NndlResult {
 	private Map<String, List<ExtractDataBind>> mapResult;
+	private List<String> logs;
 
 	public NndlResult(Map<String, List<ExtractDataBind>> mapResult) {
+		this(mapResult, List.of());
+	}
+
+	public NndlResult(Map<String, List<ExtractDataBind>> mapResult, List<String> logs) {
 		this.mapResult = mapResult;
+		this.logs = logs == null ? List.of() : List.copyOf(logs);
+	}
+
+	public List<String> getLogs() {
+		return logs;
 	}
 
 	@SuppressWarnings("unchecked")

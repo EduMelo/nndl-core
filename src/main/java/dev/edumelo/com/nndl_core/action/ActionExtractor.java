@@ -18,9 +18,14 @@ public class ActionExtractor {
 	private static final String CONDITION_TAG = "condition";
 	private static final String ON_EACH_TAG = "onEach";
 	private static final String CONDITION_CLASS_TAG = "class";
+	private static final String LOG_TAG = "log";
 	
 	public static RequirementStatus getRequirementStatus(NndlNode mappedAction) {
 		return RequirementStatusFactory.createRequirementStatus(mappedAction);
+	}
+
+	public static String getLog(NndlNode mappedAction) {
+		return mappedAction.getScalarValueFromChild(LOG_TAG).orElse(null);
 	}
 
 	public static int getOnEach(NndlNode mappedAction) {

@@ -78,6 +78,21 @@ public final class NndlContextManager {
 		return context == null ? null : context.getWebDriverSessionId();
 	}
 
+	public static void recordActionLog(String message) {
+		if (message == null || message.isBlank()) {
+			return;
+		}
+		NndlContext context = getContextOrNull();
+		if (context != null) {
+			context.addLog(message);
+		}
+	}
+
+	public static List<String> getLogs() {
+		NndlContext context = getContextOrNull();
+		return context == null ? List.of() : context.getLogs();
+	}
+
 	public static String retrieveNndlName() {
 		NndlContext context = getContextOrNull();
 		return context == null ? "" : context.getNndlName();

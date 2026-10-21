@@ -20,6 +20,7 @@ import dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkStrategies;
 import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatus;
 import dev.edumelo.com.nndl_core.action.utils.Position;
+import dev.edumelo.com.nndl_core.contextAdapter.NndlContextManager;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
@@ -41,6 +42,7 @@ public abstract class Action {
 	private int waitDuration;
 	private int onEach;
 	private int timeoutSeconds;
+	private String logMessage;
 	private boolean limitRequirement;
 	private boolean actionPerformed;
 	private LandmarkStrategies waitCondition = new LandmarkStrategies(IS_CLICKABLE);
@@ -134,6 +136,13 @@ public abstract class Action {
 	}
 	public void setOnEach(int onEach) {
 		this.onEach = onEach;
+	}
+
+	public String getLogMessage() {
+		return logMessage;
+	}
+	public void setLogMessage(String logMessage) {
+		this.logMessage = logMessage;
 	}
 	
 	protected SeleniumHubProperties getSeleniumHubProperties() {
@@ -235,6 +244,7 @@ public abstract class Action {
 			createdAction.setPositionAfter(ActionExtractor.getPositionAfter(mappedAction));
 			createdAction.setPositionBefore(ActionExtractor.getPositionBefore(mappedAction));
 			createdAction.setOnEach(ActionExtractor.getOnEach(mappedAction));
+			createdAction.setLogMessage(ActionExtractor.getLog(mappedAction));
 			
 			return createdAction;
 		} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
@@ -258,13 +268,22 @@ public abstract class Action {
 				advice = runNested(webDriver, webDriverWait, rootElement);
 			} else {
 				advice = runAction(webDriver, webDriverWait);
-			}			
+			}
+			captureLog();
 		} catch(ElementNotInteractableException e) {
 			String msg = String.format("Action element not interactable. Action: %s", this);
 			log.error(msg);
 			throw new RuntimeException(msg, e);
 		}
 		return advice;
+	}
+
+	private void captureLog() {
+		if (logMessage == null || logMessage.isBlank()) {
+			return;
+		}
+		log.info("{}", logMessage);
+		NndlContextManager.recordActionLog(logMessage);
 	}
 
 	private boolean isLoopCountAccepted(IterationContent iterationContent) {

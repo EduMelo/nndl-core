@@ -168,6 +168,7 @@ public final class LegacyNndlEncoder {
 		putPosition(encoded, "positionBefore", action.get("positionBefore"));
 		putPosition(encoded, "positionAfter", action.get("positionAfter"));
 		putCondition(encoded, action.get("condition"));
+		putText(encoded, "log", action.get("log"));
 		return encoded;
 	}
 

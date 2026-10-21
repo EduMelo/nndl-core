@@ -70,10 +70,10 @@ public class NndlRunner {
 			}
 			stepRunner.runSteps(nndl.getEntryStep(), steps);
 			
-			return new NndlResult(NndlContextManager.getExtractedData());
+			return new NndlResult(NndlContextManager.getExtractedData(), NndlContextManager.getLogs());
 		} catch(RunStopperException e) {
 			log.debug("Received advice to stop the run");
-			return new NndlResult(NndlContextManager.getExtractedData());
+			return new NndlResult(NndlContextManager.getExtractedData(), NndlContextManager.getLogs());
 		} finally {
 			if(webDriver != null) {
 				webDriver.quitWebDriver();				

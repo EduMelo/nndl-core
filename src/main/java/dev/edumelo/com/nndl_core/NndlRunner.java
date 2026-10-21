@@ -1,7 +1,10 @@
 package dev.edumelo.com.nndl_core;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +54,8 @@ public class NndlRunner {
 		SeleniumHubProperties seleniumHubProperties = session.properties();
 		Map<String, Step> steps = nndl.getStepMap(seleniumHubProperties);
 		NndlWebDriver webDriver = null;
+		List<CompletableFuture<Void>> asynchronousRuns = new ArrayList<>();
+		List<NndlWebDriver> asynchronousDrivers = new ArrayList<>();
 		try {
 			webDriver = session.open();
 			NndlWebDriverWaiter webDriverWait = session.waiter(webDriver);
@@ -60,7 +65,8 @@ public class NndlRunner {
 			
 			if(nndl.hasAsyncSteps()) {
 				Map<String, Step> asynchronousSteps = nndl.getAsyncStepMap(seleniumHubProperties);			
-				stepRunner.runAsynchronousSteps(null, asynchronousSteps);
+				asynchronousRuns = stepRunner.runAsynchronousSteps(session, null, asynchronousSteps,
+						asynchronousDrivers);
 			}
 			stepRunner.runSteps(nndl.getEntryStep(), steps);
 			
@@ -69,9 +75,23 @@ public class NndlRunner {
 			log.debug("Received advice to stop the run");
 			return new NndlResult(NndlContextManager.getExtractedData(), NndlContextManager.getLogs());
 		} finally {
+			finishAsynchronousSteps(asynchronousRuns, asynchronousDrivers);
 			if(webDriver != null) {
 				webDriver.quit();
 			}
+		}
+	}
+
+	private void finishAsynchronousSteps(List<CompletableFuture<Void>> runs, List<NndlWebDriver> drivers) {
+		for (CompletableFuture<Void> run : runs) {
+			try {
+				run.join();
+			} catch (RuntimeException e) {
+				log.error("Asynchronous step failed. Exception: {}", e.toString());
+			}
+		}
+		for (NndlWebDriver driver : drivers) {
+			driver.quit();
 		}
 	}
 	

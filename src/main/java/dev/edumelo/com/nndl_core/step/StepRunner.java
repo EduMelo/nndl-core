@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +17,7 @@ import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatus;
 import dev.edumelo.com.nndl_core.action.requirementStatus.RestartStepRequirementStatus;
 import dev.edumelo.com.nndl_core.action.runner.ActionRunner;
 import dev.edumelo.com.nndl_core.action.runner.AsynchronousActionRunner;
+import dev.edumelo.com.nndl_core.contextAdapter.NndlContext;
 import dev.edumelo.com.nndl_core.contextAdapter.NndlContextManager;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlFlowBreakerException;
 import dev.edumelo.com.nndl_core.exceptions.checked.StepBreakerActionNotPerformed;
@@ -24,6 +27,7 @@ import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.AdviceType;
 import dev.edumelo.com.nndl_core.step.advice.SwapStepAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
+import dev.edumelo.com.nndl_core.webdriver.NndlBrowserSession;
 import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
 import dev.edumelo.com.nndl_core.webdriver.NndlWebDriverWaiter;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlDriverException;
@@ -172,13 +176,36 @@ public class StepRunner {
 		return steps.get(parametrizedAdvice.getAdvisedStep()).getActions();
 	}
 	
-	public void runAsynchronousSteps(IterationContent rootElement, Map<String, Step> steps) {
-		AsynchronousActionRunner actionRunner = new AsynchronousActionRunner(webDriver, webDriverWait);
+	public List<CompletableFuture<Void>> runAsynchronousSteps(NndlBrowserSession session,
+			IterationContent rootElement, Map<String, Step> steps, List<NndlWebDriver> openedDrivers) {
+		// The browser configuration is shared, so each session is opened on this thread.
+		// Actions of one step then stay in list order on the driver that step opened.
+		List<AsyncStep> prepared = new ArrayList<>();
 		for (Step step : steps.values()) {
-			LinkedList<Action> runningActions = step.getActions();
-			for (Action action : runningActions) {
-				actionRunner.run(rootElement, action);
-			}
+			NndlWebDriver asyncDriver = session.open();
+			openedDrivers.add(asyncDriver);
+			NndlWebDriverWaiter asyncWait = session.waiter(asyncDriver);
+			prepared.add(new AsyncStep(step, new AsynchronousActionRunner(asyncDriver, asyncWait)));
+		}
+		NndlContext context = NndlContextManager.getContext();
+		List<CompletableFuture<Void>> runs = new ArrayList<>();
+		for (AsyncStep asyncStep : prepared) {
+			runs.add(CompletableFuture.runAsync(() -> NndlContextManager.runWithContext(context, () -> {
+				for (Action action : asyncStep.step.getActions()) {
+					asyncStep.runner.run(rootElement, action);
+				}
+			})));
+		}
+		return runs;
+	}
+
+	private static final class AsyncStep {
+		private final Step step;
+		private final AsynchronousActionRunner runner;
+
+		private AsyncStep(Step step, AsynchronousActionRunner runner) {
+			this.step = step;
+			this.runner = runner;
 		}
 	}
 	

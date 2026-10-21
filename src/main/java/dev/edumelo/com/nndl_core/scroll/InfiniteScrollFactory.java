@@ -11,15 +11,15 @@ import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.step.StepRunner;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
 
 public class InfiniteScrollFactory {
 
 	private static final Logger log = LoggerFactory.getLogger(InfiniteScrollFactory.class);
 	
-	public static InfiniteScroll create(Class<InfiniteScrollCondition> conditionClass, SeleniumSndlWebDriver remoteWebDriver, 
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement, int scrollCount,
+	public static InfiniteScroll create(Class<InfiniteScrollCondition> conditionClass, SeleniumNndlWebDriver remoteWebDriver, 
+			SeleniumNndlWebDriverWaiter webDriverWait, IterationContent rootElement, int scrollCount,
 			boolean autoScrool, LoopIterationScope iterationScope, Class<ScrollObserver> infinitScrollObserverClass,
 			Step iterationStep, Boolean throwTimeout, Integer elementTimeoutWait, NndlNode node) {
 		InfiniteScrollCondition scrollCondition = createInfiniteScrollCondition(conditionClass);
@@ -44,7 +44,7 @@ public class InfiniteScrollFactory {
 		return new DefaultInfiniteScrollCondition();
 	}
 	
-	private static ScrollObserver createExtractorObserver(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait, 
+	private static ScrollObserver createExtractorObserver(SeleniumNndlWebDriver remoteWebDriver, SeleniumNndlWebDriverWaiter webDriverWait, 
 			IterationContent rootElement, InfiniteScrollCondition scrollCondition, LoopIterationScope iterationScope,
 			Class<ScrollObserver> infinitScrollObserverClass, Step iterationStep, Boolean throwTimeout,
 			Integer elementTimeoutWait) {

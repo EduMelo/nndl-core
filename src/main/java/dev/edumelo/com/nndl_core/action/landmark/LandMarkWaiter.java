@@ -17,17 +17,17 @@ import dev.edumelo.com.nndl_core.exceptions.checked.NndlLandmarkException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
 
 public class LandMarkWaiter {
 	
 	private static final Logger log = LoggerFactory.getLogger(LandMarkWaiter.class);
 	
-	private SeleniumSndlWebDriver webDriver;
-	private SeleniumSndlWebDriverWaiter webDriverWait;
+	private SeleniumNndlWebDriver webDriver;
+	private SeleniumNndlWebDriverWaiter webDriverWait;
 
-	public LandMarkWaiter(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait) {
+	public LandMarkWaiter(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait) {
 		this.webDriver = webDriver;
 		this.webDriverWait = webDriverWait;
 	}

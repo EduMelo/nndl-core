@@ -17,12 +17,12 @@ import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
 
 public class Extract extends Action {
 	private static final String TAG = "extract";
-	private static final String TARGET_TAG = "targertElement";
+	private static final String TARGET_TAG = "targetElement";
 	private static final String FROM_CLIPBOARD_TAG = "fromClipboard";
 	private String extractDataBindAdapterName;
 	private StepElement targetElement;
@@ -69,7 +69,7 @@ public class Extract extends Action {
 	}
 	
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+	public Advice runNested(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) throws NndlActionException {
 		if(fromClipboard) {
 			return runElementFromClipboard(webDriver);
@@ -78,8 +78,8 @@ public class Extract extends Action {
 	}
 	
 	@Override
-	public Advice runAction(SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) throws NndlActionException {
+	public Advice runAction(SeleniumNndlWebDriver webDriver,
+			SeleniumNndlWebDriverWaiter webDriverWait) throws NndlActionException {
 		if(fromClipboard) {
 			return runElementFromClipboard(webDriver);
 		}
@@ -97,12 +97,12 @@ public class Extract extends Action {
 				.orElse(null);
 	}
 	
-	private Advice runElementFromClipboard(SeleniumSndlWebDriver webDriver) {
+	private Advice runElementFromClipboard(SeleniumNndlWebDriver webDriver) {
 		return NndlContextManager.addExtractedData(webDriver, ClipboardTextFactory.class.getName(),
 				null);
 	}
 
-	public Advice runElement(SeleniumSndlWebDriver webDriver, WebElement element) {
+	public Advice runElement(SeleniumNndlWebDriver webDriver, WebElement element) {
 		return NndlContextManager.addExtractedData(webDriver, extractDataBindAdapterName, element);
 	}
 	

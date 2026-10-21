@@ -17,7 +17,7 @@ import dev.edumelo.com.nndl_core.action.landmark.LandmarkStrategies;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
 
 public class StepElement {
 	public static final String TAG = "elements";
@@ -109,11 +109,11 @@ public class StepElement {
 	}
 	
 	private SearchContext findRoot(NndlWebDriver remoteWebDriver) {
-		if(!(remoteWebDriver instanceof SeleniumSndlWebDriver)) {
-			throw new RuntimeException("remoteWebDriver is not a SeleniumSndlWebDriver");
+		if(!(remoteWebDriver instanceof SeleniumNndlWebDriver)) {
+			throw new RuntimeException("remoteWebDriver is not a SeleniumNndlWebDriver");
 		}
-		SeleniumSndlWebDriver seleniumSndlWebDriver = (SeleniumSndlWebDriver) remoteWebDriver;
-		RemoteWebDriver webDriver = seleniumSndlWebDriver.getWebDriver();
+		SeleniumNndlWebDriver seleniumNndlWebDriver = (SeleniumNndlWebDriver) remoteWebDriver;
+		RemoteWebDriver webDriver = seleniumNndlWebDriver.getWebDriver();
 		SearchContext root = webDriver;
 		return findRoot(root);
 	}
@@ -132,8 +132,8 @@ public class StepElement {
 		if(containsShadowRoot()) {
 			root = findRoot(remoteWebDriver);
 		} else {
-			SeleniumSndlWebDriver seleniumSndlWebDriver = (SeleniumSndlWebDriver) remoteWebDriver;
-			root = seleniumSndlWebDriver.getWebDriver();
+			SeleniumNndlWebDriver seleniumNndlWebDriver = (SeleniumNndlWebDriver) remoteWebDriver;
+			root = seleniumNndlWebDriver.getWebDriver();
 		}
 		return strategies.getConditionIfAchieved(root, matchExp);
 	}
@@ -155,8 +155,8 @@ public class StepElement {
 		if(containsShadowRoot()) {
 			root = findRoot(remoteWebDriver);
 		} else {
-			SeleniumSndlWebDriver seleniumSndlWebDriver = (SeleniumSndlWebDriver) remoteWebDriver;
-			root = seleniumSndlWebDriver.getWebDriver();
+			SeleniumNndlWebDriver seleniumNndlWebDriver = (SeleniumNndlWebDriver) remoteWebDriver;
+			root = seleniumNndlWebDriver.getWebDriver();
 		}
 		return strategies.getConditionIfAllAchieved(root, matchExp);
 	}
@@ -172,7 +172,7 @@ public class StepElement {
 //	}
 	
 	public ExpectedCondition<List<WebElement>> presenceOfNestedElementsLocatedBy(
-			SeleniumSndlWebDriver seleniumWebDriver, WebElement rootElement) {
+			SeleniumNndlWebDriver seleniumWebDriver, WebElement rootElement) {
 		By locator = By.cssSelector(this.matchExp);
 		if(containsShadowRoot()) {
 			SearchContext root = findRoot(seleniumWebDriver);

@@ -21,8 +21,8 @@ import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
 
 public class SendKey extends LandmarkConditionAction {
 	private static final String TAG = "sendKey";
@@ -69,7 +69,7 @@ public class SendKey extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+	public Advice runNested(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) throws NndlActionException {
 		WebElement target = null;
 		if(isTargetSpecial(targetElement)) {
@@ -96,7 +96,7 @@ public class SendKey extends LandmarkConditionAction {
 
 
 	@Override
-	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {
+	public Advice runAction(SeleniumNndlWebDriver remoteWebDriver, SeleniumNndlWebDriverWaiter webDriverWait) {
 		WebElement target = null;
 		if(targetElement != null) {
 			target =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
@@ -115,7 +115,7 @@ public class SendKey extends LandmarkConditionAction {
 		// TODO Auto-generated method stub
 	}
 	
-	public WebElement runElement(SeleniumSndlWebDriver remoteWebDriver) {
+	public WebElement runElement(SeleniumNndlWebDriver remoteWebDriver) {
 		return remoteWebDriver.getWebDriver().findElement(By.tagName("html"));
 	}
 

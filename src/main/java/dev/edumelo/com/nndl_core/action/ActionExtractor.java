@@ -5,7 +5,6 @@ import java.util.Map;
 import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatus;
 import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatusFactory;
 import dev.edumelo.com.nndl_core.action.utils.Position;
-import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.utils.ClassUtils;
@@ -19,12 +18,6 @@ public class ActionExtractor {
 	private static final String CONDITION_TAG = "condition";
 	private static final String ON_EACH_TAG = "onEach";
 	private static final String CONDITION_CLASS_TAG = "class";
-	
-	public static int getOrder(NndlNode mappedAction) {
-		return mappedAction.getScalarValueFromChild("order", Integer.class)
-				.orElseThrow(() -> new NndlParserRuntimeException("It should be defined the order",
-						mappedAction));
-	}
 	
 	public static RequirementStatus getRequirementStatus(NndlNode mappedAction) {
 		return RequirementStatusFactory.createRequirementStatus(mappedAction);

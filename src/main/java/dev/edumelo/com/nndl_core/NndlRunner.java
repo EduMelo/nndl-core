@@ -1,5 +1,6 @@
 package dev.edumelo.com.nndl_core;
 
+import java.nio.file.Path;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -14,24 +15,28 @@ import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.step.StepRunner;
 import dev.edumelo.com.nndl_core.webdriver.BrowserControllerDriverConfiguration;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
 
 public class NndlRunner {
 	private static final Logger log = LoggerFactory.getLogger(NndlRunner.class);
 	
 
 	private final BrowserControllerDriverConfiguration browserControllerDriverConfiguration;
-	private SeleniumSndlWebDriver webDriver;
-	private SeleniumSndlWebDriverWaiter webDriverWait;
+	private SeleniumNndlWebDriver webDriver;
+	private SeleniumNndlWebDriverWaiter webDriverWait;
 	
 	public NndlRunner(BrowserControllerDriverConfiguration browserControllerDriverConfiguration) {
 		this.browserControllerDriverConfiguration = browserControllerDriverConfiguration;
 	}
 
-	public NndlResult runFromFile(String sndlFile, ContextAdapter... adapters) {
-		Nndl nndl = new Nndl(sndlFile);
+	public NndlResult runFromFile(String nndlFile, ContextAdapter... adapters) {
+		Nndl nndl = new Nndl(nndlFile);
 		return runFromStack(nndl, adapters);
+	}
+
+	public NndlResult runFromDhall(Path nndlFile, ContextAdapter... adapters) {
+		return runFromStack(Nndl.loadDhall(nndlFile), adapters);
 	}
 	
 	public NndlResult runFromStack(Nndl nndl, ContextAdapter... adapters) {
@@ -50,9 +55,9 @@ public class NndlRunner {
 				.getProperties();
 		Map<String, Step> steps = nndl.getStepMap(seleniumHubProperties);
 		try {
-			webDriver = new SeleniumSndlWebDriver(browserControllerDriverConfiguration, NndlContextManager
+			webDriver = new SeleniumNndlWebDriver(browserControllerDriverConfiguration, NndlContextManager
 					.getBrowserArgumentsContextAdapter());
-			webDriverWait = new SeleniumSndlWebDriverWaiter(webDriver);
+			webDriverWait = new SeleniumNndlWebDriverWaiter(webDriver);
 			webDriver.refreshWebDriver();
 			webDriverWait.refreshWaiter();			
 			NndlContextManager.setWebDriverSessionId(webDriver.getSessionId());

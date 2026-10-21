@@ -3,14 +3,14 @@ package dev.edumelo.com.nndl_core.scroll;
 import java.util.List;
 
 import dev.edumelo.com.nndl_core.exceptions.checked.InfiniteScrollMaxLoopCountReached;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
 
 public class ListScroll {
-	private final SeleniumSndlWebDriver remoteWebDriver;
+	private final SeleniumNndlWebDriver remoteWebDriver;
 	private final List<String> iterationScopeList;
 	private final List<ScrollObserver> scrollObservers;
 
-	public ListScroll(SeleniumSndlWebDriver remoteWebDriver, List<String> iterationScopeList,
+	public ListScroll(SeleniumNndlWebDriver remoteWebDriver, List<String> iterationScopeList,
 			List<ScrollObserver> scrollObservers) {
 		this.remoteWebDriver = remoteWebDriver;
 		this.iterationScopeList = iterationScopeList;

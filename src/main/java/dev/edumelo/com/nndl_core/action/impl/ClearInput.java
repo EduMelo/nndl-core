@@ -17,8 +17,8 @@ import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
 
 public class ClearInput extends Action {
 	private static final String TAG = "input";
@@ -64,14 +64,14 @@ public class ClearInput extends Action {
 	}
 
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+	public Advice runNested(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) throws NndlActionException {
 		WebElement input = wait(webDriver, webDriverWait);
 		return runElement(input);
 	}
 
 	@Override
-	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
+	public Advice runAction(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait)
 			throws NndlActionException {
 		WebElement input =  wait(webDriver, webDriverWait);
 		setActionPerformed(true);

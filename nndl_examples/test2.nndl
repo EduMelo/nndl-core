@@ -4,8 +4,7 @@ steps:
       - name: loginMark
         matchExp: '#USER_DROPDOWN_ID #email-collection-tooltip-id svg'
     actions:
-      - order: 1
-        storeCookies:
+      - storeCookies:
           storer: dev.edumelo.grfnkl.socialplataforms.services.reddit.RedditUserCookiesStorer
           landmarkConditions: 
             - element: loginMark
@@ -19,21 +18,17 @@ steps:
       - name: loginMark
         matchExp: '#USER_DROPDOWN_ID #email-collection-tooltip-id svg'
     actions:
-      - order: 1
-        gotoUrl: https://www.reddit.com/settings/
+      - gotoUrl: https://www.reddit.com/settings/
         landmarkConditions: 
           - element: inputLogin
-      - order: 2
-        loadCookies: 
+      - loadCookies: 
           retriever: dev.edumelo.grfnkl.socialplataforms.services.reddit.RedditUserCookiesRetriever
           retrieverParams:
             - ${userHandle}
-      - order: 3
-        gotoUrl: https://www.reddit.com/settings/
+      - gotoUrl: https://www.reddit.com/settings/
         landmarkConditions:
           - cooldown: 15000
-      - order: 4
-        gotoUrl: https://www.reddit.com/settings/
+      - gotoUrl: https://www.reddit.com/settings/
         forkElement: 
           - element: loginMark
             fork: loginSuccessfull
@@ -55,24 +50,20 @@ steps:
       - name: invalidLogin
         matchExp: 'fieldset.m-invalid'
     actions:
-      - order: 1
-        gotoUrl: https://www.reddit.com/login
+      - gotoUrl: https://www.reddit.com/login
         landmarkConditions:
           - element: inputLogin
-      - order: 2
-        fillInput:
+      - fillInput:
           input: inputLogin
           value: '${userHandle}'
         landmarkConditions:
           - element: inputLogin
-      - order: 3
-        fillInput:
+      - fillInput:
           input: inputPassword
           value: '${userPassword}'
         landmarkConditions:
           - element: inputPassword
-      - order: 4
-        elementClick: submitButton
+      - elementClick: submitButton
         timeout: 200
         forkElement:
           - element: loginMark

@@ -1,7 +1,6 @@
 package dev.edumelo.com.nndl_core.step;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -118,7 +117,6 @@ public class Step {
 				.map(m -> Action.createAction(seleniumHubProperties, mappedElements, mappedSubSteps,
 						m))
 				.filter(Objects::nonNull)
-				.sorted(Comparator.comparing(Action::getOrder))
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	

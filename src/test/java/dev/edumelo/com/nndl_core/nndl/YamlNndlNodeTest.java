@@ -23,8 +23,7 @@ class YamlNndlNodeTest {
                 "      - name: dialog_close_button\n" +
                 "        matchExp: \"div[role='dialog'] button[aria-label]\"\n" +
                 "    actions:\n" +
-                "      - order: 1\n" +
-                "        elementClick: dialog_close_button\n" +
+                "      - elementClick: dialog_close_button\n" +
                 "        timeout: 200\n"+
                 "    subSteps:    \n"+
                 "    - name: fillElement\n"+
@@ -33,8 +32,7 @@ class YamlNndlNodeTest {
                 "        - name: aria\n"+
                 "          matchExp: \"[aria-labelledby]\"\n"+
                 "      actions:      \n"+
-                "      - order: 1\n"+
-                "        sendKey: ARROW_DOWN\n"+
+                "      - sendKey: ARROW_DOWN\n"+
                 "        targetElement: $activeElement\n"+
                 "        requirementStatus:\n"+
                 "              type: nonRequired\n"+

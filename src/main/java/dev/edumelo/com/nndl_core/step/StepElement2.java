@@ -17,7 +17,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
 
 public class StepElement2 {
 	private static final String SHADOW_ROOT_TAG = "\\$\\{shadowRoot\\}";
@@ -99,8 +99,8 @@ public class StepElement2 {
 	public ExpectedCondition<WebElement> elementToBeClickable(NndlWebDriver remoteWebDriver) {
 		if(containsShadowRoot()) {
 			String[] matchExpressions = getMatchExpressions();
-			SeleniumSndlWebDriver seleniumSndlWebDriver = (SeleniumSndlWebDriver) remoteWebDriver;
-			RemoteWebDriver webDriver = seleniumSndlWebDriver.getWebDriver();
+			SeleniumNndlWebDriver seleniumNndlWebDriver = (SeleniumNndlWebDriver) remoteWebDriver;
+			RemoteWebDriver webDriver = seleniumNndlWebDriver.getWebDriver();
 			WebElement shadowHost = webDriver.findElement(By.cssSelector(matchExpressions[0]));
 			SearchContext shadowRoot = shadowHost.getShadowRoot();
 			return driver -> {
@@ -130,12 +130,12 @@ public class StepElement2 {
 	
 	public ExpectedCondition<WebElement> visibilityOfElementLocated(NndlWebDriver remoteWebDriver){
 		if(containsShadowRoot()) {
-			if(!(remoteWebDriver instanceof SeleniumSndlWebDriver)) {
+			if(!(remoteWebDriver instanceof SeleniumNndlWebDriver)) {
 				throw new RuntimeException();
 			}
 			String[] matchExpressions = getMatchExpressions();
-			SeleniumSndlWebDriver seleniumSndlWebDriver = (SeleniumSndlWebDriver) remoteWebDriver;
-			RemoteWebDriver webDriver = seleniumSndlWebDriver.getWebDriver();
+			SeleniumNndlWebDriver seleniumNndlWebDriver = (SeleniumNndlWebDriver) remoteWebDriver;
+			RemoteWebDriver webDriver = seleniumNndlWebDriver.getWebDriver();
 			WebElement shadowHost = webDriver.findElement(By.cssSelector(matchExpressions[0]));
 			SearchContext shadowRoot = shadowHost.getShadowRoot();
 			return driver -> {
@@ -150,12 +150,12 @@ public class StepElement2 {
 	
 	public ExpectedCondition<WebElement> presenceOfElementLocated(NndlWebDriver remoteWebDriver){
 		if(containsShadowRoot()) {
-			if(!(remoteWebDriver instanceof SeleniumSndlWebDriver)) {
+			if(!(remoteWebDriver instanceof SeleniumNndlWebDriver)) {
 				throw new RuntimeException();
 			}
 			String[] matchExpressions = getMatchExpressions();
-			SeleniumSndlWebDriver seleniumSndlWebDriver = (SeleniumSndlWebDriver) remoteWebDriver;
-			RemoteWebDriver webDriver = seleniumSndlWebDriver.getWebDriver();
+			SeleniumNndlWebDriver seleniumNndlWebDriver = (SeleniumNndlWebDriver) remoteWebDriver;
+			RemoteWebDriver webDriver = seleniumNndlWebDriver.getWebDriver();
 			WebElement shadowHost = webDriver.findElement(By.cssSelector(matchExpressions[0]));
 			SearchContext shadowRoot = shadowHost.getShadowRoot();
 			return driver -> {
@@ -169,12 +169,12 @@ public class StepElement2 {
 	
 	public ExpectedCondition<List<WebElement>> presenceOfAllElementsLocatedBy(NndlWebDriver remoteWebDriver){
 		if(containsShadowRoot()) {
-			if(!(remoteWebDriver instanceof SeleniumSndlWebDriver)) {
+			if(!(remoteWebDriver instanceof SeleniumNndlWebDriver)) {
 				throw new RuntimeException();
 			}
 			String[] matchExpressions = getMatchExpressions();
-			SeleniumSndlWebDriver seleniumSndlWebDriver = (SeleniumSndlWebDriver) remoteWebDriver;
-			RemoteWebDriver webDriver = seleniumSndlWebDriver.getWebDriver();
+			SeleniumNndlWebDriver seleniumNndlWebDriver = (SeleniumNndlWebDriver) remoteWebDriver;
+			RemoteWebDriver webDriver = seleniumNndlWebDriver.getWebDriver();
 			WebElement shadowHost = webDriver.findElement(By.cssSelector(matchExpressions[0]));
 			SearchContext shadowRoot = shadowHost.getShadowRoot();
 			return driver -> {
@@ -188,7 +188,7 @@ public class StepElement2 {
 	}
 	
 	public ExpectedCondition<List<WebElement>> presenceOfNestedElementsLocatedBy(
-			SeleniumSndlWebDriver seleniumWebDriver, WebElement rootElement) {
+			SeleniumNndlWebDriver seleniumWebDriver, WebElement rootElement) {
 		By locator = By.cssSelector(getMatchExpressions()[0]);
 		if(containsShadowRoot()) {
 			String[] matchExpressions = getMatchExpressions();

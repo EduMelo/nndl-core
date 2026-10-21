@@ -16,8 +16,8 @@ import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
 
 public class ElementPaint extends Action {
 	private static final String TAG = "elementPaint";
@@ -59,7 +59,7 @@ public class ElementPaint extends Action {
 	}
 	
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+	public Advice runNested(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) throws NndlActionException {
 		WebElement target = null;
 		if(isTargetSpecial(paintableElement)) {
@@ -77,13 +77,13 @@ public class ElementPaint extends Action {
 	}
 
 	@Override
-	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
+	public Advice runAction(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait)
 			throws NndlActionException {
 		WebElement element =  wait(webDriver, webDriverWait);
 		return runElement(webDriver, webDriverWait, null, element);
 	}
 	
-	public Advice runElement(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+	public Advice runElement(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement, WebElement element) {
 		if(checkCondition(webDriver, webDriverWait, rootElement)) {
 			webDriver.getWebDriver().executeScript("arguments[0].style.backgroundColor = arguments[1]", element, color);		

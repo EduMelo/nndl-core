@@ -17,8 +17,8 @@ import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
 
 public class Hover extends LandmarkConditionAction {
 
@@ -59,13 +59,13 @@ private static final String TAG = "hover";
 	}
 
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+	public Advice runNested(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) throws NndlActionException {
 		return runElement(webDriver, webDriverWait, rootElement);
 	}
 	
 	@Override
-	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait)
+	public Advice runAction(SeleniumNndlWebDriver remoteWebDriver, SeleniumNndlWebDriverWaiter webDriverWait)
 			throws NndlActionException {	
 		return runElement(remoteWebDriver, webDriverWait, null);
 	}
@@ -75,7 +75,7 @@ private static final String TAG = "hover";
 		// TODO Auto-generated method stub	
 	}
 	
-	public Advice runElement(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait, 
+	public Advice runElement(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait, 
 			IterationContent rootElement) throws NndlActionException {
 		WebElement element = wait(webDriver, webDriverWait);
 		Actions actions = new Actions(webDriver.getWebDriver());

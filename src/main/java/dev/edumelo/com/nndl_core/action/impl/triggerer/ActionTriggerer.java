@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy;
@@ -19,8 +20,8 @@ import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.utils.SpecialParamsTranslater;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
 
 public class ActionTriggerer extends LandmarkConditionAction {
 	private static final String TAG = "actionTriggerer";
@@ -56,14 +57,14 @@ public class ActionTriggerer extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+	public Advice runNested(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) throws NndlActionException {
 		return runElement(webDriver, webDriverWait, rootElement);
 	}
 	
 	@Override
-	public Advice runAction(SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) throws NndlActionException {
+	public Advice runAction(SeleniumNndlWebDriver webDriver,
+			SeleniumNndlWebDriverWaiter webDriverWait) throws NndlActionException {
 		return runElement(webDriver, webDriverWait, null);
 	}
 	
@@ -82,8 +83,8 @@ public class ActionTriggerer extends LandmarkConditionAction {
 		// TODO Auto-generated method stub
 	}
 	
-	public Advice runElement(SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
+	public Advice runElement(SeleniumNndlWebDriver webDriver,
+			SeleniumNndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
 
 		Object[] translatedParams = Arrays.stream(triggerParams)
 				.map(p -> SpecialParamsTranslater.translateIfSpecial(p))
@@ -106,6 +107,7 @@ public class ActionTriggerer extends LandmarkConditionAction {
 				.get()
 				.stream()
 				.map(NndlNode::getScalarValue)
+				.flatMap(Optional::stream)
 				.toArray(String[]::new);
 	}
 	

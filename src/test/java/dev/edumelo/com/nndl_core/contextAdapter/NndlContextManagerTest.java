@@ -16,7 +16,7 @@ import dev.edumelo.com.nndl_core.ExtractDataBind;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlRuntimeException;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
 
 class NndlContextManagerTest {
 
@@ -123,7 +123,7 @@ class NndlContextManagerTest {
 	private static class StubExtractDataBindAdapter implements ExtractDataBindAdapter<StubExtractDataBind> {
 
 		@Override
-		public ExtractDataBind createFromElement(SeleniumSndlWebDriver webDriver, WebElement element) {
+		public ExtractDataBind createFromElement(SeleniumNndlWebDriver webDriver, WebElement element) {
 			return new StubExtractDataBind();
 		}
 

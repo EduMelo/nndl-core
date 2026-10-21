@@ -17,8 +17,8 @@ import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.utils.UrlUtils;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
 
 public class Goto extends LandmarkConditionAction {
 	private static final String TAG = "gotoUrl";
@@ -48,14 +48,14 @@ public class Goto extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+	public Advice runNested(SeleniumNndlWebDriver remoteWebDriver, SeleniumNndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) {	
 		remoteWebDriver.getWebDriver().get(this.url.toExternalForm());
 		return new ContinueAdvice();
 	}
 	
 	@Override
-	public Advice runAction(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait) {
+	public Advice runAction(SeleniumNndlWebDriver remoteWebDriver, SeleniumNndlWebDriverWaiter webDriverWait) {
 		//try-catch added to avoid the error described in https://github.com/SeleniumHQ/selenium/issues/12277
 		try {
 			remoteWebDriver.getWebDriver().get(this.url.toExternalForm());			

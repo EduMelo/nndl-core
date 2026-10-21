@@ -19,7 +19,7 @@ import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.step.advice.RunControllerAdvice;
 import dev.edumelo.com.nndl_core.webdriver.BrowserArgumentsContextAdapter;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
 
 /**
  * Gives access to the {@link NndlContext} of the current run.
@@ -91,7 +91,7 @@ public final class NndlContextManager {
 		return getContext().getExtractedData();
 	}
 
-	public static Advice addExtractedData(SeleniumSndlWebDriver webDriver, String extractDataBindAdapterName,
+	public static Advice addExtractedData(SeleniumNndlWebDriver webDriver, String extractDataBindAdapterName,
 			WebElement element) {
 		List<ExtractDataBind> list = getAdapters().stream()
 			.filter(a -> a instanceof ExtractDataBindAdapter)

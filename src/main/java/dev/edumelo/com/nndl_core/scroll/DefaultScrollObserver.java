@@ -13,15 +13,15 @@ import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.StepRunner;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
 
 public class DefaultScrollObserver implements ScrollObserver {
 	
 	private static final Logger log = LoggerFactory.getLogger(DefaultScrollObserver.class);
 	
-	private final SeleniumSndlWebDriver webDriver;
-    private final SeleniumSndlWebDriverWaiter webDriverWait;
+	private final SeleniumNndlWebDriver webDriver;
+    private final SeleniumNndlWebDriverWaiter webDriverWait;
     private Step iterationStep;
     private StepRunner runner;
     private InfiniteScrollCondition infiniteScrollCondition;
@@ -86,14 +86,14 @@ public class DefaultScrollObserver implements ScrollObserver {
 	public void setIterationScope(String iterationScope) {
 		this.iterationScope = iterationScope;
 	}
-	public SeleniumSndlWebDriver getWebDriver() {
+	public SeleniumNndlWebDriver getWebDriver() {
 		return webDriver;
 	}
-	public SeleniumSndlWebDriverWaiter getWebDriverWait() {
+	public SeleniumNndlWebDriverWaiter getWebDriverWait() {
 		return webDriverWait;
 	}
 
-	public int execute(SeleniumSndlWebDriver webDriver, int loopCount)
+	public int execute(SeleniumNndlWebDriver webDriver, int loopCount)
 			throws ScrollContinueException, ScrollStopException {
     	try {
     		if(rootElement != null) {

@@ -6,10 +6,8 @@ steps:
       - name: dolar
         matchExp: "#root h2"
     actions:
-      - order: 1
-        gotoUrl: "https://site.nomadglobal.com/lps/currency-converter/?currency=USD&initialValue=100&history=true"
+      - gotoUrl: "https://site.nomadglobal.com/lps/currency-converter/?currency=USD&initialValue=100&history=true"
         landmarkConditions:
           - element: dolar
-      - order: 2
-        extract: dev.edumelo.grfnkl.service.ValueFactory
+      - extract: dev.edumelo.grfnkl.service.ValueFactory
         targertElement: dolar

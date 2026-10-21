@@ -9,16 +9,16 @@ import dev.edumelo.com.nndl_core.action.landmark.LandmarkConditionAction;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
 
 public class ActionRunner {
 	
-	private final SeleniumSndlWebDriver webDriver;
-	private final SeleniumSndlWebDriverWaiter webDriverWait;
+	private final SeleniumNndlWebDriver webDriver;
+	private final SeleniumNndlWebDriverWaiter webDriverWait;
 	private LandMarkWaiter landmarkWaiter;
 
-	public ActionRunner(SeleniumSndlWebDriver remoteWebDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+	public ActionRunner(SeleniumNndlWebDriver remoteWebDriver, SeleniumNndlWebDriverWaiter webDriverWait,
 			Collection<ExtractDataBind> extractDataBindList) {
 		this.webDriver = remoteWebDriver;
 		this.webDriverWait = webDriverWait;

@@ -6,19 +6,19 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class SeleniumSndlWebDriverWaiter implements NndlWebDriverWaiter {
+public class SeleniumNndlWebDriverWaiter implements NndlWebDriverWaiter {
 
 	private WebDriverWait webDriverWait;
 	private final BrowserControllerDriverConfiguration browserConfiguration;
-	private final SeleniumSndlWebDriver webDriver;
+	private final SeleniumNndlWebDriver webDriver;
 	
-	public SeleniumSndlWebDriverWaiter(BrowserControllerDriverConfiguration browserConfiguration,
-			SeleniumSndlWebDriver webDriver) {
+	public SeleniumNndlWebDriverWaiter(BrowserControllerDriverConfiguration browserConfiguration,
+			SeleniumNndlWebDriver webDriver) {
 		this.browserConfiguration = browserConfiguration;
 		this.webDriver = webDriver;
 	}
 
-	public SeleniumSndlWebDriverWaiter(SeleniumSndlWebDriver webDriver) {
+	public SeleniumNndlWebDriverWaiter(SeleniumNndlWebDriver webDriver) {
 		this.webDriver = webDriver;
 		this.browserConfiguration = webDriver.getBrowserCOnfiguration();
 	}
@@ -33,7 +33,7 @@ public class SeleniumSndlWebDriverWaiter implements NndlWebDriverWaiter {
 		this.webDriverWait = browserConfiguration.createWait(webDriver.getWebDriver());
 	}
 	
-	public SeleniumSndlWebDriverWaiter withTimeout(Duration timeoutSeconds) {
+	public SeleniumNndlWebDriverWaiter withTimeout(Duration timeoutSeconds) {
 		this.webDriverWait.withTimeout(timeoutSeconds);
 		return this;
 	}

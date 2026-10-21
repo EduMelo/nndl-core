@@ -9,16 +9,16 @@ import org.openqa.selenium.remote.SessionId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SeleniumSndlWebDriver implements NndlWebDriver {
+public class SeleniumNndlWebDriver implements NndlWebDriver {
 	
-	private static final Logger log = LoggerFactory.getLogger(SeleniumSndlWebDriver.class);
+	private static final Logger log = LoggerFactory.getLogger(SeleniumNndlWebDriver.class);
 	
 	private final BrowserControllerDriverConfiguration browserConfiguration;
 	private RemoteWebDriver webDriver;
 	private SessionId sessionId;
 	private List<BrowserArgumentsContextAdapter> browserArgumentsContextAdapter;
 
-	public SeleniumSndlWebDriver(BrowserControllerDriverConfiguration browserConfiguration,
+	public SeleniumNndlWebDriver(BrowserControllerDriverConfiguration browserConfiguration,
 			List<BrowserArgumentsContextAdapter> browserArgumentsContextAdapter) {
 		this.browserConfiguration = browserConfiguration;
 		this.browserArgumentsContextAdapter = browserArgumentsContextAdapter;

@@ -21,14 +21,15 @@ import dev.edumelo.com.nndl_core.action.landmark.LandmarkStrategies;
 import dev.edumelo.com.nndl_core.action.requirementStatus.RequirementStatus;
 import dev.edumelo.com.nndl_core.action.utils.Position;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
+import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
 
 public abstract class Action {
 	private final static Logger log = LoggerFactory.getLogger(Action.class);
@@ -37,7 +38,6 @@ public abstract class Action {
 	private final String TIMEOUT_TAG = "timeout";
 	private final int DEFAULT_TIMEOUT = 50;
 	
-	private int order;
 	private int waitDuration;
 	private int onEach;
 	private int timeoutSeconds;
@@ -68,17 +68,10 @@ public abstract class Action {
 	public abstract NndlNode getRelevantNode();
 	public abstract StepElement getRelevantElment();
 	public abstract LandmarkStrategies getDefaultWaitCondition();
-	public abstract Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+	public abstract Advice runNested(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) throws NndlActionException;
-	public abstract Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
+	public abstract Advice runAction(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait)
 			throws NndlActionException;
-	
-	public int getOrder() {
-		return order;
-	}
-	public void setOrder(int order) {
-		this.order = order;
-	}
 	
 	public int getWaitDuration() {
 		return waitDuration;
@@ -163,7 +156,7 @@ public abstract class Action {
 		return Action.TAG;
 	}
 	
-	protected boolean checkCondition(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+	protected boolean checkCondition(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) {
 		if(this.conditionClass == null || conditionElement == null) {
 			return true;
@@ -190,17 +183,17 @@ public abstract class Action {
 		}
 	}
 	
-	protected void positionBefore(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait, WebElement element, 
+	protected void positionBefore(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait, WebElement element, 
 			ExpectedCondition<WebElement> expectedCondition) {
 		positionElement(positionBefore, webDriver, webDriverWait, element, expectedCondition);
 	}
 	
-	protected void positionAfter(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait, WebElement element, 
+	protected void positionAfter(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait, WebElement element, 
 			ExpectedCondition<WebElement> expectedCondition) {
 		positionElement(positionAfter, webDriver, webDriverWait, element, expectedCondition);
 	}
 	
-	protected void positionElement(Position position, SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait, WebElement element,
+	protected void positionElement(Position position, SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait, WebElement element,
 			ExpectedCondition<WebElement> expectedCondition) {
 		if(position != null) {
 			if(position.getY() != null) {		
@@ -217,6 +210,10 @@ public abstract class Action {
 	
 	public static Action createAction(SeleniumHubProperties seleniumHubProperties, Map<String, StepElement> mappedElements,
 			Map<String, ?> mappedSubSteps, NndlNode mappedAction) {
+		if (mappedAction.hasValueFromChild("order")) {
+			throw new NndlParserRuntimeException("Actions run in the order they are listed. "
+					+ "The order field is not part of the recipe.", mappedAction);
+		}
 		ActionType actionType = indentifyAction(mappedAction);
 		Action createdAction;
 		try {
@@ -231,7 +228,6 @@ public abstract class Action {
 						.newInstance(seleniumHubProperties, mappedAction, mappedElements);
 			}
 				
-			createdAction.setOrder(ActionExtractor.getOrder(mappedAction));
 			createdAction.setRequirementStatus(ActionExtractor.getRequirementStatus(mappedAction));
 			createdAction.setConditionClass(ActionExtractor.getConditionClass(mappedAction));
 			createdAction.setConditionElement(ActionExtractor.getConditionElement(mappedAction, mappedElements));
@@ -248,8 +244,8 @@ public abstract class Action {
 
 	}
 	
-	public Advice run(SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait, IterationContent rootElement)
+	public Advice run(SeleniumNndlWebDriver webDriver,
+			SeleniumNndlWebDriverWaiter webDriverWait, IterationContent rootElement)
 					throws NndlActionException {		
 		if(!isLoopCountAccepted(rootElement)) {
 			return new ContinueAdvice();
@@ -287,7 +283,7 @@ public abstract class Action {
 			.orElseThrow(() -> new RuntimeException("Non identify action: "+mappedAction));
 	}
 	
-	protected WebElement wait(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
+	protected WebElement wait(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait)
 			throws NndlActionException {
 		return webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
 				.until(getRelevantElment().landmarkAchiveable(webDriver, waitCondition));

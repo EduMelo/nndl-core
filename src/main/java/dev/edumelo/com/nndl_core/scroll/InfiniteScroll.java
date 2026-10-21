@@ -9,13 +9,13 @@ import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.exceptions.checked.InfiniteScrollMaxLoopCountReached;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
 
 public class InfiniteScroll {
 	
 	private static final Logger log = LoggerFactory.getLogger(InfiniteScroll.class);
 
-	private final SeleniumSndlWebDriver remoteWebDriver;
+	private final SeleniumNndlWebDriver remoteWebDriver;
 	private final int scrollCount;
 	private final boolean autoScrool;
 	private final List<ScrollObserver> scrollObservers;
@@ -23,7 +23,7 @@ public class InfiniteScroll {
 	private int maxBreakCount = 50;
 	private NndlNode node;
 
-	public InfiniteScroll(SeleniumSndlWebDriver remoteWebDriver, int scrollCount, boolean autoScrool, NndlNode node,
+	public InfiniteScroll(SeleniumNndlWebDriver remoteWebDriver, int scrollCount, boolean autoScrool, NndlNode node,
 			List<ScrollObserver> scrollObservers) {
 		super();
 		this.remoteWebDriver = remoteWebDriver;

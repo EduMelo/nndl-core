@@ -21,8 +21,8 @@ import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.utils.UrlUtils;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumSndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
 
 public class DownloadFile extends Action {
 	private static final String TAG = "downloadFile";
@@ -65,13 +65,13 @@ public class DownloadFile extends Action {
 	}
 
 	@Override
-	public Advice runNested(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait,
+	public Advice runNested(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) throws NndlActionException {
 		return runElment(webDriver, webDriverWait);
 	}
 
 	@Override
-	public Advice runAction(SeleniumSndlWebDriver webDriver, SeleniumSndlWebDriverWaiter webDriverWait)
+	public Advice runAction(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait)
 			throws NndlActionException {
 		return runElment(webDriver, webDriverWait);
 	}
@@ -86,8 +86,8 @@ public class DownloadFile extends Action {
 		return null;
 	}
 
-	private Advice runElment(SeleniumSndlWebDriver webDriver,
-			SeleniumSndlWebDriverWaiter webDriverWait) {
+	private Advice runElment(SeleniumNndlWebDriver webDriver,
+			SeleniumNndlWebDriverWaiter webDriverWait) {
 		RemoteWebDriver driver = webDriver.getWebDriver();
 		
 		driver.executeScript("window.open()");

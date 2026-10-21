@@ -2,6 +2,7 @@ package dev.edumelo.com.nndl_core.nndl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
+import dev.edumelo.com.nndl_core.nndl.dhall.DhallNndlLoader;
+import dev.edumelo.com.nndl_core.nndl.dhall.EncodedNndl;
 import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
 
@@ -30,10 +33,25 @@ public class Nndl {
 	private List<Nndl> imports;
 	private NndlNode rootNode;
 	private NndlNode stepsNode;
+	private List<String> missingStepNames = List.of();
 	
 	public Nndl() {
 	}
 	
+	public static Nndl loadDhall(Path file) {
+		EncodedNndl encoded = new DhallNndlLoader().load(file);
+		if (!encoded.missingStepNames().isEmpty()) {
+			LoggerFactory.getLogger(Nndl.class).warn(
+					"Dhall recipe refers to unknown steps: {}", encoded.missingStepNames());
+		}
+		Nndl nndl = new Nndl();
+		nndl.setName(file.toString());
+		nndl.setValue(encoded.yaml());
+		nndl.loadNndlMap();
+		nndl.missingStepNames = encoded.missingStepNames();
+		return nndl;
+	}
+
 	public Nndl(String nndlFile) {
 		InputStream input = this.getClass()
 				.getClassLoader()
@@ -138,6 +156,10 @@ public class Nndl {
 				.collect(Collectors.toMap(Step::getName, Function.identity()));
 	}
 	
+	public List<String> getMissingStepNames() {
+		return missingStepNames;
+	}
+
 	public String getEntryStep() {
 		String entyStepName =  rootNode.getScalarValueFromChild(ENTRY_STEP_TAG)
 			.orElseThrow(() -> new NndlParserRuntimeException("The nndl root node doesn't have a entryStep tag.",

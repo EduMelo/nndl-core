@@ -13,8 +13,8 @@ import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriverWaiter;
 
 public abstract class LandmarkConditionAction extends Action {
 	
@@ -46,8 +46,8 @@ public abstract class LandmarkConditionAction extends Action {
 		return landmarkWaiter.wait(landmarkConditionAggregation, getRelevantNode());
 	}
 
-	public Advice runSequentialWait(SeleniumNndlWebDriver webDriver,
-			SeleniumNndlWebDriverWaiter webDriverWait, 
+	public Advice runSequentialWait(NndlWebDriver webDriver,
+			NndlWebDriverWaiter webDriverWait, 
 			LandMarkWaiter landmarkWaiter, IterationContent rootElement) throws NndlActionException {
 		log.debug("runSequentialWait: rootElement:{}", rootElement);	
 		run(webDriver, webDriverWait, rootElement);
@@ -55,8 +55,8 @@ public abstract class LandmarkConditionAction extends Action {
 	}
 
 	
-	public void runPrecedentWait(SeleniumNndlWebDriver webDriver,
-			SeleniumNndlWebDriverWaiter webDriverWait, 
+	public void runPrecedentWait(NndlWebDriver webDriver,
+			NndlWebDriverWaiter webDriverWait, 
 			LandMarkWaiter landmarkWaiter, IterationContent rootElement) throws NndlActionException {
 		log.debug("runPrecedentWait: rootElement:{}", rootElement);
 		wait(landmarkWaiter, landmarkConditionAggregation);

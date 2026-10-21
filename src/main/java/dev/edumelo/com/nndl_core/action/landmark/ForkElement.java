@@ -2,8 +2,6 @@ package dev.edumelo.com.nndl_core.action.landmark;
 
 import java.util.Map;
 
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
@@ -11,6 +9,7 @@ import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.SwapStepAdvice;
 import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlElementCondition;
 
 public class ForkElement implements Landmark {
 	public static final String TAG = "element";
@@ -48,7 +47,7 @@ public class ForkElement implements Landmark {
 	}
 	
 	@Override
-	public ExpectedCondition<WebElement> landmarkAchiveable(NndlWebDriver remoteWebDriver,
+	public NndlElementCondition landmarkAchiveable(NndlWebDriver remoteWebDriver,
 			LandmarkStrategies strategies) {
 		return this.element.landmarkAchiveable(remoteWebDriver, strategies);
 	}

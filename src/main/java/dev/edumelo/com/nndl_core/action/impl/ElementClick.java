@@ -2,7 +2,6 @@ package dev.edumelo.com.nndl_core.action.impl;
 
 import java.util.Map;
 
-import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy;
@@ -16,8 +15,9 @@ import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlElement;
 
 public class ElementClick extends LandmarkConditionAction {
 	private static final String TAG = "elementClick";
@@ -59,21 +59,21 @@ public class ElementClick extends LandmarkConditionAction {
 	}
 
 	@Override
-	public Advice runNested(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
+	public Advice runNested(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) throws NndlActionException {
-		WebElement button = wait(webDriver, webDriverWait);
+		NndlElement button = wait(webDriver, webDriverWait);
 		return runElement(webDriver, webDriverWait, rootElement, button);
 	}
 	
 	@Override
-	public Advice runAction(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait)
+	public Advice runAction(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait)
 			throws NndlActionException {	
-		WebElement button = wait(webDriver, webDriverWait);
+		NndlElement button = wait(webDriver, webDriverWait);
 		return runElement(webDriver, webDriverWait, null, button);
 	}
 	
-	public Advice runElement(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
-			IterationContent rootElement, WebElement button) {
+	public Advice runElement(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement, NndlElement button) {
 		if(checkCondition(webDriver, webDriverWait, rootElement)) {
 			button.click();
 			setActionPerformed(true);

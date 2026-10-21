@@ -20,8 +20,8 @@ import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.utils.SpecialParamsTranslater;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriverWaiter;
 
 public class ActionTriggerer extends LandmarkConditionAction {
 	private static final String TAG = "actionTriggerer";
@@ -57,14 +57,14 @@ public class ActionTriggerer extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public Advice runNested(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
+	public Advice runNested(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) throws NndlActionException {
 		return runElement(webDriver, webDriverWait, rootElement);
 	}
 	
 	@Override
-	public Advice runAction(SeleniumNndlWebDriver webDriver,
-			SeleniumNndlWebDriverWaiter webDriverWait) throws NndlActionException {
+	public Advice runAction(NndlWebDriver webDriver,
+			NndlWebDriverWaiter webDriverWait) throws NndlActionException {
 		return runElement(webDriver, webDriverWait, null);
 	}
 	
@@ -83,8 +83,8 @@ public class ActionTriggerer extends LandmarkConditionAction {
 		// TODO Auto-generated method stub
 	}
 	
-	public Advice runElement(SeleniumNndlWebDriver webDriver,
-			SeleniumNndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
+	public Advice runElement(NndlWebDriver webDriver,
+			NndlWebDriverWaiter webDriverWait, IterationContent rootElement) {
 
 		Object[] translatedParams = Arrays.stream(triggerParams)
 				.map(p -> SpecialParamsTranslater.translateIfSpecial(p))

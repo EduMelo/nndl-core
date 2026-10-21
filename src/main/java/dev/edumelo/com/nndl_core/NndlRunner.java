@@ -13,21 +13,18 @@ import dev.edumelo.com.nndl_core.nndl.Nndl;
 import dev.edumelo.com.nndl_core.step.RunStopperException;
 import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.step.StepRunner;
-import dev.edumelo.com.nndl_core.webdriver.BrowserControllerDriverConfiguration;
+import dev.edumelo.com.nndl_core.webdriver.NndlBrowserSession;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriverWaiter;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
 
 public class NndlRunner {
 	private static final Logger log = LoggerFactory.getLogger(NndlRunner.class);
-	
 
-	private final BrowserControllerDriverConfiguration browserControllerDriverConfiguration;
-	private SeleniumNndlWebDriver webDriver;
-	private SeleniumNndlWebDriverWaiter webDriverWait;
-	
-	public NndlRunner(BrowserControllerDriverConfiguration browserControllerDriverConfiguration) {
-		this.browserControllerDriverConfiguration = browserControllerDriverConfiguration;
+	private final NndlBrowserSession session;
+
+	public NndlRunner(NndlBrowserSession session) {
+		this.session = session;
 	}
 
 	public NndlResult runFromFile(String nndlFile, ContextAdapter... adapters) {
@@ -51,15 +48,12 @@ public class NndlRunner {
 	}
 
 	private NndlResult runStack(Nndl nndl) {
-		SeleniumHubProperties seleniumHubProperties = browserControllerDriverConfiguration
-				.getProperties();
+		SeleniumHubProperties seleniumHubProperties = session.properties();
 		Map<String, Step> steps = nndl.getStepMap(seleniumHubProperties);
+		NndlWebDriver webDriver = null;
 		try {
-			webDriver = new SeleniumNndlWebDriver(browserControllerDriverConfiguration, NndlContextManager
-					.getBrowserArgumentsContextAdapter());
-			webDriverWait = new SeleniumNndlWebDriverWaiter(webDriver);
-			webDriver.refreshWebDriver();
-			webDriverWait.refreshWaiter();			
+			webDriver = session.open();
+			NndlWebDriverWaiter webDriverWait = session.waiter(webDriver);
 			NndlContextManager.setWebDriverSessionId(webDriver.getSessionId());
 
 			StepRunner stepRunner = new StepRunner(webDriver, webDriverWait);
@@ -76,7 +70,7 @@ public class NndlRunner {
 			return new NndlResult(NndlContextManager.getExtractedData(), NndlContextManager.getLogs());
 		} finally {
 			if(webDriver != null) {
-				webDriver.quitWebDriver();				
+				webDriver.quit();
 			}
 		}
 	}

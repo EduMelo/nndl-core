@@ -6,18 +6,17 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openqa.selenium.By;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkStrategies;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlElement;
+import dev.edumelo.com.nndl_core.webdriver.NndlElementCondition;
+import dev.edumelo.com.nndl_core.webdriver.NndlElementsCondition;
+import dev.edumelo.com.nndl_core.webdriver.NndlLocator;
+import dev.edumelo.com.nndl_core.webdriver.NndlSearchContext;
 
 public class StepElement {
 	public static final String TAG = "elements";
@@ -108,39 +107,32 @@ public class StepElement {
 		return CollectionUtils.isNotEmpty(this.shadowPath);
 	}
 	
-	private SearchContext findRoot(NndlWebDriver remoteWebDriver) {
-		if(!(remoteWebDriver instanceof SeleniumNndlWebDriver)) {
-			throw new RuntimeException("remoteWebDriver is not a SeleniumNndlWebDriver");
-		}
-		SeleniumNndlWebDriver seleniumNndlWebDriver = (SeleniumNndlWebDriver) remoteWebDriver;
-		RemoteWebDriver webDriver = seleniumNndlWebDriver.getWebDriver();
-		SearchContext root = webDriver;
-		return findRoot(root);
+	private NndlSearchContext findRoot(NndlWebDriver remoteWebDriver) {
+		return findRoot((NndlSearchContext) remoteWebDriver);
 	}
 
-	private SearchContext findRoot(SearchContext root) {
+	private NndlSearchContext findRoot(NndlSearchContext root) {
 		for (String path : shadowPath) {
-			WebElement shadowHost = root.findElement(By.cssSelector(path));
-			root = shadowHost.getShadowRoot();				
+			NndlElement shadowHost = root.find(NndlLocator.css(path));
+			root = shadowHost.shadowRoot();				
 		}
 		return root;
 	}
 	
-	public ExpectedCondition<WebElement> landmarkAchiveable(NndlWebDriver remoteWebDriver,
+	public NndlElementCondition landmarkAchiveable(NndlWebDriver remoteWebDriver,
 			LandmarkStrategies strategies){
-		SearchContext root = null;
+		NndlSearchContext root = null;
 		if(containsShadowRoot()) {
 			root = findRoot(remoteWebDriver);
 		} else {
-			SeleniumNndlWebDriver seleniumNndlWebDriver = (SeleniumNndlWebDriver) remoteWebDriver;
-			root = seleniumNndlWebDriver.getWebDriver();
+			root = remoteWebDriver;
 		}
 		return strategies.getConditionIfAchieved(root, matchExp);
 	}
 	
-	public ExpectedCondition<WebElement> landmarkAchiveable(NndlWebDriver remoteWebDriver,
-			LandmarkStrategies strategies, WebElement rootElement){
-		SearchContext root = null;
+	public NndlElementCondition landmarkAchiveable(NndlWebDriver remoteWebDriver,
+			LandmarkStrategies strategies, NndlElement rootElement){
+		NndlSearchContext root = null;
 		if(containsShadowRoot()) {
 			root = findRoot(rootElement);
 		} else {
@@ -149,47 +141,40 @@ public class StepElement {
 		return strategies.getConditionIfAchieved(root, matchExp);
 	}
 	
-	public ExpectedCondition<List<WebElement>> allLandmarkAchiveable(NndlWebDriver remoteWebDriver,
+	public NndlElementsCondition allLandmarkAchiveable(NndlWebDriver remoteWebDriver,
 			LandmarkStrategies strategies){
-		SearchContext root = null;
+		NndlSearchContext root = null;
 		if(containsShadowRoot()) {
 			root = findRoot(remoteWebDriver);
 		} else {
-			SeleniumNndlWebDriver seleniumNndlWebDriver = (SeleniumNndlWebDriver) remoteWebDriver;
-			root = seleniumNndlWebDriver.getWebDriver();
+			root = remoteWebDriver;
 		}
 		return strategies.getConditionIfAllAchieved(root, matchExp);
 	}
 	
-//	public ExpectedCondition<List<WebElement>> presenceOfAllElementsLocatedBy(NndlWebDriver remoteWebDriver){
+//	public NndlElementsCondition presenceOfAllElementsLocatedBy(NndlWebDriver remoteWebDriver){
 //		if(containsShadowRoot()) {
-//			SearchContext root = findRoot(remoteWebDriver);
+//			NndlSearchContext root = findRoot(remoteWebDriver);
 //			return getMultPresenceCondition(root);
 //		} else {
-//			By locator = By.cssSelector(this.matchExp);
+//			By locator = NndlLocator.css(this.matchExp);
 //			return ExpectedConditions.presenceOfAllElementsLocatedBy(locator);			
 //		}
 //	}
 	
-	public ExpectedCondition<List<WebElement>> presenceOfNestedElementsLocatedBy(
-			SeleniumNndlWebDriver seleniumWebDriver, WebElement rootElement) {
-		By locator = By.cssSelector(this.matchExp);
+	public NndlElementsCondition presenceOfNestedElementsLocatedBy(
+			NndlWebDriver seleniumWebDriver, NndlElement rootElement) {
+		NndlLocator locator = NndlLocator.css(this.matchExp);
 		if(containsShadowRoot()) {
-			SearchContext root = findRoot(seleniumWebDriver);
-			return new ExpectedCondition<List<WebElement>>() {
-				@Override
-				public List<WebElement> apply(WebDriver driver) {
-					List<WebElement> allChildren = root.findElements(locator);
-					return allChildren.isEmpty() ? null : allChildren;
-				}
+			NndlSearchContext root = findRoot(seleniumWebDriver);
+			return () -> {
+				List<NndlElement> allChildren = root.findAll(locator);
+				return allChildren.isEmpty() ? null : allChildren;
 			};
 		} else {
-			return new ExpectedCondition<List<WebElement>>() {
-				@Override
-				public List<WebElement> apply(WebDriver driver) {
-					List<WebElement> allChildren = rootElement.findElements(locator);
-					return allChildren.isEmpty() ? null : allChildren;
-				}
+			return () -> {
+				List<NndlElement> allChildren = rootElement.findAll(locator);
+				return allChildren.isEmpty() ? null : allChildren;
 			};
 		}
 	  }

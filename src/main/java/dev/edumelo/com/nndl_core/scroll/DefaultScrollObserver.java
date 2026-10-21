@@ -2,8 +2,6 @@ package dev.edumelo.com.nndl_core.scroll;
 
 import java.time.Duration;
 
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,15 +11,17 @@ import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.StepRunner;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlStaleElementException;
+import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlTimeoutException;
 
 public class DefaultScrollObserver implements ScrollObserver {
 	
 	private static final Logger log = LoggerFactory.getLogger(DefaultScrollObserver.class);
 	
-	private final SeleniumNndlWebDriver webDriver;
-    private final SeleniumNndlWebDriverWaiter webDriverWait;
+	private final NndlWebDriver webDriver;
+    private final NndlWebDriverWaiter webDriverWait;
     private Step iterationStep;
     private StepRunner runner;
     private InfiniteScrollCondition infiniteScrollCondition;
@@ -86,38 +86,36 @@ public class DefaultScrollObserver implements ScrollObserver {
 	public void setIterationScope(String iterationScope) {
 		this.iterationScope = iterationScope;
 	}
-	public SeleniumNndlWebDriver getWebDriver() {
+	public NndlWebDriver getWebDriver() {
 		return webDriver;
 	}
-	public SeleniumNndlWebDriverWaiter getWebDriverWait() {
+	public NndlWebDriverWaiter getWebDriverWait() {
 		return webDriverWait;
 	}
 
-	public int execute(SeleniumNndlWebDriver webDriver, int loopCount)
+	public int execute(NndlWebDriver webDriver, int loopCount)
 			throws ScrollContinueException, ScrollStopException {
     	try {
     		if(rootElement != null) {
-    			return webDriverWait.getWebDriverWaiter().withTimeout(
-    						Duration.ofSeconds(elementTimeoutWait))
-    					.until(element.presenceOfNestedElementsLocatedBy(webDriver,
+    			return webDriverWait.untilElements(Duration.ofSeconds(elementTimeoutWait),
+    					element.presenceOfNestedElementsLocatedBy(webDriver,
     							rootElement.getRootElement())).stream()
     					.filter(e -> infiniteScrollCondition.checkCondition(e))
     					.map(e -> new IterationContent(e, loopCount))
     					.map(e -> runner.runStep(iterationStep, e))
     					.reduce(0, Integer::sum);
     		} else {
-    			return webDriverWait.getWebDriverWaiter().withTimeout(
-    						Duration.ofSeconds(elementTimeoutWait))
-    					.until(element.allLandmarkAchiveable(webDriver, new LandmarkStrategies(IS_PRESENT))).stream()
+    			return webDriverWait.untilElements(Duration.ofSeconds(elementTimeoutWait),
+    					element.allLandmarkAchiveable(webDriver, new LandmarkStrategies(IS_PRESENT))).stream()
     					.filter(e -> infiniteScrollCondition.checkCondition(e))
     					.map(e -> new IterationContent(e, loopCount))
     					.map(e -> runner.runStep(iterationStep, e))
     					.reduce(0, Integer::sum);
     		}  				    		
-    	} catch (StaleElementReferenceException e) {
+    	} catch (NndlStaleElementException e) {
     		String msg = "DefaultInfiniteScrollObserver execution error";
     		log.error(msg);
-    	} catch (TimeoutException e) {
+    	} catch (NndlTimeoutException e) {
     		log.error("Timeout to locate element: "+element);
     		if(throwTimeout) {
     			throw e;

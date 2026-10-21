@@ -2,8 +2,6 @@ package dev.edumelo.com.nndl_core.action.impl;
 
 import java.util.Map;
 
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy;
@@ -17,8 +15,9 @@ import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlElement;
 
 public class Hover extends LandmarkConditionAction {
 
@@ -59,13 +58,13 @@ private static final String TAG = "hover";
 	}
 
 	@Override
-	public Advice runNested(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
+	public Advice runNested(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) throws NndlActionException {
 		return runElement(webDriver, webDriverWait, rootElement);
 	}
 	
 	@Override
-	public Advice runAction(SeleniumNndlWebDriver remoteWebDriver, SeleniumNndlWebDriverWaiter webDriverWait)
+	public Advice runAction(NndlWebDriver remoteWebDriver, NndlWebDriverWaiter webDriverWait)
 			throws NndlActionException {	
 		return runElement(remoteWebDriver, webDriverWait, null);
 	}
@@ -75,12 +74,11 @@ private static final String TAG = "hover";
 		// TODO Auto-generated method stub	
 	}
 	
-	public Advice runElement(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait, 
+	public Advice runElement(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait, 
 			IterationContent rootElement) throws NndlActionException {
-		WebElement element = wait(webDriver, webDriverWait);
-		Actions actions = new Actions(webDriver.getWebDriver());
+		NndlElement element = wait(webDriver, webDriverWait);
 		if(checkCondition(webDriver, webDriverWait, rootElement)) {
-			actions.moveToElement(element).perform();
+			webDriver.hover(element);
 		}
 		
 		setActionPerformed(true);

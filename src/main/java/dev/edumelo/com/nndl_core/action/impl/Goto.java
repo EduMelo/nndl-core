@@ -3,7 +3,6 @@ package dev.edumelo.com.nndl_core.action.impl;
 import java.net.URL;
 import java.util.Map;
 
-import org.openqa.selenium.WebDriverException;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy;
@@ -17,8 +16,9 @@ import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.utils.UrlUtils;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlDriverException;
 
 public class Goto extends LandmarkConditionAction {
 	private static final String TAG = "gotoUrl";
@@ -48,19 +48,19 @@ public class Goto extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public Advice runNested(SeleniumNndlWebDriver remoteWebDriver, SeleniumNndlWebDriverWaiter webDriverWait,
+	public Advice runNested(NndlWebDriver remoteWebDriver, NndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) {	
-		remoteWebDriver.getWebDriver().get(this.url.toExternalForm());
+		remoteWebDriver.get(this.url.toExternalForm());
 		return new ContinueAdvice();
 	}
 	
 	@Override
-	public Advice runAction(SeleniumNndlWebDriver remoteWebDriver, SeleniumNndlWebDriverWaiter webDriverWait) {
+	public Advice runAction(NndlWebDriver remoteWebDriver, NndlWebDriverWaiter webDriverWait) {
 		//try-catch added to avoid the error described in https://github.com/SeleniumHQ/selenium/issues/12277
 		try {
-			remoteWebDriver.getWebDriver().get(this.url.toExternalForm());			
-		} catch (WebDriverException ex) {
-			if(!remoteWebDriver.getWebDriver().getCurrentUrl()
+			remoteWebDriver.get(this.url.toExternalForm());			
+		} catch (NndlDriverException ex) {
+			if(!remoteWebDriver.getCurrentUrl()
 					.startsWith(this.url.toExternalForm())) {
 				throw new RuntimeException("Could not access the url "+this.url.toExternalForm());
 			}

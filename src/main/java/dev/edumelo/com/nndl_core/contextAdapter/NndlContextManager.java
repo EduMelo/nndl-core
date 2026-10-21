@@ -9,8 +9,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.ExtractDataBind;
 import dev.edumelo.com.nndl_core.action.impl.triggerer.ActionTrigger;
@@ -19,7 +17,9 @@ import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.step.advice.RunControllerAdvice;
 import dev.edumelo.com.nndl_core.webdriver.BrowserArgumentsContextAdapter;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlCookie;
+import dev.edumelo.com.nndl_core.webdriver.NndlElement;
 
 /**
  * Gives access to the {@link NndlContext} of the current run.
@@ -106,8 +106,8 @@ public final class NndlContextManager {
 		return getContext().getExtractedData();
 	}
 
-	public static Advice addExtractedData(SeleniumNndlWebDriver webDriver, String extractDataBindAdapterName,
-			WebElement element) {
+	public static Advice addExtractedData(NndlWebDriver webDriver, String extractDataBindAdapterName,
+			NndlElement element) {
 		List<ExtractDataBind> list = getAdapters().stream()
 			.filter(a -> a instanceof ExtractDataBindAdapter)
 			.map(a -> (ExtractDataBindAdapter<?>) a)
@@ -137,14 +137,14 @@ public final class NndlContextManager {
 				.orElse(new HashMap<>());
 	}
 
-	public static void storeCookies(Object[] storerParams, Set<Cookie> cookies) {
+	public static void storeCookies(Object[] storerParams, Set<NndlCookie> cookies) {
 		getAdapters().stream()
 		.filter(storer -> storer instanceof CookieStorerAdapter)
 		.map(storer -> (CookieStorerAdapter) storer)
 		.forEach(storer -> storer.storeCookies(storerParams, cookies));
 	}
 
-	public static Set<Cookie> retrieveCookies(Object... params) {
+	public static Set<NndlCookie> retrieveCookies(Object... params) {
 		return getAdapters().stream()
 				.filter(a -> a instanceof CookieRetrieverAdapter)
 				.map(a -> (CookieRetrieverAdapter) a)

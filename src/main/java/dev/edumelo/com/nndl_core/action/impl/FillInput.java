@@ -2,7 +2,6 @@ package dev.edumelo.com.nndl_core.action.impl;
 
 import java.util.Map;
 
-import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
@@ -16,8 +15,9 @@ import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlElement;
 
 public class FillInput extends Action {
 	private static final String TAG = "input";
@@ -59,16 +59,16 @@ public class FillInput extends Action {
 	}
 
 	@Override
-	public Advice runNested(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
+	public Advice runNested(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) throws NndlActionException {
-		WebElement input = wait(webDriver, webDriverWait);
+		NndlElement input = wait(webDriver, webDriverWait);
 		return runElement(input);
 	}
 	
 	@Override
-	public Advice runAction(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait)
+	public Advice runAction(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait)
 			throws NndlActionException {	
-		WebElement input = wait(webDriver, webDriverWait);		
+		NndlElement input = wait(webDriver, webDriverWait);		
 		setActionPerformed(true);
 		return runElement(input);
 	}
@@ -78,8 +78,8 @@ public class FillInput extends Action {
 		// TODO Auto-generated method stub	
 	}
 	
-	public Advice runElement(WebElement input) {
-		input.sendKeys(this.value);
+	public Advice runElement(NndlElement input) {
+		input.sendText(this.value);
 		return new ContinueAdvice();
 	}
 	

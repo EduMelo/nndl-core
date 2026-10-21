@@ -1,9 +1,10 @@
 package dev.edumelo.com.nndl_core.scroll;
 
-import org.openqa.selenium.WebElement;
+import dev.edumelo.com.nndl_core.webdriver.NndlElement;
+
 
 public interface InfiniteScrollCondition {
 	
-	boolean checkCondition(WebElement element);
+	boolean checkCondition(NndlElement element);
 
 }

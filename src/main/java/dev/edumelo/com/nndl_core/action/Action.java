@@ -8,11 +8,6 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.ElementNotInteractableException;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,8 +24,12 @@ import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlElementNotInteractableException;
+import dev.edumelo.com.nndl_core.webdriver.NndlElement;
+import dev.edumelo.com.nndl_core.webdriver.NndlElementCondition;
+import dev.edumelo.com.nndl_core.webdriver.NndlLocator;
 
 public abstract class Action {
 	private final static Logger log = LoggerFactory.getLogger(Action.class);
@@ -70,9 +69,9 @@ public abstract class Action {
 	public abstract NndlNode getRelevantNode();
 	public abstract StepElement getRelevantElment();
 	public abstract LandmarkStrategies getDefaultWaitCondition();
-	public abstract Advice runNested(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
+	public abstract Advice runNested(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) throws NndlActionException;
-	public abstract Advice runAction(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait)
+	public abstract Advice runAction(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait)
 			throws NndlActionException;
 	
 	public int getWaitDuration() {
@@ -165,23 +164,17 @@ public abstract class Action {
 		return Action.TAG;
 	}
 	
-	protected boolean checkCondition(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
+	protected boolean checkCondition(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) {
 		if(this.conditionClass == null || conditionElement == null) {
 			return true;
 		}
 		
 		try {
-			WebElement target;
-			if(rootElement != null) {
-				target = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
-						.until(conditionElement.landmarkAchiveable(webDriver, new LandmarkStrategies(IS_DISPLAYED,
-								IS_ENABLED)));				
-			} else {
-				target = webDriverWait.getWebDriverWaiter().withTimeout(Duration.ofSeconds(50))
-						.until(conditionElement.landmarkAchiveable(webDriver, new LandmarkStrategies(IS_DISPLAYED,
-								IS_ENABLED)));
-			}
+			NndlElement target;
+			target = webDriverWait.untilElement(Duration.ofSeconds(50),
+					conditionElement.landmarkAchiveable(webDriver, new LandmarkStrategies(IS_DISPLAYED,
+							IS_ENABLED)));
 			
 			ActionCondition condition = conditionClass.getConstructor().newInstance();
 			return condition.checkCondition(target);
@@ -192,26 +185,26 @@ public abstract class Action {
 		}
 	}
 	
-	protected void positionBefore(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait, WebElement element, 
-			ExpectedCondition<WebElement> expectedCondition) {
+	protected void positionBefore(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait, NndlElement element, 
+			NndlElementCondition expectedCondition) {
 		positionElement(positionBefore, webDriver, webDriverWait, element, expectedCondition);
 	}
 	
-	protected void positionAfter(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait, WebElement element, 
-			ExpectedCondition<WebElement> expectedCondition) {
+	protected void positionAfter(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait, NndlElement element, 
+			NndlElementCondition expectedCondition) {
 		positionElement(positionAfter, webDriver, webDriverWait, element, expectedCondition);
 	}
 	
-	protected void positionElement(Position position, SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait, WebElement element,
-			ExpectedCondition<WebElement> expectedCondition) {
+	protected void positionElement(Position position, NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait, NndlElement element,
+			NndlElementCondition expectedCondition) {
 		if(position != null) {
 			if(position.getY() != null) {		
-				int y = element.getRect().getY()-position.getY();
-				webDriver.getWebDriver().executeScript("window.scrollBy(0,"+y+");");
+				int y = element.getY()-position.getY();
+				webDriver.executeScript("window.scrollBy(0,"+y+");");
 			}
 			if(position.getX() != null) {
-				while(element.getLocation().getX() > position.getX()) {
-					webDriver.getWebDriver().findElement(By.tagName("html")).sendKeys(Keys.chord(Keys.ARROW_LEFT));
+				while(element.getX() > position.getX()) {
+					webDriver.find(NndlLocator.tag("html")).sendChord("ARROW_LEFT");
 				}	    	
 			}			
 		}
@@ -254,8 +247,8 @@ public abstract class Action {
 
 	}
 	
-	public Advice run(SeleniumNndlWebDriver webDriver,
-			SeleniumNndlWebDriverWaiter webDriverWait, IterationContent rootElement)
+	public Advice run(NndlWebDriver webDriver,
+			NndlWebDriverWaiter webDriverWait, IterationContent rootElement)
 					throws NndlActionException {		
 		if(!isLoopCountAccepted(rootElement)) {
 			return new ContinueAdvice();
@@ -270,7 +263,7 @@ public abstract class Action {
 				advice = runAction(webDriver, webDriverWait);
 			}
 			captureLog();
-		} catch(ElementNotInteractableException e) {
+		} catch(NndlElementNotInteractableException e) {
 			String msg = String.format("Action element not interactable. Action: %s", this);
 			log.error(msg);
 			throw new RuntimeException(msg, e);
@@ -302,10 +295,10 @@ public abstract class Action {
 			.orElseThrow(() -> new RuntimeException("Non identify action: "+mappedAction));
 	}
 	
-	protected WebElement wait(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait)
+	protected NndlElement wait(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait)
 			throws NndlActionException {
-		return webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-				.until(getRelevantElment().landmarkAchiveable(webDriver, waitCondition));
+		return webDriverWait.untilElement(getTimeoutSeconds(),
+				getRelevantElment().landmarkAchiveable(webDriver, waitCondition));
 	}
 	
 	@Override

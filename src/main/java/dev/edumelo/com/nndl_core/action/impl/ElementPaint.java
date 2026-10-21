@@ -2,7 +2,6 @@ package dev.edumelo.com.nndl_core.action.impl;
 
 import java.util.Map;
 
-import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
@@ -16,8 +15,9 @@ import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlElement;
 
 public class ElementPaint extends Action {
 	private static final String TAG = "elementPaint";
@@ -59,11 +59,11 @@ public class ElementPaint extends Action {
 	}
 	
 	@Override
-	public Advice runNested(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
+	public Advice runNested(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) throws NndlActionException {
-		WebElement target = null;
+		NndlElement target = null;
 		if(isTargetSpecial(paintableElement)) {
-			target = webDriver.getWebDriver().switchTo().activeElement();
+			target = webDriver.activeElement();
 		} else {
 			if(paintableElement != null) {
 				target = wait(webDriver, webDriverWait);
@@ -77,16 +77,16 @@ public class ElementPaint extends Action {
 	}
 
 	@Override
-	public Advice runAction(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait)
+	public Advice runAction(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait)
 			throws NndlActionException {
-		WebElement element =  wait(webDriver, webDriverWait);
+		NndlElement element =  wait(webDriver, webDriverWait);
 		return runElement(webDriver, webDriverWait, null, element);
 	}
 	
-	public Advice runElement(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
-			IterationContent rootElement, WebElement element) {
+	public Advice runElement(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait,
+			IterationContent rootElement, NndlElement element) {
 		if(checkCondition(webDriver, webDriverWait, rootElement)) {
-			webDriver.getWebDriver().executeScript("arguments[0].style.backgroundColor = arguments[1]", element, color);		
+			webDriver.executeScript("arguments[0].style.backgroundColor = arguments[1]", element, color);		
 			setActionPerformed(true);
 		} else {
 			setActionPerformed(false);

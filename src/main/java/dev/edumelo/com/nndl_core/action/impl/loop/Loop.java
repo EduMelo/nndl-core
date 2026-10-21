@@ -24,8 +24,8 @@ import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriverWaiter;
 
 public class Loop extends Action {
 	private static final Logger log = LoggerFactory.getLogger(Loop.class);
@@ -87,22 +87,22 @@ public class Loop extends Action {
 	}
 	
 	@Override
-	public Advice runNested(SeleniumNndlWebDriver remoteWebDriver,
-			SeleniumNndlWebDriverWaiter webDriverWait, IterationContent rootElement)
+	public Advice runNested(NndlWebDriver remoteWebDriver,
+			NndlWebDriverWaiter webDriverWait, IterationContent rootElement)
 					throws NndlActionException {
 		log.debug("runNested");
 		return runElement(remoteWebDriver, webDriverWait, rootElement);
 	}
 	
 	@Override
-	public Advice runAction(SeleniumNndlWebDriver remoteWebDriver,
-			SeleniumNndlWebDriverWaiter webDriverWait) throws NndlActionException {
+	public Advice runAction(NndlWebDriver remoteWebDriver,
+			NndlWebDriverWaiter webDriverWait) throws NndlActionException {
 		log.debug("runAction");
 		return runElement(remoteWebDriver, webDriverWait, null);
 	}
 	
-	public Advice runElement(SeleniumNndlWebDriver remoteWebDriver,
-			SeleniumNndlWebDriverWaiter webDriverWait, IterationContent rootElement) 
+	public Advice runElement(NndlWebDriver remoteWebDriver,
+			NndlWebDriverWaiter webDriverWait, IterationContent rootElement) 
 			throws InfiniteScrollMaxLoopCountReached {
 		int maxLoopCount = DEFAULT_MAX_LOOP_COUNT;
 		
@@ -119,14 +119,14 @@ public class Loop extends Action {
 		return new ContinueAdvice();
 	}
 
-	private void runListScroll(SeleniumNndlWebDriver remoteWebDriver, SeleniumNndlWebDriverWaiter webDriverWait,
+	private void runListScroll(NndlWebDriver remoteWebDriver, NndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement, int maxLoopCount) throws InfiniteScrollMaxLoopCountReached {
 		ListScroll listScroll = ListScrollFactory.create();
 		listScroll.scroll(maxLoopCount, limit);
 	}
 
-	private void runInfiniteScroll(SeleniumNndlWebDriver remoteWebDriver,
-			SeleniumNndlWebDriverWaiter webDriverWait, IterationContent rootElement,
+	private void runInfiniteScroll(NndlWebDriver remoteWebDriver,
+			NndlWebDriverWaiter webDriverWait, IterationContent rootElement,
 			int maxLoopCount) throws InfiniteScrollMaxLoopCountReached {
 		InfiniteScroll infiniteScroll = InfiniteScrollFactory.create(conditionClass,
 				remoteWebDriver, webDriverWait, rootElement, scrollCount, autoScrool,

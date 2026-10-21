@@ -23,10 +23,5 @@ jobs:
           sudo mv /tmp/bin/dhall-to-json /usr/local/bin/dhall-to-json
           dhall-to-json --version
 
-      - name: Install Selenium Server JAR
-        run: |
-          curl -fsSL -o selenium-server-4.21.0.jar https://github.com/SeleniumHQ/selenium/releases/download/selenium-4.21.0/selenium-server-4.21.0.jar
-          mvn install:install-file -Dfile=selenium-server-4.21.0.jar -DgroupId=org.seleniumhq.selenium -DartifactId=selenium-server -Dversion=4.21.0 -Dpackaging=jar
-
       - name: Test
         run: mvn test

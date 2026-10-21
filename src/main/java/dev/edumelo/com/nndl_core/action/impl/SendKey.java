@@ -1,13 +1,7 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.ActionModificator;
 import dev.edumelo.com.nndl_core.action.landmark.LandmarkAchievementStrategy;
@@ -21,14 +15,16 @@ import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlElement;
+import dev.edumelo.com.nndl_core.webdriver.NndlLocator;
 
 public class SendKey extends LandmarkConditionAction {
 	private static final String TAG = "sendKey";
 	private static final String TARGET_TAG = "targetElement";
 	private static final String IGNORE_ROOT_TAG = "ignoreRoot";
-	private CharSequence key;
+	private String key;
 	private StepElement targetElement;
 	private boolean ignoreRoot;
 	private NndlNode relevantNode;
@@ -69,11 +65,11 @@ public class SendKey extends LandmarkConditionAction {
 	}
 	
 	@Override
-	public Advice runNested(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
+	public Advice runNested(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) throws NndlActionException {
-		WebElement target = null;
+		NndlElement target = null;
 		if(isTargetSpecial(targetElement)) {
-			target = webDriver.getWebDriver().switchTo().activeElement();
+			target = webDriver.activeElement();
 		} else {
 			if(targetElement != null) {
 				target = wait(webDriver, webDriverWait);
@@ -82,7 +78,7 @@ public class SendKey extends LandmarkConditionAction {
 			}			
 		}
 		
-		target.sendKeys(Keys.chord(key));
+		target.sendChord(key);
 		setActionPerformed(true);
 		return new ContinueAdvice();
 	}
@@ -96,16 +92,16 @@ public class SendKey extends LandmarkConditionAction {
 
 
 	@Override
-	public Advice runAction(SeleniumNndlWebDriver remoteWebDriver, SeleniumNndlWebDriverWaiter webDriverWait) {
-		WebElement target = null;
+	public Advice runAction(NndlWebDriver remoteWebDriver, NndlWebDriverWaiter webDriverWait) {
+		NndlElement target = null;
 		if(targetElement != null) {
-			target =  webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-					.until(targetElement.landmarkAchiveable(remoteWebDriver, getWaitCondition()));
+			target = webDriverWait.untilElement(getTimeoutSeconds(),
+					targetElement.landmarkAchiveable(remoteWebDriver, getWaitCondition()));
 		} else {
 			target = runElement(remoteWebDriver);
 		}
 		
-		target.sendKeys(Keys.chord(key));
+		target.sendChord(key);
 		setActionPerformed(true);
 		return new ContinueAdvice();
 	}
@@ -115,8 +111,8 @@ public class SendKey extends LandmarkConditionAction {
 		// TODO Auto-generated method stub
 	}
 	
-	public WebElement runElement(SeleniumNndlWebDriver remoteWebDriver) {
-		return remoteWebDriver.getWebDriver().findElement(By.tagName("html"));
+	public NndlElement runElement(NndlWebDriver remoteWebDriver) {
+		return remoteWebDriver.find(NndlLocator.tag("html"));
 	}
 
 	private StepElement getTargetElement(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
@@ -126,17 +122,9 @@ public class SendKey extends LandmarkConditionAction {
 	}
 	 
 	
-	private CharSequence getKey(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
-		String value = mappedAction.getScalarValueFromChild(TAG)
+	private String getKey(NndlNode mappedAction, Map<String, StepElement> mappedElements) {
+		return mappedAction.getScalarValueFromChild(TAG)
 				.orElseThrow(() -> new NndlParserRuntimeException("SendKey tag should have an "+TAG+" tag.", mappedAction));
-	    List<String> keyList = Arrays.asList(Keys.values()).stream()
-	    		.map(Keys::name)
-	    		.collect(Collectors.toList());
-	    
-		if(keyList.contains(value)) {
-			return Keys.valueOf(value);
-		}
-		return value;
 	}
 
 	private void extractIgnoreRoot(NndlNode mappedAction, Map<String, StepElement> mappedElements) {

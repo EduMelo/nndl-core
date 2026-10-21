@@ -2,20 +2,19 @@ package dev.edumelo.com.nndl_core.scroll;
 
 import java.util.List;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.exceptions.checked.InfiniteScrollMaxLoopCountReached;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlLocator;
 
 public class InfiniteScroll {
 	
 	private static final Logger log = LoggerFactory.getLogger(InfiniteScroll.class);
 
-	private final SeleniumNndlWebDriver remoteWebDriver;
+	private final NndlWebDriver remoteWebDriver;
 	private final int scrollCount;
 	private final boolean autoScrool;
 	private final List<ScrollObserver> scrollObservers;
@@ -23,7 +22,7 @@ public class InfiniteScroll {
 	private int maxBreakCount = 50;
 	private NndlNode node;
 
-	public InfiniteScroll(SeleniumNndlWebDriver remoteWebDriver, int scrollCount, boolean autoScrool, NndlNode node,
+	public InfiniteScroll(NndlWebDriver remoteWebDriver, int scrollCount, boolean autoScrool, NndlNode node,
 			List<ScrollObserver> scrollObservers) {
 		super();
 		this.remoteWebDriver = remoteWebDriver;
@@ -47,7 +46,7 @@ public class InfiniteScroll {
 	 * @return The current twitter user page`s body scroll Height measure in pixels
 	 */
 	private Long getBodyScrollSize() {
-		return (Long) remoteWebDriver.getWebDriver().executeScript("return Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight )");
+		return (Long) remoteWebDriver.executeScript("return Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight )");
 	}
 	
 	/**
@@ -57,11 +56,11 @@ public class InfiniteScroll {
 	 * @param yCoord The Y coordinate to scroll
 	 */
 	private void scrollBody(long xCoord, long yCoord) {
-		remoteWebDriver.getWebDriver().executeScript(String.format("window.scroll(%d, %d);", xCoord, yCoord));
+		remoteWebDriver.executeScript(String.format("window.scroll(%d, %d);", xCoord, yCoord));
 	}
 
 	private int getCurrentScroll() {
-		Object value = remoteWebDriver.getWebDriver().executeScript("return (window.pageYOffset || document.documentElement.scrollTop)");
+		Object value = remoteWebDriver.executeScript("return (window.pageYOffset || document.documentElement.scrollTop)");
 		if(value != null) {
 			return ((Long) value).intValue();
 		}
@@ -75,7 +74,7 @@ public class InfiniteScroll {
 	 */
 	private void scrollToTheLastCreatedElement() {
 		for (int i = 0; i < scrollCount; i++) {
-			remoteWebDriver.getWebDriver().findElement(By.tagName("html")).sendKeys(Keys.chord(Keys.DOWN));
+			remoteWebDriver.find(NndlLocator.tag("html")).sendChord("DOWN");
 		}
 	}
 	
@@ -88,7 +87,7 @@ public class InfiniteScroll {
 		}
 		
 		while (currentScroll < maxScrollReached) {
-			remoteWebDriver.getWebDriver().findElement(By.tagName("html")).sendKeys(Keys.chord(Keys.DOWN));
+			remoteWebDriver.find(NndlLocator.tag("html")).sendChord("DOWN");
 			currentScroll = getCurrentScroll();
 		}
 		setMaxScrollReached(currentScroll);

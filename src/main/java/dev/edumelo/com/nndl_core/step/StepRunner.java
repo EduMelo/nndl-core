@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,18 +24,19 @@ import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.AdviceType;
 import dev.edumelo.com.nndl_core.step.advice.SwapStepAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlDriverException;
 
 public class StepRunner {
 	private static final Logger log = LoggerFactory.getLogger(StepRunner.class);
 	
-	private final SeleniumNndlWebDriver webDriver;
-	private final SeleniumNndlWebDriverWaiter webDriverWait;
+	private final NndlWebDriver webDriver;
+	private final NndlWebDriverWaiter webDriverWait;
 	private ActionRunner actionRunner;
 	private Map<String, Step> steps;
 	
-	public StepRunner(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait) {
+	public StepRunner(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait) {
 		this.webDriver = webDriver;
 		this.webDriverWait = webDriverWait;
 		Collection<ExtractDataBind> extractDataBindCollection = new ArrayList<ExtractDataBind>();
@@ -150,7 +150,7 @@ public class StepRunner {
 					try {
 						NndlContextManager.storeSourceCode(action.getRelevantNode().getConcatenadedLines(),
 								webDriver.getPageSource());
-					} catch (WebDriverException e) {
+					} catch (NndlDriverException e) {
 						log.error("It wasn't possible to capture exception's page source.");
 					}
 				}

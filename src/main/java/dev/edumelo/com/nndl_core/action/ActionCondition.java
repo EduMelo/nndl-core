@@ -1,9 +1,10 @@
 package dev.edumelo.com.nndl_core.action;
 
-import org.openqa.selenium.WebElement;
+import dev.edumelo.com.nndl_core.webdriver.NndlElement;
+
 
 public interface ActionCondition {
 
-	boolean checkCondition(WebElement element);
+	boolean checkCondition(NndlElement element);
 	
 }

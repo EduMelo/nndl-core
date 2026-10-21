@@ -1,13 +1,12 @@
 package dev.edumelo.com.nndl_core.action.landmark;
 
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlElementCondition;
 
 public class LandmarkCoolDown implements Landmark {
 	
@@ -52,7 +51,7 @@ public class LandmarkCoolDown implements Landmark {
 	}
 	
 	@Override
-	public ExpectedCondition<WebElement> landmarkAchiveable(NndlWebDriver remoteWebDriver,
+	public NndlElementCondition landmarkAchiveable(NndlWebDriver remoteWebDriver,
 			LandmarkStrategies strategies) {
 		return null;
 	}

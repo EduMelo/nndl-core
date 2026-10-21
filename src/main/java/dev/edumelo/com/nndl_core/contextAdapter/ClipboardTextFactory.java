@@ -1,16 +1,15 @@
 package dev.edumelo.com.nndl_core.contextAdapter;
 
-import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.ExtractDataBind;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlElement;
 
 public class ClipboardTextFactory implements ExtractDataBindAdapter<ClipboardText>  {
 
 	@Override
-	public ExtractDataBind createFromElement(SeleniumNndlWebDriver webDriver, WebElement element) {
-		String text = (String) webDriver.getWebDriver()
-				.executeScript("navigator.clipboard.readText();");
+	public ExtractDataBind createFromElement(NndlWebDriver webDriver, NndlElement element) {
+		String text = (String) webDriver.executeScript("navigator.clipboard.readText();");
 		ClipboardText clipboardText = new ClipboardText();
 		clipboardText.setText(text);
 		return clipboardText;

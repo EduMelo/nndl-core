@@ -10,13 +10,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.ExtractDataBind;
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlRuntimeException;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlElement;
 
 class NndlContextManagerTest {
 
@@ -140,7 +140,7 @@ class NndlContextManagerTest {
 	private static class StubExtractDataBindAdapter implements ExtractDataBindAdapter<StubExtractDataBind> {
 
 		@Override
-		public ExtractDataBind createFromElement(SeleniumNndlWebDriver webDriver, WebElement element) {
+		public ExtractDataBind createFromElement(NndlWebDriver webDriver, NndlElement element) {
 			return new StubExtractDataBind();
 		}
 

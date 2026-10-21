@@ -2,8 +2,6 @@ package dev.edumelo.com.nndl_core.action.impl;
 
 import java.util.Map;
 
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
@@ -17,8 +15,9 @@ import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlElement;
 
 public class ClearInput extends Action {
 	private static final String TAG = "input";
@@ -64,16 +63,16 @@ public class ClearInput extends Action {
 	}
 
 	@Override
-	public Advice runNested(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
+	public Advice runNested(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement) throws NndlActionException {
-		WebElement input = wait(webDriver, webDriverWait);
+		NndlElement input = wait(webDriver, webDriverWait);
 		return runElement(input);
 	}
 
 	@Override
-	public Advice runAction(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait)
+	public Advice runAction(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait)
 			throws NndlActionException {
-		WebElement input =  wait(webDriver, webDriverWait);
+		NndlElement input =  wait(webDriver, webDriverWait);
 		setActionPerformed(true);
 		return runElement(input);
 	}
@@ -84,8 +83,8 @@ public class ClearInput extends Action {
 				.orElseThrow(NndlParserRuntimeException.get("Action ClearInput should have "+TAG+" tag.", mappedAction));
 	}
 	
-	private Advice runElement(WebElement input) {
-		input.sendKeys(Keys.chord(Keys.CONTROL,"a",Keys.DELETE));
+	private Advice runElement(NndlElement input) {
+		input.sendChord("CONTROL", "a", "DELETE");
 		return new ContinueAdvice();
 	}
 	

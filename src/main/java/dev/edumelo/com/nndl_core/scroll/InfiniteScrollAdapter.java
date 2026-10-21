@@ -4,12 +4,12 @@ import dev.edumelo.com.nndl_core.step.Step;
 import dev.edumelo.com.nndl_core.step.StepElement;
 import dev.edumelo.com.nndl_core.step.StepRunner;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriverWaiter;
 
 public class InfiniteScrollAdapter {
-	private SeleniumNndlWebDriver webDriver;
-    private SeleniumNndlWebDriverWaiter webDriverWait;
+	private NndlWebDriver webDriver;
+    private NndlWebDriverWaiter webDriverWait;
     private Step iterationStep;
     private StepRunner runner;
     private InfiniteScrollCondition infiniteScrollCondition;
@@ -18,7 +18,7 @@ public class InfiniteScrollAdapter {
     private Boolean throwTimeout = true;
     private Integer elementTimeoutWait = 50;
 	
-    public InfiniteScrollAdapter(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
+    public InfiniteScrollAdapter(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait,
     		Step iterationStep, StepRunner runner, InfiniteScrollCondition infiniteScrollCondition,
     		IterationContent rootElement, StepElement element, Boolean throwTimeout, Integer elementTimeoutWait) {
 		this.webDriver = webDriver;
@@ -36,10 +36,10 @@ public class InfiniteScrollAdapter {
 		}
 	}
     
-	public SeleniumNndlWebDriver getWebDriver() {
+	public NndlWebDriver getWebDriver() {
 		return webDriver;
 	}
-	public SeleniumNndlWebDriverWaiter getWebDriverWait() {
+	public NndlWebDriverWaiter getWebDriverWait() {
 		return webDriverWait;
 	}
 	public Step getIterationStep() {

@@ -6,18 +6,15 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlParserRuntimeException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlElement;
+import dev.edumelo.com.nndl_core.webdriver.NndlElementCondition;
+import dev.edumelo.com.nndl_core.webdriver.NndlElementsCondition;
+import dev.edumelo.com.nndl_core.webdriver.NndlLocator;
+import dev.edumelo.com.nndl_core.webdriver.NndlSearchContext;
 
 public class StepElement2 {
 	private static final String SHADOW_ROOT_TAG = "\\$\\{shadowRoot\\}";
@@ -96,121 +93,88 @@ public class StepElement2 {
 		return this.matchExp.split(SHADOW_ROOT_TAG);
 	}
 	
-	public ExpectedCondition<WebElement> elementToBeClickable(NndlWebDriver remoteWebDriver) {
-		if(containsShadowRoot()) {
-			String[] matchExpressions = getMatchExpressions();
-			SeleniumNndlWebDriver seleniumNndlWebDriver = (SeleniumNndlWebDriver) remoteWebDriver;
-			RemoteWebDriver webDriver = seleniumNndlWebDriver.getWebDriver();
-			WebElement shadowHost = webDriver.findElement(By.cssSelector(matchExpressions[0]));
-			SearchContext shadowRoot = shadowHost.getShadowRoot();
-			return driver -> {
-				WebElement element = shadowRoot.findElement(By.cssSelector(matchExpressions[1]));
-				return (element != null && element.isDisplayed() && element.isEnabled()) ? element : null;
-			};
-		} else {
-			By locator = By.cssSelector(getMatchExpressions()[0]);
-			return ExpectedConditions.elementToBeClickable(locator);			
-		}
+	public NndlElementCondition elementToBeClickable(NndlWebDriver remoteWebDriver) {
+		return elementMatching(remoteWebDriver, true, true);
 	}
 	
-	public ExpectedCondition<WebElement> nestedElementToBeClickable(NndlWebDriver remoteWebDriver, WebElement rootElement) {
+	public NndlElementCondition nestedElementToBeClickable(NndlWebDriver remoteWebDriver, NndlElement rootElement) {
 		if(containsShadowRoot()) {
-			String[] matchExpressions = getMatchExpressions();
-			WebElement shadowHost = rootElement.findElement(By.cssSelector(matchExpressions[0]));
-			SearchContext shadowRoot = shadowHost.getShadowRoot(); 
-			return driver -> {
-				WebElement element = shadowRoot.findElement(By.cssSelector(matchExpressions[1]));
-				return (element != null && element.isDisplayed() && element.isEnabled()) ? element : null;
-			};
-		} else {
-			By locator = By.cssSelector(getMatchExpressions()[0]);
-			return ExpectedConditions.elementToBeClickable(rootElement.findElement(locator));			
+			NndlSearchContext shadowRoot = shadowRootOf(rootElement);
+			return () -> matching(shadowRoot.find(NndlLocator.css(getMatchExpressions()[1])), true, true);
 		}
+		NndlElement element = rootElement.find(NndlLocator.css(getMatchExpressions()[0]));
+		return () -> matching(element, true, true);
 	}
 	
-	public ExpectedCondition<WebElement> visibilityOfElementLocated(NndlWebDriver remoteWebDriver){
-		if(containsShadowRoot()) {
-			if(!(remoteWebDriver instanceof SeleniumNndlWebDriver)) {
-				throw new RuntimeException();
-			}
-			String[] matchExpressions = getMatchExpressions();
-			SeleniumNndlWebDriver seleniumNndlWebDriver = (SeleniumNndlWebDriver) remoteWebDriver;
-			RemoteWebDriver webDriver = seleniumNndlWebDriver.getWebDriver();
-			WebElement shadowHost = webDriver.findElement(By.cssSelector(matchExpressions[0]));
-			SearchContext shadowRoot = shadowHost.getShadowRoot();
-			return driver -> {
-				WebElement element = shadowRoot.findElement(By.cssSelector(matchExpressions[1]));
-				return (element != null && element.isDisplayed()) ? element : null;
-			};
-		} else {
-			By locator = By.cssSelector(getMatchExpressions()[0]);
-			return ExpectedConditions.visibilityOfElementLocated(locator);			
-		}
+	public NndlElementCondition visibilityOfElementLocated(NndlWebDriver remoteWebDriver){
+		return elementMatching(remoteWebDriver, true, false);
 	}
 	
-	public ExpectedCondition<WebElement> presenceOfElementLocated(NndlWebDriver remoteWebDriver){
-		if(containsShadowRoot()) {
-			if(!(remoteWebDriver instanceof SeleniumNndlWebDriver)) {
-				throw new RuntimeException();
-			}
-			String[] matchExpressions = getMatchExpressions();
-			SeleniumNndlWebDriver seleniumNndlWebDriver = (SeleniumNndlWebDriver) remoteWebDriver;
-			RemoteWebDriver webDriver = seleniumNndlWebDriver.getWebDriver();
-			WebElement shadowHost = webDriver.findElement(By.cssSelector(matchExpressions[0]));
-			SearchContext shadowRoot = shadowHost.getShadowRoot();
-			return driver -> {
-				return shadowRoot.findElement(By.cssSelector(matchExpressions[1]));
-			};
-		} else {
-			By locator = By.cssSelector(getMatchExpressions()[0]);
-			return ExpectedConditions.presenceOfElementLocated(locator);			
-		}
+	public NndlElementCondition presenceOfElementLocated(NndlWebDriver remoteWebDriver){
+		return elementMatching(remoteWebDriver, false, false);
 	}
 	
-	public ExpectedCondition<List<WebElement>> presenceOfAllElementsLocatedBy(NndlWebDriver remoteWebDriver){
+	public NndlElementsCondition presenceOfAllElementsLocatedBy(NndlWebDriver remoteWebDriver){
 		if(containsShadowRoot()) {
-			if(!(remoteWebDriver instanceof SeleniumNndlWebDriver)) {
-				throw new RuntimeException();
-			}
-			String[] matchExpressions = getMatchExpressions();
-			SeleniumNndlWebDriver seleniumNndlWebDriver = (SeleniumNndlWebDriver) remoteWebDriver;
-			RemoteWebDriver webDriver = seleniumNndlWebDriver.getWebDriver();
-			WebElement shadowHost = webDriver.findElement(By.cssSelector(matchExpressions[0]));
-			SearchContext shadowRoot = shadowHost.getShadowRoot();
-			return driver -> {
-				List<WebElement> elements = shadowRoot.findElements(By.cssSelector(matchExpressions[1]));
-				return !elements.isEmpty() ? elements : null;
+			NndlSearchContext shadowRoot = shadowRootOf(remoteWebDriver);
+			return () -> {
+				List<NndlElement> elements = shadowRoot.findAll(NndlLocator.css(getMatchExpressions()[1]));
+				return elements.isEmpty() ? null : elements;
 			};
-		} else {
-			By locator = By.cssSelector(getMatchExpressions()[0]);
-			return ExpectedConditions.presenceOfAllElementsLocatedBy(locator);			
 		}
+		NndlLocator locator = NndlLocator.css(getMatchExpressions()[0]);
+		return () -> {
+			List<NndlElement> elements = remoteWebDriver.findAll(locator);
+			return elements.isEmpty() ? null : elements;
+		};
 	}
 	
-	public ExpectedCondition<List<WebElement>> presenceOfNestedElementsLocatedBy(
-			SeleniumNndlWebDriver seleniumWebDriver, WebElement rootElement) {
-		By locator = By.cssSelector(getMatchExpressions()[0]);
+	public NndlElementsCondition presenceOfNestedElementsLocatedBy(
+			NndlWebDriver seleniumWebDriver, NndlElement rootElement) {
+		NndlLocator locator = NndlLocator.css(getMatchExpressions()[0]);
 		if(containsShadowRoot()) {
-			String[] matchExpressions = getMatchExpressions();
-			WebElement shadowHost = rootElement.findElement(By.cssSelector(matchExpressions[0]));
-			SearchContext shadowRoot = shadowHost.getShadowRoot(); 
-			return new ExpectedCondition<List<WebElement>>() {
-				@Override
-				public List<WebElement> apply(WebDriver driver) {
-					List<WebElement> allChildren = shadowRoot.findElements(locator);
-					return allChildren.isEmpty() ? null : allChildren;
-				}
-			};
-		} else {
-			return new ExpectedCondition<List<WebElement>>() {
-				@Override
-				public List<WebElement> apply(WebDriver driver) {
-					List<WebElement> allChildren = rootElement.findElements(locator);
-					return allChildren.isEmpty() ? null : allChildren;
-				}
+			NndlSearchContext shadowRoot = shadowRootOf(rootElement);
+			return () -> {
+				List<NndlElement> allChildren = shadowRoot.findAll(locator);
+				return allChildren.isEmpty() ? null : allChildren;
 			};
 		}
-	  }
+		return () -> {
+			List<NndlElement> allChildren = rootElement.findAll(locator);
+			return allChildren.isEmpty() ? null : allChildren;
+		};
+	}
+
+	private NndlElementCondition elementMatching(NndlWebDriver remoteWebDriver, boolean displayed, boolean enabled) {
+		if(containsShadowRoot()) {
+			NndlSearchContext shadowRoot = shadowRootOf(remoteWebDriver);
+			NndlLocator locator = NndlLocator.css(getMatchExpressions()[1]);
+			return () -> matching(shadowRoot.find(locator), displayed, enabled);
+		}
+		NndlLocator locator = NndlLocator.css(getMatchExpressions()[0]);
+		return () -> {
+			List<NndlElement> elements = remoteWebDriver.findAll(locator);
+			return elements.isEmpty() ? null : matching(elements.get(0), displayed, enabled);
+		};
+	}
+
+	private NndlSearchContext shadowRootOf(NndlSearchContext root) {
+		NndlElement shadowHost = root.find(NndlLocator.css(getMatchExpressions()[0]));
+		return shadowHost.shadowRoot();
+	}
+
+	private NndlElement matching(NndlElement element, boolean displayed, boolean enabled) {
+		if(element == null) {
+			return null;
+		}
+		if(displayed && !element.isDisplayed()) {
+			return null;
+		}
+		if(enabled && !element.isEnabled()) {
+			return null;
+		}
+		return element;
+	}
 	
 	@Override
 	public String toString() {

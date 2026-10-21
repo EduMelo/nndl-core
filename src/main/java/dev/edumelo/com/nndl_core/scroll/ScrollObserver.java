@@ -1,8 +1,8 @@
 package dev.edumelo.com.nndl_core.scroll;
 
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
 
 public interface ScrollObserver {	
 	void setIterationScope(String iterationScope);
-	int execute(SeleniumNndlWebDriver webDriver, int loopCount) throws ScrollContinueException, ScrollStopException;
+	int execute(NndlWebDriver webDriver, int loopCount) throws ScrollContinueException, ScrollStopException;
 }

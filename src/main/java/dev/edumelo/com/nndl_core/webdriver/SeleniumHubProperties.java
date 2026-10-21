@@ -22,8 +22,8 @@ public class SeleniumHubProperties {
 	private static final Logger log = LoggerFactory.getLogger(SeleniumHubProperties.class);
 	private static final String DOWNLOAD_DIRECTORY = "/tmp/";
 	
-	enum PlataformType {LINUX, ANDROID}
-	enum BrowserType {CHROME, FIREFOX, INTERNETEXPLORER}
+	public enum PlataformType {LINUX, ANDROID}
+	public enum BrowserType {CHROME, FIREFOX, INTERNETEXPLORER}
 	private String environment;
 	private String browser;
 	private String browserVersion = "";

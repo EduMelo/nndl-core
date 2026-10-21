@@ -1,13 +1,9 @@
 package dev.edumelo.com.nndl_core.action.impl;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import dev.edumelo.com.nndl_core.action.Action;
 import dev.edumelo.com.nndl_core.action.ActionModificator;
@@ -22,8 +18,9 @@ import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
 import dev.edumelo.com.nndl_core.utils.UrlUtils;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
 import dev.edumelo.com.nndl_core.webdriver.SeleniumHubProperties;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlElement;
 
 public class UploadFile extends Action {
 	private static final String TAG = "uploadFile";
@@ -62,14 +59,14 @@ public class UploadFile extends Action {
 	}
 
 	@Override
-	public Advice runNested(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait,
+	public Advice runNested(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait,
 			IterationContent rootElement)
 					throws NndlActionException {
 		return runElement(webDriver, webDriverWait);
 	}
 
 	@Override
-	public Advice runAction(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait)
+	public Advice runAction(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait)
 			throws NndlActionException {
 		return runElement(webDriver, webDriverWait);
 	}
@@ -84,17 +81,12 @@ public class UploadFile extends Action {
 		return this.inputElement;
 	}
 	
-	private Advice runElement(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait)
+	private Advice runElement(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait)
 			throws NndlActionException {
-		RemoteWebDriver driver = webDriver.getWebDriver();
-		
-		//abre uma nova aba
-		driver.executeScript("window.open()");
-		List<String> tabs = new ArrayList<>(driver.getWindowHandles());
-		
-		//muda para nova aba
-		driver.switchTo().window(tabs.get(tabs.size()-1));
-		driver.get("chrome://downloads/");
+		webDriver.executeScript("window.open()");
+		List<String> tabs = webDriver.getWindowHandles();
+		webDriver.switchToWindow(tabs.get(tabs.size()-1));
+		webDriver.get("chrome://downloads/");
 		
 		String code = "var a = document.createElement('a');"+"\n"+
 				String.format("a.href = '%s';", url)+"\n"+
@@ -102,26 +94,25 @@ public class UploadFile extends Action {
 				"document.body.appendChild(a);"+"\n"+
 				"a.click();";
 		
-		driver.executeScript(code);
+		webDriver.executeScript(code);
 		
 		String waitCode = "var items = document.querySelector('downloads-manager')"+"\n"+
 				".shadowRoot.getElementById('downloadsList').items;"+"\n"+
 				"if (items.every(e => e.state === 2))"+"\n"+
 				"{return items.map(e => e.fileUrl || e.file_url);}";
 		
-		webDriverWait.getWebDriverWaiter().withTimeout(getTimeoutSeconds())
-		.until(ExpectedConditions.jsReturnsValue(waitCode));
+		webDriverWait.untilScriptReturns(getTimeoutSeconds(), waitCode);
 		
-		driver.close();
-		driver.switchTo().window(tabs.get(0));
+		webDriver.closeWindow();
+		webDriver.switchToWindow(tabs.get(0));
 		
-		WebElement input = wait(webDriver, webDriverWait);
+		NndlElement input = wait(webDriver, webDriverWait);
 		
 		String[] fileNameArray = url.toString().split("/");
 		String fileName = fileNameArray[fileNameArray.length-1];
 		String fileLocation = String.format("%s%s", getSeleniumHubProperties()
 				.getDownloadDirectory(), fileName);
-		input.sendKeys(fileLocation);
+		input.sendText(fileLocation);
 		
 		setActionPerformed(true);
 		return new ContinueAdvice();

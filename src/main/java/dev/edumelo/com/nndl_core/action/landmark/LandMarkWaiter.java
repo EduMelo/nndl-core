@@ -7,7 +7,6 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import org.openqa.selenium.WebDriverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,17 +16,18 @@ import dev.edumelo.com.nndl_core.exceptions.checked.NndlLandmarkException;
 import dev.edumelo.com.nndl_core.nndl.NndlNode;
 import dev.edumelo.com.nndl_core.step.advice.Advice;
 import dev.edumelo.com.nndl_core.step.advice.ContinueAdvice;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.exceptions.unchecked.NndlDriverException;
 
 public class LandMarkWaiter {
 	
 	private static final Logger log = LoggerFactory.getLogger(LandMarkWaiter.class);
 	
-	private SeleniumNndlWebDriver webDriver;
-	private SeleniumNndlWebDriverWaiter webDriverWait;
+	private NndlWebDriver webDriver;
+	private NndlWebDriverWaiter webDriverWait;
 
-	public LandMarkWaiter(SeleniumNndlWebDriver webDriver, SeleniumNndlWebDriverWaiter webDriverWait) {
+	public LandMarkWaiter(NndlWebDriver webDriver, NndlWebDriverWaiter webDriverWait) {
 		this.webDriver = webDriver;
 		this.webDriverWait = webDriverWait;
 	}
@@ -58,10 +58,9 @@ public class LandMarkWaiter {
 							}
 						} else {
 							try {
-								webDriverWait.getWebDriverWaiter()
-									.withTimeout(Duration.ofSeconds(landmark.getTimeout()))
-									.until(landmark.landmarkAchiveable(webDriver, landmark.getStrategy()));						
-							} catch(WebDriverException e) {
+								webDriverWait.untilElement(Duration.ofSeconds(landmark.getTimeout()),
+									landmark.landmarkAchiveable(webDriver, landmark.getStrategy()));						
+							} catch(NndlDriverException e) {
 								log.debug("Landmark wait interrupt. Landmark: {}", landmark);
 								exceptionCapture.setExceptionCaptured(true);
 								exceptionCapture.setThrowable(e);

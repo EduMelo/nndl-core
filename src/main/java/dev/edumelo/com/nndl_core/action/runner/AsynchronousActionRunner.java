@@ -12,18 +12,18 @@ import dev.edumelo.com.nndl_core.contextAdapter.NndlContext;
 import dev.edumelo.com.nndl_core.contextAdapter.NndlContextManager;
 import dev.edumelo.com.nndl_core.exceptions.checked.NndlActionException;
 import dev.edumelo.com.nndl_core.webdriver.IterationContent;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriver;
-import dev.edumelo.com.nndl_core.webdriver.SeleniumNndlWebDriverWaiter;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriver;
+import dev.edumelo.com.nndl_core.webdriver.NndlWebDriverWaiter;
 
 public class AsynchronousActionRunner {
 	
 	private static final Logger log = LoggerFactory.getLogger(AsynchronousActionRunner.class);
 	
-	private final SeleniumNndlWebDriver remoteWebDriver;
-	private final SeleniumNndlWebDriverWaiter webDriverWait;
+	private final NndlWebDriver remoteWebDriver;
+	private final NndlWebDriverWaiter webDriverWait;
 	private LandMarkWaiter landmarkWaiter;
 
-	public AsynchronousActionRunner(SeleniumNndlWebDriver remoteWebDriver, SeleniumNndlWebDriverWaiter webDriverWait) {
+	public AsynchronousActionRunner(NndlWebDriver remoteWebDriver, NndlWebDriverWaiter webDriverWait) {
 		this.remoteWebDriver = remoteWebDriver;
 		this.webDriverWait = webDriverWait;
 		this.landmarkWaiter = new LandMarkWaiter(remoteWebDriver, webDriverWait);
